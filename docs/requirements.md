@@ -64,9 +64,11 @@
 - **キーボードショートカット**: 効率的な操作のためのショートカット
 - **ドラッグ&ドロップ**: 直感的なノート整理
 
-### 2.6 マークダウン機能
-- **Tiptap**: 純粋なマークダウンではなく、Tiptapのショートカットをサポート
-  - 利用者としてはマークダウンエディタとほぼ同じ
+### 2.6 エディタ機能
+- **Tiptap**: リッチテキストエディタライブラリを使用
+  - マークダウンライクなショートカットをサポート（例: `#` で見出し、`-` で箇条書き）
+  - WYSIWYG（What You See Is What You Get）形式でコンテンツを編集
+  - 利用者にとってはマークダウンエディタに近い使い勝手を提供
 
 ### 2.7 データ管理
 - **自動保存**: 編集内容の自動保存
@@ -335,7 +337,6 @@ NoteTag {
 ## 10. 付録
 
 ### 10.1 参考資料
-- マークダウン仕様: [CommonMark](https://commonmark.org/)
 - Next.js ドキュメント: [Next.js](https://nextjs.org/docs)
 - Supabase ドキュメント: [Supabase](https://supabase.com/docs)
 - Tiptap ドキュメント: [Tiptap](https://tiptap.dev/docs)
