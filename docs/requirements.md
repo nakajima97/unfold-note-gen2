@@ -153,41 +153,9 @@ NoteTag {
 }
 ```
 
-## 5. API仕様
+## 5. 技術スタック
 
-### 5.1 認証API
-- `POST /api/auth/login`: ユーザーログイン
-- `POST /api/auth/logout`: ユーザーログアウト
-- `GET /api/auth/me`: 現在のユーザー情報取得
-
-### 5.2 ユーザーAPI
-- `GET /api/users/:id`: ユーザー情報取得
-- `PUT /api/users/:id`: ユーザー情報更新
-
-### 5.3 プロジェクトAPI
-- `GET /api/projects`: プロジェクト一覧取得
-- `POST /api/projects`: プロジェクト作成
-- `GET /api/projects/:id`: プロジェクト詳細取得
-- `PUT /api/projects/:id`: プロジェクト更新
-- `DELETE /api/projects/:id`: プロジェクト削除
-- `PUT /api/projects/:id/archive`: プロジェクトアーカイブ
-
-### 5.4 ノートAPI
-- `GET /api/projects/:projectId/notes`: ノート一覧取得
-- `POST /api/projects/:projectId/notes`: ノート作成
-- `GET /api/notes/:id`: ノート詳細取得
-- `PUT /api/notes/:id`: ノート更新
-- `DELETE /api/notes/:id`: ノート削除
-- `GET /api/notes/search`: ノート検索
-
-### 5.5 タグAPI
-- `GET /api/projects/:projectId/tags`: タグ一覧取得
-- `GET /api/tags/:id/notes`: タグに関連するノート取得
-- `GET /api/notes/:id/tags`: ノートに関連するタグ取得
-
-## 6. 技術スタック
-
-### 6.1 フロントエンド
+### 5.1 フロントエンド
 - **フレームワーク**: Next.js
 - **言語**: TypeScript
 - **スタイリング**: Tailwind CSS
@@ -195,28 +163,26 @@ NoteTag {
 - **マークダウンレンダリング**: react-markdown
 - **エディタ**: CodeMirror または Monaco Editor
 
-### 6.2 バックエンド
-- **フレームワーク**: Next.js API Routes または Express.js
-- **言語**: TypeScript
-- **データベース**: PostgreSQL
-- **ORM**: Prisma
-- **認証**: NextAuth.js
+### 5.2 バックエンド
+- **BaaS**: Supabase
+- **データベース**: Supabase Database
+- **認証**: Supabase Authentication
 
-### 6.3 インフラストラクチャ
-- **ホスティング**: Vercel または AWS
-- **データベースホスティング**: Supabase または AWS RDS
-- **ストレージ**: AWS S3
-- **CDN**: Cloudflare または Vercel Edge Network
+### 5.3 インフラストラクチャ
+- **ホスティング**: Vercel
+- **データベースホスティング**: Supabase
+- **ストレージ**: Supabase Storage
+- **CDN**: Vercel Edge Network
 
-## 7. 実装ガイドライン
+## 6. 実装ガイドライン
 
-### 7.1 コーディング規約
+### 6.1 コーディング規約
 - TypeScriptの型定義を厳格に行う
 - ESLintとPrettierを使用したコード品質の維持
 - コンポーネント設計はアトミックデザインパターンに従う
 - テスト駆動開発（TDD）の採用
 
-### 7.2 ディレクトリ構造
+### 6.2 ディレクトリ構造
 ```
 /
 ├── frontend/
@@ -239,52 +205,52 @@ NoteTag {
 └── docs/                 # プロジェクトドキュメント
 ```
 
-### 7.3 開発フロー
+### 6.3 開発フロー
 - Gitブランチ戦略: GitHub Flow
-- プルリクエストレビュー必須
+- プルリクエスト必須
+  - レビューは一人で開発しているため不要
 - CIパイプラインによる自動テスト
 - セマンティックバージョニングの採用
 
-### 7.4 テスト戦略
-- ユニットテスト: Jest
+### 6.4 テスト戦略
+- ユニットテスト: Vitest
 - コンポーネントテスト: React Testing Library
 - E2Eテスト: Cypress
 - テストカバレッジ目標: 80%以上
 
-## 8. マイルストーンとリリース計画
+## 7. マイルストーンとリリース計画
 
-### 8.1 フェーズ1: MVP（最小実用製品）
+### 7.1 フェーズ1: MVP（最小実用製品）
 - 基本的なユーザー認証
 - プロジェクト作成・管理
 - 基本的なノート作成・編集機能
 - シンプルなタグ機能
 
-### 8.2 フェーズ2: 機能拡張
+### 7.2 フェーズ2: 機能拡張
 - 高度なマークダウン機能
 - タグナビゲーションの強化
 - 検索機能の強化
 - エクスポート・インポート機能
 
-### 8.3 フェーズ3: 洗練と最適化
+### 7.3 フェーズ3: 洗練と最適化
 - UI/UXの改善
 - パフォーマンス最適化
 - モバイル対応の強化
 - 追加機能の実装
 
-## 9. 用語集
+## 8. 用語集
 - **ノート**: マークダウン形式で作成されるドキュメント
 - **プロジェクト**: ノートを整理するためのコンテナ
 - **タグ**: ノートを分類・関連付けるためのキーワード
 - **マークダウン**: テキストを構造化するための軽量マークアップ言語
 
-## 10. 付録
+## 8. 付録
 
-### 10.1 参考資料
+### 8.1 参考資料
 - マークダウン仕様: [CommonMark](https://commonmark.org/)
 - Next.js ドキュメント: [Next.js](https://nextjs.org/docs)
-- Prisma ドキュメント: [Prisma](https://www.prisma.io/docs)
 
-### 10.2 UI/UXデザイン参考
+### 8.2 UI/UXデザイン参考
 - 基本的なカラーパレット: ダークモード/ライトモード対応
 - フォント: システムフォントスタック（読みやすさ重視）
 - アイコン: Heroicons または Material Icons
