@@ -1,7 +1,7 @@
 "use client";
 
-import LoginComponent from "@/features/auth/components/Login";
+import LoginContainer from "@/features/auth/containers/LoginContainer";
 
 export default function LoginPage() {
-  return <LoginComponent />;
+  return <LoginContainer />;
 }

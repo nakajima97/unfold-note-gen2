@@ -1,7 +1,7 @@
 "use client";
 
-import AdminPageComponent from "@/features/admin/components/AdminPage";
+import AdminContainer from "@/features/admin/containers/AdminContainer";
 
 export default function AdminPage() {
-  return <AdminPageComponent />;
+  return <AdminContainer />;
 }

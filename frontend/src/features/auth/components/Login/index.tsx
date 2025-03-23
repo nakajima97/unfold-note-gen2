@@ -1,105 +1,37 @@
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/shadcn/ui/button";
 import { Input } from "@/components/shadcn/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
 
-export default function LoginComponent() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [isSignUp, setIsSignUp] = useState(false);
-  const router = useRouter();
+interface LoginComponentProps {
+  email: string;
+  setEmail: (email: string) => void;
+  password: string;
+  setPassword: (password: string) => void;
+  loading: boolean;
+  error: string | null;
+  message: string | null;
+  isSignUp: boolean;
+  handleLogin: (e: React.FormEvent) => Promise<void>;
+  handleSignUp: (e: React.FormEvent) => Promise<void>;
+  handleGoogleLogin: () => Promise<void>;
+  toggleSignUp: () => void;
+}
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setMessage(null);
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data.user) {
-        router.push("/");
-        router.refresh();
-      }
-    } catch (error: any) {
-      setError(error.message || "ログインに失敗しました。");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setMessage(null);
-
-    try {
-      // Check if email is in allowed_emails table
-      const { data: allowedEmails, error: allowedEmailError } = await supabase
-        .from('allowed_emails')
-        .select('email')
-        .eq('email', email)
-        .single();
-
-      if (allowedEmailError && allowedEmailError.code !== 'PGRST116') {
-        // PGRST116 is the error code for "no rows returned"
-        throw new Error("メールアドレスの検証中にエラーが発生しました。");
-      }
-
-      if (!allowedEmails) {
-        throw new Error("このメールアドレスは登録が許可されていません。管理者に連絡してください。");
-      }
-
-      // If email is allowed, proceed with signup
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      setMessage("登録確認メールを送信しました。メールを確認してアカウントを有効化してください。");
-      setIsSignUp(false); // Switch back to login view
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-    } catch (error: any) {
-      setError(error.message || "Googleログインに失敗しました。");
-    }
-  };
-
+export default function LoginComponent({
+  email,
+  setEmail,
+  password,
+  setPassword,
+  loading,
+  error,
+  message,
+  isSignUp,
+  handleLogin,
+  handleSignUp,
+  handleGoogleLogin,
+  toggleSignUp
+}: LoginComponentProps) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
@@ -170,11 +102,7 @@ export default function LoginComponent() {
             <button
               type="button"
               className="text-sm text-blue-600 hover:underline"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setError(null);
-                setMessage(null);
-              }}
+              onClick={toggleSignUp}
             >
               {isSignUp ? "既にアカウントをお持ちの方はこちら" : "アカウントをお持ちでない方はこちら"}
             </button>
