@@ -166,28 +166,48 @@ NoteTag {
 }
 ```
 
-### 4.6 Supabaseスキーマ設計
+### 4.6 ファイルモデル
+```
+File {
+  id: string (primary key)
+  originalName: string
+  storagePath: string
+  mimeType: string
+  size: number
+  noteId: string (foreign key -> Note.id)
+  projectId: string (foreign key -> Project.id)
+  createdAt: timestamp
+  updatedAt: timestamp
+}
+```
 
-#### 4.6.1 テーブル構造
-- 上記のデータモデルに対応するテーブルをSupabase上に作成
-- 各テーブルには適切なインデックスを設定（検索パフォーマンス向上のため）
-- **allowed_emails**テーブル:
-  ```
-  AllowedEmail {
-    id: string (primary key)
-    email: string (unique)
-    createdAt: timestamp
-    createdBy: string (foreign key -> User.id, nullable)
-  }
-  ```
+### 4.7 許可メールモデル
+```
+AllowedEmail {
+  id: string (primary key)
+  email: string (unique)
+  createdAt: timestamp
+  createdBy: string (foreign key -> User.id, nullable)
+}
+```
 
-#### 4.6.2 RLSポリシー（Row Level Security）
+### 4.8 データベース設計
+
+#### 4.8.1 インデックス
+- ユーザーテーブル: email列にユニークインデックス
+- プロジェクトテーブル: ownerId列にインデックス
+- ノートテーブル: projectId列にインデックス、title列にインデックス
+- タグテーブル: name列とprojectId列の複合インデックス
+- ファイルテーブル: noteId列とprojectId列にインデックス
+
+#### 4.8.2 RLSポリシー（Row Level Security）
 - **ユーザーテーブル**: 自分自身のデータのみ読み取り/更新可能
 - **プロジェクトテーブル**: 所有者のみ読み取り/更新/削除可能
 - **ノートテーブル**: プロジェクト所有者のみ読み取り/更新/削除可能
 - **タグテーブル**: プロジェクト所有者のみ読み取り/更新/削除可能
 - **ノートタグ関連テーブル**: プロジェクト所有者のみ読み取り/更新/削除可能
-- **allowed_emailsテーブル**: 管理者ロールを持つユーザーのみ読み取り/作成/更新/削除可能
+- **ファイルテーブル**: プロジェクト所有者のみ読み取り/更新/削除可能
+- **許可メールテーブル**: 管理者ロールを持つユーザーのみ読み取り/作成/更新/削除可能
 
 ## 5. 技術スタック
 
@@ -265,14 +285,16 @@ NoteTag {
   4. ファイルサイズ上限：10MB
   5. フェーズ3でプロジェクトごとに1GBの容量制限を実装
   6. ファイル管理画面の実装（一覧表示、削除、メタデータ確認など）
+- **メタデータ管理**:
+  1. データベースでファイルメタデータを管理（ファイル名、サイズ、タイプ、アップロード日時など）
+  2. 専用のFileテーブルでファイル情報を管理（オリジナル名、ストレージパス、MIME型、サイズなど）
+  3. ノートとファイルの関連付けをデータベースで管理
+  4. フェーズ3でファイル管理画面を実装
 - **画像処理**:
   1. 表示時のみ画像をリサイズ（大きい画像は表示領域に収まるようにリサイズ）
   2. アップロード時のリサイズは行わない
   3. 画像の最適化（WebP形式への変換など）
   4. サムネイル生成
-- **メタデータ管理**:
-  1. データベースでファイルメタデータを管理（ファイル名、サイズ、タイプ、アップロード日時など）
-  2. フェーズ3でファイル管理画面を実装
 
 ### 6.6 エディタ実装
 - **使用ライブラリ**: Tiptap
