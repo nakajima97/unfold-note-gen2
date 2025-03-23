@@ -1,10 +1,15 @@
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+// エラー型の定義
+interface ErrorWithMessage {
+  message: string;
+}
 
 export function useLoginContainer() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -28,11 +33,12 @@ export function useLoginContainer() {
       }
 
       if (data.user) {
-        router.push("/");
+        router.push('/');
         router.refresh();
       }
-    } catch (error: any) {
-      setError(error.message || "ログインに失敗しました。");
+    } catch (error: unknown) {
+      const errorWithMessage = error as ErrorWithMessage;
+      setError(errorWithMessage.message || 'ログインに失敗しました。');
     } finally {
       setLoading(false);
     }
@@ -54,11 +60,13 @@ export function useLoginContainer() {
 
       if (allowedEmailError && allowedEmailError.code !== 'PGRST116') {
         // PGRST116 is the error code for "no rows returned"
-        throw new Error("メールアドレスの検証中にエラーが発生しました。");
+        throw new Error('メールアドレスの検証中にエラーが発生しました。');
       }
 
       if (!allowedEmails) {
-        throw new Error("このメールアドレスは登録が許可されていません。管理者に連絡してください。");
+        throw new Error(
+          'このメールアドレスは登録が許可されていません。管理者に連絡してください。',
+        );
       }
 
       // If email is allowed, proceed with signup
@@ -74,10 +82,13 @@ export function useLoginContainer() {
         throw error;
       }
 
-      setMessage("登録確認メールを送信しました。メールを確認してアカウントを有効化してください。");
+      setMessage(
+        '登録確認メールを送信しました。メールを確認してアカウントを有効化してください。',
+      );
       setIsSignUp(false); // Switch back to login view
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorWithMessage = error as ErrorWithMessage;
+      setError(errorWithMessage.message);
     } finally {
       setLoading(false);
     }
@@ -86,13 +97,14 @@ export function useLoginContainer() {
   const handleGoogleLogin = async () => {
     try {
       await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-    } catch (error: any) {
-      setError(error.message || "Googleログインに失敗しました。");
+    } catch (error: unknown) {
+      const errorWithMessage = error as ErrorWithMessage;
+      setError(errorWithMessage.message || 'Googleログインに失敗しました。');
     }
   };
 
@@ -114,6 +126,6 @@ export function useLoginContainer() {
     handleLogin,
     handleSignUp,
     handleGoogleLogin,
-    toggleSignUp
+    toggleSignUp,
   };
 }

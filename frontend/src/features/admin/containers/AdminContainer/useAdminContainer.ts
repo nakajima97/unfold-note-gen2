@@ -1,6 +1,11 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+// エラー型の定義
+interface ErrorWithMessage {
+  message: string;
+}
 
 interface AllowedEmail {
   id: string;
@@ -10,7 +15,7 @@ interface AllowedEmail {
 
 export function useAdminContainer() {
   const [allowedEmails, setAllowedEmails] = useState<AllowedEmail[]>([]);
-  const [newEmail, setNewEmail] = useState("");
+  const [newEmail, setNewEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -19,26 +24,28 @@ export function useAdminContainer() {
   // Check if user is admin
   useEffect(() => {
     const checkAdmin = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
-        router.push("/login");
+        router.push('/login');
         return;
       }
 
       // Get user role from Supabase
       const { data, error } = await supabase.rpc('is_admin');
-      
+
       if (error) {
-        console.error("Error checking admin status:", error);
+        console.error('Error checking admin status:', error);
         setIsAdmin(false);
-        router.push("/");
+        router.push('/');
         return;
       }
 
       if (!data) {
         setIsAdmin(false);
-        router.push("/");
+        router.push('/');
         return;
       }
 
@@ -52,6 +59,8 @@ export function useAdminContainer() {
   const fetchAllowedEmails = async () => {
     try {
       setLoading(true);
+      setError(null);
+
       const { data, error } = await supabase
         .from('allowed_emails')
         .select('*')
@@ -59,9 +68,10 @@ export function useAdminContainer() {
 
       if (error) throw error;
       setAllowedEmails(data || []);
-    } catch (error: any) {
-      console.error("Error fetching allowed emails:", error);
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorWithMessage = error as ErrorWithMessage;
+      console.error('Error fetching allowed emails:', error);
+      setError(errorWithMessage.message);
     } finally {
       setLoading(false);
     }
@@ -69,17 +79,17 @@ export function useAdminContainer() {
 
   const addAllowedEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!newEmail.trim()) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(newEmail)) {
-        throw new Error("有効なメールアドレスを入力してください");
+        throw new Error('有効なメールアドレスを入力してください');
       }
 
       const { data, error } = await supabase
@@ -88,12 +98,13 @@ export function useAdminContainer() {
         .select();
 
       if (error) throw error;
-      
-      setNewEmail("");
+
+      setNewEmail('');
       fetchAllowedEmails();
-    } catch (error: any) {
-      console.error("Error adding allowed email:", error);
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorWithMessage = error as ErrorWithMessage;
+      console.error('Error adding allowed email:', error);
+      setError(errorWithMessage.message);
     } finally {
       setLoading(false);
     }
@@ -103,25 +114,26 @@ export function useAdminContainer() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const { error } = await supabase
         .from('allowed_emails')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
-      
+
       fetchAllowedEmails();
-    } catch (error: any) {
-      console.error("Error removing allowed email:", error);
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorWithMessage = error as ErrorWithMessage;
+      console.error('Error removing allowed email:', error);
+      setError(errorWithMessage.message);
     } finally {
       setLoading(false);
     }
   };
 
   const navigateToHome = () => {
-    router.push("/");
+    router.push('/');
   };
 
   return {
@@ -133,6 +145,6 @@ export function useAdminContainer() {
     isAdmin,
     addAllowedEmail,
     removeAllowedEmail,
-    navigateToHome
+    navigateToHome,
   };
 }

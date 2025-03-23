@@ -1,7 +1,14 @@
-import Image from "next/image";
-import { Button } from "@/components/shadcn/ui/button";
-import { Input } from "@/components/shadcn/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
+import { Button } from '@/components/shadcn/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/shadcn/ui/card';
+import { Input } from '@/components/shadcn/ui/input';
+import Image from 'next/image';
 
 interface LoginComponentProps {
   email: string;
@@ -30,7 +37,7 @@ export default function LoginComponent({
   handleLogin,
   handleSignUp,
   handleGoogleLogin,
-  toggleSignUp
+  toggleSignUp,
 }: LoginComponentProps) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -47,13 +54,18 @@ export default function LoginComponent({
               onError={(e) => {
                 // Fallback if logo doesn't exist yet
                 const target = e.target as HTMLImageElement;
-                target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E";
+                target.src =
+                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E";
               }}
             />
           </div>
-          <CardTitle className="text-center text-2xl font-bold">Unfold Note</CardTitle>
+          <CardTitle className="text-center text-2xl font-bold">
+            Unfold Note
+          </CardTitle>
           <CardDescription className="text-center">
-            {isSignUp ? "アカウントを作成する" : "ログインしてノートを管理しましょう"}
+            {isSignUp
+              ? 'アカウントを作成する'
+              : 'ログインしてノートを管理しましょう'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -62,10 +74,16 @@ export default function LoginComponent({
               {message}
             </div>
           )}
-          
-          <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-4">
+
+          <form
+            onSubmit={isSignUp ? handleSignUp : handleLogin}
+            className="space-y-4"
+          >
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 メールアドレス
               </label>
               <Input
@@ -78,7 +96,10 @@ export default function LoginComponent({
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 パスワード
               </label>
               <Input
@@ -90,21 +111,21 @@ export default function LoginComponent({
                 required
               />
             </div>
-            {error && (
-              <div className="text-sm text-red-500 mt-2">{error}</div>
-            )}
+            {error && <div className="text-sm text-red-500 mt-2">{error}</div>}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "処理中..." : isSignUp ? "アカウント作成" : "ログイン"}
+              {loading ? '処理中...' : isSignUp ? 'アカウント作成' : 'ログイン'}
             </Button>
           </form>
-          
+
           <div className="mt-4 text-center">
             <button
               type="button"
               className="text-sm text-blue-600 hover:underline"
               onClick={toggleSignUp}
             >
-              {isSignUp ? "既にアカウントをお持ちの方はこちら" : "アカウントをお持ちでない方はこちら"}
+              {isSignUp
+                ? '既にアカウントをお持ちの方はこちら'
+                : 'アカウントをお持ちでない方はこちら'}
             </button>
           </div>
         </CardContent>
@@ -135,7 +156,7 @@ export default function LoginComponent({
               <path
                 fill="currentColor"
                 d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
-              ></path>
+              />
             </svg>
             Googleでログイン
           </Button>

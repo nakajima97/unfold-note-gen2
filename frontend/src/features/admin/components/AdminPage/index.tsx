@@ -1,6 +1,13 @@
-import { Button } from "@/components/shadcn/ui/button";
-import { Input } from "@/components/shadcn/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/ui/card";
+import { Button } from '@/components/shadcn/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/shadcn/ui/card';
+import { Input } from '@/components/shadcn/ui/input';
 
 interface AllowedEmail {
   id: string;
@@ -29,7 +36,7 @@ export default function AdminPageComponent({
   isAdmin,
   addAllowedEmail,
   removeAllowedEmail,
-  navigateToHome
+  navigateToHome,
 }: AdminPageComponentProps) {
   if (!isAdmin) {
     return null; // Will redirect in useEffect
