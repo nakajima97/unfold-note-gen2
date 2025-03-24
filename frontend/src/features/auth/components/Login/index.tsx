@@ -45,18 +45,11 @@ export default function LoginComponent({
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
             <Image
-              src="/logo.svg"
+              src="/logo.png"
               alt="Unfold Note Logo"
-              width={64}
-              height={64}
-              className="h-16 w-auto"
-              priority
-              onError={(e) => {
-                // Fallback if logo doesn't exist yet
-                const target = e.target as HTMLImageElement;
-                target.src =
-                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cpolyline points='10 9 9 9 8 9'/%3E%3C/svg%3E";
-              }}
+              width={120}
+              height={120}
+              className="rounded-lg"
             />
           </div>
           <CardTitle className="text-center text-2xl font-bold">
