@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import type { Meta, StoryObj } from '@storybook/react';
+import type { Decorator } from '@storybook/react';
 import LoginComponent from './index';
-import { Decorator } from '@storybook/react';
 
 // Create a decorator that wraps the story in a div with proper styling
 const withContainer: Decorator = (Story) => (
@@ -37,9 +37,15 @@ const commonProps = {
   setEmail: action('setEmail'),
   password: '',
   setPassword: action('setPassword'),
-  handleLogin: action('handleLogin') as unknown as (e: React.FormEvent) => Promise<void>,
-  handleSignUp: action('handleSignUp') as unknown as (e: React.FormEvent) => Promise<void>,
-  handleGoogleLogin: action('handleGoogleLogin') as unknown as () => Promise<void>,
+  handleLogin: action('handleLogin') as unknown as (
+    e: React.FormEvent,
+  ) => Promise<void>,
+  handleSignUp: action('handleSignUp') as unknown as (
+    e: React.FormEvent,
+  ) => Promise<void>,
+  handleGoogleLogin: action(
+    'handleGoogleLogin',
+  ) as unknown as () => Promise<void>,
   toggleSignUp: action('toggleSignUp'),
 };
 
@@ -98,7 +104,7 @@ export const Loading: Story = {
 };
 
 // Error state
-export const Error: Story = {
+export const ErrorState: Story = {
   args: {
     ...commonProps,
     loading: false,
