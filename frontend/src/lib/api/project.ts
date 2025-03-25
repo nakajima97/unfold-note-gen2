@@ -34,7 +34,7 @@ export async function getUserProjects(userId: string): Promise<Project[]> {
 export async function createProject(
   name: string,
   ownerId: string,
-  description: string = ''
+  description = '',
 ): Promise<Project> {
   const { data, error } = await supabase
     .from('projects')
@@ -62,16 +62,19 @@ export async function createProject(
  * Note: This function is now redundant as we have a database trigger that automatically
  * creates a default project for new users, but we keep it for safety and testing purposes.
  */
-export async function ensureUserHasProject(userId: string, userName: string = ''): Promise<Project> {
+export async function ensureUserHasProject(
+  userId: string,
+  userName = '',
+): Promise<Project> {
   try {
     // Get user's projects
     const projects = await getUserProjects(userId);
-    
+
     // If user has projects, return the first one
     if (projects.length > 0) {
       return projects[0];
     }
-    
+
     // If no projects, create one with the user's name or email
     const defaultName = userName || 'My Project';
     return await createProject(defaultName, userId);
