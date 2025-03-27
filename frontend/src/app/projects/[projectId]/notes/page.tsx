@@ -1,19 +1,14 @@
-import { Metadata } from 'next';
 import NoteListContainer from '@/features/notes/containers/NoteListContainer';
+import { use } from 'react';
 
-interface NoteListPageProps {
-  params: {
+type NoteListPageProps = {
+  params: Promise<{
     projectId: string;
-  };
+  }>;
 }
 
-export const metadata: Metadata = {
-  title: 'Notes | Unfold Note',
-  description: 'View and manage your notes',
-};
-
 export default function NotesPage({ params }: NoteListPageProps) {
-  const { projectId } = params;
+  const { projectId } = use(params);
   
   return <NoteListContainer projectId={projectId} />;
 }
