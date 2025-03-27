@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { getUserProjects } from '@/lib/api/project';
 
 // エラー型の定義
 interface ErrorWithMessage {
@@ -15,6 +16,27 @@ export function useLoginContainer() {
   const [message, setMessage] = useState<string | null>(null);
   const [isSignUp, setIsSignUp] = useState(false);
   const router = useRouter();
+
+  const redirectToNotes = async (userId: string) => {
+    try {
+      // Get user's projects
+      const projects = await getUserProjects(userId);
+      
+      // If user has projects, redirect to the first project's notes page
+      if (projects.length > 0) {
+        router.push(`/projects/${projects[0].id}/notes`);
+      } else {
+        // This should not happen as per requirements, but just in case
+        router.push('/');
+      }
+      router.refresh();
+    } catch (error) {
+      console.error('Error redirecting to notes:', error);
+      // Fallback to home page if there's an error
+      router.push('/');
+      router.refresh();
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +55,7 @@ export function useLoginContainer() {
       }
 
       if (data.user) {
-        router.push('/');
-        router.refresh();
+        await redirectToNotes(data.user.id);
       }
     } catch (error: unknown) {
       const errorWithMessage = error as ErrorWithMessage;
