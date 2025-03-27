@@ -1,18 +1,10 @@
 'use client';
 
 import { Button } from '@/components/shadcn/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/shadcn/ui/card';
 import { Input } from '@/components/shadcn/ui/input';
+import NoteCard from '@/features/notes/components/NoteCard';
 import type { NoteListProps } from '@/features/notes/types';
-import { formatDistanceToNow } from 'date-fns';
-import { Clock, Plus, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import type React from 'react';
 
 const NoteList: React.FC<NoteListProps> = ({
@@ -72,51 +64,16 @@ const NoteList: React.FC<NoteListProps> = ({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {notes.map((note) => (
-            <Card
-              key={note.id}
-              className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => onNoteClick(note.id)}
-            >
-              <CardHeader className="pb-2">
-                <CardTitle className="line-clamp-1">{note.title}</CardTitle>
-                <CardDescription className="flex items-center gap-1 text-xs">
-                  <Clock size={12} />
-                  <span>
-                    {formatDistanceToNow(new Date(note.updated_at), {
-                      addSuffix: true,
-                    })}
-                  </span>
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm line-clamp-3">
-                  {note.content.replace(/#[a-zA-Z0-9_\-/\p{L}\p{N}]+/gu, '')}
-                </p>
-              </CardContent>
-              <CardFooter className="pt-2 flex flex-wrap gap-2">
-                {extractTags(note.content).map((tag) => (
-                  <span
-                    key={`tag-${note.id}-${tag}`}
-                    className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </CardFooter>
-            </Card>
+            <NoteCard 
+              key={note.id} 
+              note={note} 
+              onClick={onNoteClick} 
+            />
           ))}
         </div>
       )}
     </div>
   );
 };
-
-// Helper function to extract tags from content
-function extractTags(content: string): string[] {
-  const tagRegex = /#([a-zA-Z0-9_\-/\p{L}\p{N}]+)/gu;
-  const matches = content.matchAll(tagRegex);
-  const tags = Array.from(matches, (m) => m[1]);
-  return tags;
-}
 
 export default NoteList;
