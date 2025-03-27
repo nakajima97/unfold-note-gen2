@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import NoteList from '@/features/notes/components/NoteList';
+import type React from 'react';
 import { useNoteListContainer } from './useNoteListContainer';
 
 interface NoteListContainerProps {

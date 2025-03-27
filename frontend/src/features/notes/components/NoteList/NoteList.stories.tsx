@@ -1,6 +1,6 @@
+import type { Note } from '@/lib/api/note';
 import type { Meta, StoryObj } from '@storybook/react';
 import NoteList from './index';
-import { Note } from '@/lib/api/note';
 
 const meta: Meta<typeof NoteList> = {
   title: 'Features/Notes/NoteList',
@@ -18,7 +18,8 @@ const sampleNotes: Note[] = [
   {
     id: '1',
     title: 'Getting Started with Unfold Note',
-    content: 'Welcome to Unfold Note! This is a simple note-taking app that uses #markdown and #tags to organize your notes.',
+    content:
+      'Welcome to Unfold Note! This is a simple note-taking app that uses #markdown and #tags to organize your notes.',
     project_id: 'project-1',
     created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -26,7 +27,8 @@ const sampleNotes: Note[] = [
   {
     id: '2',
     title: 'How to use tags',
-    content: 'Tags are a powerful way to organize your notes. Simply add a #hashtag to your note and it will be automatically tagged. You can use #multiple #tags in a single note.',
+    content:
+      'Tags are a powerful way to organize your notes. Simply add a #hashtag to your note and it will be automatically tagged. You can use #multiple #tags in a single note.',
     project_id: 'project-1',
     created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -34,7 +36,8 @@ const sampleNotes: Note[] = [
   {
     id: '3',
     title: 'Project Planning',
-    content: 'Here are some ideas for the #project:\n- Implement #search functionality\n- Add #darkmode support\n- Create mobile app',
+    content:
+      'Here are some ideas for the #project:\n- Implement #search functionality\n- Add #darkmode support\n- Create mobile app',
     project_id: 'project-1',
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
@@ -42,7 +45,8 @@ const sampleNotes: Note[] = [
   {
     id: '4',
     title: 'Meeting Notes',
-    content: 'Meeting with the #team on 2025-03-25:\n- Discussed #project timeline\n- Assigned tasks\n- Next meeting scheduled for next week',
+    content:
+      'Meeting with the #team on 2025-03-25:\n- Discussed #project timeline\n- Assigned tasks\n- Next meeting scheduled for next week',
     project_id: 'project-1',
     created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -50,7 +54,8 @@ const sampleNotes: Note[] = [
   {
     id: '5',
     title: 'Research on Markdown Editors',
-    content: 'Looking into different #markdown editors for the #project:\n- Tiptap\n- ProseMirror\n- Slate\n- CodeMirror',
+    content:
+      'Looking into different #markdown editors for the #project:\n- Tiptap\n- ProseMirror\n- Slate\n- CodeMirror',
     project_id: 'project-1',
     created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
@@ -103,9 +108,8 @@ export const Empty: Story = {
 
 export const WithSearchTerm: Story = {
   args: {
-    notes: sampleNotes.filter(note => 
-      note.title.includes('tag') || 
-      note.content.includes('tag')
+    notes: sampleNotes.filter(
+      (note) => note.title.includes('tag') || note.content.includes('tag'),
     ),
     isLoading: false,
     error: null,

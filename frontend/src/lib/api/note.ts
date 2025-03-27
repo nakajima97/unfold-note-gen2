@@ -54,7 +54,7 @@ export async function getNoteById(noteId: string): Promise<Note | null> {
  */
 export async function searchNotes(
   projectId: string,
-  searchTerm: string
+  searchTerm: string,
 ): Promise<Note[]> {
   if (!searchTerm.trim()) {
     return getProjectNotes(projectId);

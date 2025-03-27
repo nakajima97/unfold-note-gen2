@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { getProjectNotes, searchNotes } from '@/lib/api/note';
-import { Note } from '@/lib/api/note';
+import type { Note } from '@/lib/api/note';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export function useNoteListContainer(projectId: string) {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -21,7 +21,9 @@ export function useNoteListContainer(projectId: string) {
         setNotes(fetchedNotes);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to fetch notes'));
+        setError(
+          err instanceof Error ? err : new Error('Failed to fetch notes'),
+        );
       } finally {
         setIsLoading(false);
       }
@@ -39,7 +41,9 @@ export function useNoteListContainer(projectId: string) {
           const fetchedNotes = await getProjectNotes(projectId);
           setNotes(fetchedNotes);
         } catch (err) {
-          setError(err instanceof Error ? err : new Error('Failed to fetch notes'));
+          setError(
+            err instanceof Error ? err : new Error('Failed to fetch notes'),
+          );
         }
       } else {
         // Otherwise, search for notes
@@ -47,7 +51,9 @@ export function useNoteListContainer(projectId: string) {
           const searchResults = await searchNotes(projectId, searchTerm);
           setNotes(searchResults);
         } catch (err) {
-          setError(err instanceof Error ? err : new Error('Failed to search notes'));
+          setError(
+            err instanceof Error ? err : new Error('Failed to search notes'),
+          );
         }
       }
     }, 300); // 300ms debounce

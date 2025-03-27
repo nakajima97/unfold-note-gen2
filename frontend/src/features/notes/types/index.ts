@@ -1,4 +1,4 @@
-import { Note } from '@/lib/api/note';
+import type { Note } from '@/lib/api/note';
 
 export interface NoteListProps {
   notes: Note[];

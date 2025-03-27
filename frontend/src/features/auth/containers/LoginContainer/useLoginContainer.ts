@@ -1,7 +1,7 @@
+import { getUserProjects } from '@/lib/api/project';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { getUserProjects } from '@/lib/api/project';
 
 // エラー型の定義
 interface ErrorWithMessage {
@@ -21,7 +21,7 @@ export function useLoginContainer() {
     try {
       // Get user's projects
       const projects = await getUserProjects(userId);
-      
+
       // If user has projects, redirect to the first project's notes page
       if (projects.length > 0) {
         router.push(`/projects/${projects[0].id}/notes`);

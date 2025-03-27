@@ -1,6 +1,6 @@
+import { getUserProjects } from '@/lib/api/project';
 import { supabase } from '@/lib/supabase';
 import { type NextRequest, NextResponse } from 'next/server';
-import { getUserProjects } from '@/lib/api/project';
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
@@ -8,16 +8,18 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const { data } = await supabase.auth.exchangeCodeForSession(code);
-    
+
     // If we have a user, redirect to their notes page
     if (data.user) {
       try {
         // Get user's projects
         const projects = await getUserProjects(data.user.id);
-        
+
         // If user has projects, redirect to the first project's notes page
         if (projects.length > 0) {
-          return NextResponse.redirect(new URL(`/projects/${projects[0].id}/notes`, requestUrl.origin));
+          return NextResponse.redirect(
+            new URL(`/projects/${projects[0].id}/notes`, requestUrl.origin),
+          );
         }
       } catch (error) {
         console.error('Error redirecting to notes:', error);
