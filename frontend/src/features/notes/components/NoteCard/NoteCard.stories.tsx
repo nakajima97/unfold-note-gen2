@@ -33,8 +33,10 @@ const sampleNote: Note = {
 
 const longTitleNote: Note = {
   id: '2',
-  title: 'This is a very long title that should be truncated because it exceeds the available space in the card header',
-  content: 'This note has a very long title to test the truncation functionality.',
+  title:
+    'This is a very long title that should be truncated because it exceeds the available space in the card header',
+  content:
+    'This note has a very long title to test the truncation functionality.',
   project_id: 'project-1',
   created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
   updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
