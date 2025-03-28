@@ -2,7 +2,11 @@ import type * as React from 'react';
 
 import { cn } from '@/lib/shadcn/utils';
 
-const Input = ({ className, type, ...props }: React.ComponentProps<'input'>) => {
+const Input = ({
+  className,
+  type,
+  ...props
+}: React.ComponentProps<'input'>) => {
   return (
     <input
       type={type}

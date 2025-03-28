@@ -30,4 +30,4 @@ export const SignOutButton = () => {
       {loading ? 'サインアウト中...' : 'サインアウト'}
     </button>
   );
-}
+};

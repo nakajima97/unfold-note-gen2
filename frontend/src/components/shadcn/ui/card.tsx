@@ -38,7 +38,10 @@ const CardTitle = ({ className, ...props }: React.ComponentProps<'div'>) => {
   );
 };
 
-const CardDescription = ({ className, ...props }: React.ComponentProps<'div'>) => {
+const CardDescription = ({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) => {
   return (
     <div
       data-slot="card-description"
