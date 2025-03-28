@@ -8,7 +8,7 @@ interface ErrorWithMessage {
   message: string;
 }
 
-export function useLoginContainer() {
+export const useLoginContainer = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -149,4 +149,4 @@ export function useLoginContainer() {
     handleGoogleLogin,
     toggleSignUp,
   };
-}
+};

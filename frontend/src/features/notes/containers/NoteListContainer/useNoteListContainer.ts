@@ -5,7 +5,7 @@ import type { Note } from '@/lib/api/note';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export function useNoteListContainer(projectId: string) {
+export const useNoteListContainer = (projectId: string) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -79,4 +79,4 @@ export function useNoteListContainer(projectId: string) {
     handleNoteClick,
     handleSearchChange,
   };
-}
+};

@@ -25,7 +25,7 @@ interface LoginComponentProps {
   toggleSignUp: () => void;
 }
 
-export default function LoginComponent({
+const LoginComponent = ({
   email,
   setEmail,
   password,
@@ -38,7 +38,7 @@ export default function LoginComponent({
   handleSignUp,
   handleGoogleLogin,
   toggleSignUp,
-}: LoginComponentProps) {
+}: LoginComponentProps) => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
@@ -157,4 +157,6 @@ export default function LoginComponent({
       </Card>
     </div>
   );
-}
+};
+
+export default LoginComponent;

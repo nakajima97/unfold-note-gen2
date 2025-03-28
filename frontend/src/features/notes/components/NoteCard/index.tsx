@@ -55,11 +55,11 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
 };
 
 // Helper function to extract tags from content
-function extractTags(content: string): string[] {
+const extractTags = (content: string): string[] => {
   const tagRegex = /#([a-zA-Z0-9_\-/\p{L}\p{N}]+)/gu;
   const matches = content.matchAll(tagRegex);
   const tags = Array.from(matches, (m) => m[1]);
   return tags;
-}
+};
 
 export default NoteCard;

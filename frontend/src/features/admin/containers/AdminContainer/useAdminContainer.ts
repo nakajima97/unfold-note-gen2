@@ -13,7 +13,7 @@ interface AllowedEmail {
   created_at: string;
 }
 
-export function useAdminContainer() {
+export const useAdminContainer = () => {
   const [allowedEmails, setAllowedEmails] = useState<AllowedEmail[]>([]);
   const [newEmail, setNewEmail] = useState('');
   const [loading, setLoading] = useState(true);
@@ -147,4 +147,4 @@ export function useAdminContainer() {
     removeAllowedEmail,
     navigateToHome,
   };
-}
+};

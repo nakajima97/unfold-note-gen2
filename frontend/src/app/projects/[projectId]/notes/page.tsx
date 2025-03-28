@@ -7,8 +7,10 @@ type NoteListPageProps = {
   }>;
 };
 
-export default function NotesPage({ params }: NoteListPageProps) {
+const NotesPage = ({ params }: NoteListPageProps) => {
   const { projectId } = use(params);
 
   return <NoteListContainer projectId={projectId} />;
-}
+};
+
+export default NotesPage;

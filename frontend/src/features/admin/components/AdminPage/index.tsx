@@ -27,7 +27,7 @@ interface AdminPageComponentProps {
   navigateToHome: () => void;
 }
 
-export default function AdminPageComponent({
+const AdminPageComponent = ({
   allowedEmails,
   newEmail,
   setNewEmail,
@@ -37,7 +37,7 @@ export default function AdminPageComponent({
   addAllowedEmail,
   removeAllowedEmail,
   navigateToHome,
-}: AdminPageComponentProps) {
+}: AdminPageComponentProps) => {
   if (!isAdmin) {
     return null; // Will redirect in useEffect
   }
@@ -128,4 +128,6 @@ export default function AdminPageComponent({
       </Card>
     </div>
   );
-}
+};
+
+export default AdminPageComponent;

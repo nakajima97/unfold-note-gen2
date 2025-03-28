@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export function SignOutButton() {
+export const SignOutButton = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -30,4 +30,4 @@ export function SignOutButton() {
       {loading ? 'サインアウト中...' : 'サインアウト'}
     </button>
   );
-}
+};
