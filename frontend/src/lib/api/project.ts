@@ -13,7 +13,7 @@ export interface Project {
 /**
  * Get all projects for a user
  */
-export async function getUserProjects(userId: string): Promise<Project[]> {
+export const getUserProjects = async (userId: string): Promise<Project[]> => {
   const { data, error } = await supabase
     .from('projects')
     .select('*')
@@ -26,16 +26,16 @@ export async function getUserProjects(userId: string): Promise<Project[]> {
   }
 
   return data || [];
-}
+};
 
 /**
  * Create a new project
  */
-export async function createProject(
+export const createProject = async (
   name: string,
   ownerId: string,
   description = '',
-): Promise<Project> {
+): Promise<Project> => {
   const { data, error } = await supabase
     .from('projects')
     .insert([
@@ -55,17 +55,17 @@ export async function createProject(
   }
 
   return data;
-}
+};
 
 /**
  * Check if a user has any projects and create a default one if not
  * Note: This function is now redundant as we have a database trigger that automatically
  * creates a default project for new users, but we keep it for safety and testing purposes.
  */
-export async function ensureUserHasProject(
+export const ensureUserHasProject = async (
   userId: string,
   userName = '',
-): Promise<Project> {
+): Promise<Project> => {
   try {
     // Get user's projects
     const projects = await getUserProjects(userId);
@@ -82,4 +82,4 @@ export async function ensureUserHasProject(
     console.error('Error ensuring user has project:', error);
     throw error;
   }
-}
+};

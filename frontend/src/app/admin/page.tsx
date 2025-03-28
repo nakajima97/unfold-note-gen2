@@ -2,6 +2,8 @@
 
 import AdminContainer from '@/features/admin/containers/AdminContainer';
 
-export default function AdminPage() {
+const AdminPage = () => {
   return <AdminContainer />;
-}
+};
+
+export default AdminPage;

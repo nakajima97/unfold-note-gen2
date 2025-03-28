@@ -5,12 +5,12 @@ import { supabase } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
-export default function Home() {
+const Home = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function getUser() {
+    const getUser = async () => {
       try {
         const { data } = await supabase.auth.getUser();
         setUser(data.user);
@@ -19,7 +19,7 @@ export default function Home() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     getUser();
   }, []);
@@ -67,4 +67,6 @@ export default function Home() {
       </div>
     </main>
   );
-}
+};
+
+export default Home;

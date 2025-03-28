@@ -12,7 +12,7 @@ export interface Note {
 /**
  * Get all notes for a project
  */
-export async function getProjectNotes(projectId: string): Promise<Note[]> {
+export const getProjectNotes = async (projectId: string): Promise<Note[]> => {
   const { data, error } = await supabase
     .from('notes')
     .select('*')
@@ -25,12 +25,12 @@ export async function getProjectNotes(projectId: string): Promise<Note[]> {
   }
 
   return data || [];
-}
+};
 
 /**
  * Get a single note by ID
  */
-export async function getNoteById(noteId: string): Promise<Note | null> {
+export const getNoteById = async (noteId: string): Promise<Note | null> => {
   const { data, error } = await supabase
     .from('notes')
     .select('*')
@@ -47,15 +47,15 @@ export async function getNoteById(noteId: string): Promise<Note | null> {
   }
 
   return data;
-}
+};
 
 /**
  * Search notes by title, content, or tags
  */
-export async function searchNotes(
+export const searchNotes = async (
   projectId: string,
   searchTerm: string,
-): Promise<Note[]> {
+): Promise<Note[]> => {
   if (!searchTerm.trim()) {
     return getProjectNotes(projectId);
   }
@@ -73,4 +73,4 @@ export async function searchNotes(
   }
 
   return data || [];
-}
+};

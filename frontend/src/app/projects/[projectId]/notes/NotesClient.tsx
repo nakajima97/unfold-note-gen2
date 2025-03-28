@@ -6,6 +6,8 @@ interface NotesClientProps {
   projectId: string;
 }
 
-export default function NotesClient({ projectId }: NotesClientProps) {
+const NotesClient = ({ projectId }: NotesClientProps) => {
   return <NoteListContainer projectId={projectId} />;
-}
+};
+
+export default NotesClient;

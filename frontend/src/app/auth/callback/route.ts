@@ -2,7 +2,7 @@ import { getUserProjects } from '@/lib/api/project';
 import { supabase } from '@/lib/supabase';
 import { type NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export const GET = async (request: NextRequest) => {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
 
@@ -30,4 +30,4 @@ export async function GET(request: NextRequest) {
 
   // Fallback to home page if there's no code, no user, or an error occurred
   return NextResponse.redirect(new URL('/', requestUrl.origin));
-}
+};
