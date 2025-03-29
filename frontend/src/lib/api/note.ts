@@ -10,7 +10,7 @@ export interface Note {
 }
 
 /**
- * Get all notes for a project
+ * プロジェクトの全ノートを取得する
  */
 export const getProjectNotes = async (projectId: string): Promise<Note[]> => {
   const { data, error } = await supabase
@@ -20,7 +20,7 @@ export const getProjectNotes = async (projectId: string): Promise<Note[]> => {
     .order('updated_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching project notes:', error);
+    console.error('プロジェクトノートの取得エラー:', error);
     throw error;
   }
 
@@ -28,7 +28,7 @@ export const getProjectNotes = async (projectId: string): Promise<Note[]> => {
 };
 
 /**
- * Get a single note by ID
+ * IDによる単一ノートの取得
  */
 export const getNoteById = async (noteId: string): Promise<Note | null> => {
   const { data, error } = await supabase
@@ -39,10 +39,10 @@ export const getNoteById = async (noteId: string): Promise<Note | null> => {
 
   if (error) {
     if (error.code === 'PGRST116') {
-      // PGRST116 is the error code for "no rows returned"
+      // PGRST116は「行が返されなかった」エラーコード
       return null;
     }
-    console.error('Error fetching note:', error);
+    console.error('ノート取得エラー:', error);
     throw error;
   }
 
@@ -50,7 +50,7 @@ export const getNoteById = async (noteId: string): Promise<Note | null> => {
 };
 
 /**
- * Search notes by title, content, or tags
+ * タイトル、内容、またはタグによるノート検索
  */
 export const searchNotes = async (
   projectId: string,
@@ -68,9 +68,74 @@ export const searchNotes = async (
     .order('updated_at', { ascending: false });
 
   if (error) {
-    console.error('Error searching notes:', error);
+    console.error('ノート検索エラー:', error);
     throw error;
   }
 
   return data || [];
+};
+
+/**
+ * 新規ノートの作成
+ */
+export const createNote = async (noteData: {
+  title: string;
+  content: string;
+  projectId: string;
+}): Promise<Note> => {
+  const { data, error } = await supabase
+    .from('notes')
+    .insert([
+      {
+        title: noteData.title,
+        content: noteData.content,
+        project_id: noteData.projectId,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('ノート作成エラー:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * 既存ノートの更新
+ */
+export const updateNote = async (
+  noteId: string,
+  noteData: {
+    title?: string;
+    content?: string;
+  },
+): Promise<Note> => {
+  const { data, error } = await supabase
+    .from('notes')
+    .update(noteData)
+    .eq('id', noteId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('ノート更新エラー:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * ノートの削除
+ */
+export const deleteNote = async (noteId: string): Promise<void> => {
+  const { error } = await supabase.from('notes').delete().eq('id', noteId);
+
+  if (error) {
+    console.error('ノート削除エラー:', error);
+    throw error;
+  }
 };
