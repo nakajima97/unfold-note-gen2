@@ -13,17 +13,11 @@ const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
   projectId,
   noteId,
 }) => {
-  const {
-    note,
-    isLoading,
-    isSubmitting,
-    error,
-    handleSubmit,
-    handleCancel,
-  } = useNoteEditContainer({
-    projectId,
-    noteId,
-  });
+  const { note, isLoading, isSubmitting, error, handleSubmit, handleCancel } =
+    useNoteEditContainer({
+      projectId,
+      noteId,
+    });
 
   // ローディング中の表示
   if (isLoading) {

@@ -26,20 +26,22 @@ export const useNoteEditContainer = ({
       try {
         setIsLoading(true);
         const fetchedNote = await getNoteById(noteId);
-        
+
         if (!fetchedNote) {
           setError(new Error('ノートが見つかりませんでした'));
           return;
         }
-        
+
         if (fetchedNote.project_id !== projectId) {
           setError(new Error('このプロジェクトに属するノートではありません'));
           return;
         }
-        
+
         setNote(fetchedNote);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('ノートの取得に失敗しました'));
+        setError(
+          err instanceof Error ? err : new Error('ノートの取得に失敗しました'),
+        );
       } finally {
         setIsLoading(false);
       }
@@ -67,7 +69,9 @@ export const useNoteEditContainer = ({
       // 更新後、ノート一覧ページに戻る
       router.push(`/projects/${projectId}/notes`);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('ノートの更新に失敗しました'));
+      setError(
+        err instanceof Error ? err : new Error('ノートの更新に失敗しました'),
+      );
     } finally {
       setIsSubmitting(false);
     }
