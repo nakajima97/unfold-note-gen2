@@ -2,7 +2,7 @@
 
 ## 実装詳細
 
-### 6.8 URL設計
+### 1. URL設計
 
 - **ルートパス**: `/` (トップページ)
 - **ログインページ**: `/login` (ログインページ)
@@ -18,20 +18,20 @@
       - ノートの内容
       - タグ
     - 検索結果の表示は表示されているノート一覧にフィルターがかかるイメージで表示する
-  - テンプレート作成
-  - テンプレート選択
+  - ノートテンプレート作成
+  - ノートテンプレート呼び出し
 - **ノート編集ページ**: `/projects/:projectId/notes/:noteId` (ノート編集ページ)
   - タイトル入力
   - ノート編集
   - ノート削除
-  - テンプレート呼び出し
+  - ノートテンプレート呼び出し
   - 同じタグが付いているノートの表示
   - ノート名と完全一致するタグをつけているノートの表示
 - **新規ノート作成ページ**: `/projects/:projectId/notes/new` (新規ノート作成ページ)
   - タイトル入力
   - ノート編集
   - ノート作成
-  - テンプレート呼び出し
+  - ノートテンプレート呼び出し
 - **プロジェクト一覧ページ**: `/projects` (プロジェクト一覧ページ)
   - プロジェクト一覧表示
   - プロジェクト編集ページへの遷移
@@ -55,9 +55,31 @@
 - **ユーザー設定**: `/user/settings` (ユーザー設定ページ)
   - ユーザ名変更
   - パスワード変更
-- **テンプレート作成ページ**: `/projects/:projectId/templates/new` (テンプレート作成ページ)
-  - テンプレート名の入力
-  - テンプレート作成
-- **テンプレート編集ページ**: `/projects/:projectId/templates/:templateId` (テンプレート編集ページ)
-  - テンプレート名の変更
-  - テンプレートの削除
+- **ノートテンプレート一覧ページ**: `/projects/:projectId/templates` (ノートテンプレート一覧ページ)
+  - ノートテンプレート一覧表示
+  - ノートテンプレート作成ページへの遷移
+  - ノートテンプレート編集ページへの遷移
+  - ノートテンプレートの削除
+- **ノートテンプレート作成ページ**: `/projects/:projectId/templates/new` (ノートテンプレート作成ページ)
+  - ノートテンプレート名の入力
+  - ノートテンプレート作成
+- **ノートテンプレート編集ページ**: `/projects/:projectId/templates/:templateId` (ノートテンプレート編集ページ)
+  - ノートテンプレート名の変更
+  - ノートテンプレートの削除
+
+### 1.2 画面遷移図
+```mermaid
+graph LR
+    A["/ (トップページ)"] --> B{"/login (ログインページ)"};
+    B --> C["/projects/:projectId/notes (ノート一覧ページ)"];
+    C --> D["/projects/:projectId/notes/:noteId (ノート編集ページ)"];
+    C --> E["/projects/:projectId/notes/new (新規ノート作成ページ)"];
+    C --> N["/projects/:projectId/templates (ノートテンプレート一覧ページ)"];
+    C --> G["/projects/:projectId/files (ファイル管理ページ)"];
+    C --> H["/projects/:projectId/setting (プロジェクト設定ページ)"];
+    C --> J["/projects (プロジェクト一覧ページ)"];
+    J --> K["/projects/new (プロジェクト作成ページ)"];
+    J --> I["/projects/:projectId/archive (プロジェクトアーカイブページ)"];
+    N --> M["/projects/:projectId/templates/:templateId (ノートテンプレート編集ページ)"];
+    N --> F["/projects/:projectId/templates/new (ノートテンプレート作成ページ)"];
+```
