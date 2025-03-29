@@ -1,17 +1,20 @@
 'use client';
 
 import NoteCreate from '@/features/notes/components/NoteCreate';
+import type React from 'react';
 import { useNoteCreateContainer } from './useNoteCreateContainer';
-import React from 'react';
 
 export interface NoteCreateContainerProps {
   projectId: string;
 }
 
-const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({ projectId }) => {
-  const { isSubmitting, error, handleSubmit, handleCancel } = useNoteCreateContainer({
-    projectId,
-  });
+const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
+  projectId,
+}) => {
+  const { isSubmitting, error, handleSubmit, handleCancel } =
+    useNoteCreateContainer({
+      projectId,
+    });
 
   // エラーがある場合は表示
   if (error) {

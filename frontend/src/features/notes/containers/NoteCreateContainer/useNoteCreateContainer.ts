@@ -1,15 +1,17 @@
 'use client';
 
+import type { Note } from '@/features/notes/types';
 import { createNote } from '@/lib/api/note';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Note } from '@/features/notes/types';
 
 export interface UseNoteCreateContainerProps {
   projectId: string;
 }
 
-export const useNoteCreateContainer = ({ projectId }: UseNoteCreateContainerProps) => {
+export const useNoteCreateContainer = ({
+  projectId,
+}: UseNoteCreateContainerProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<Error | null>(null);

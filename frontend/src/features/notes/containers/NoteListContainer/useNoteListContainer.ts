@@ -9,7 +9,9 @@ export interface UseNoteListContainerProps {
   projectId: string;
 }
 
-export const useNoteListContainer = ({ projectId }: UseNoteListContainerProps) => {
+export const useNoteListContainer = ({
+  projectId,
+}: UseNoteListContainerProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

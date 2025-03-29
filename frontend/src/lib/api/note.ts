@@ -132,10 +132,7 @@ export const updateNote = async (
  * Delete a note
  */
 export const deleteNote = async (noteId: string): Promise<void> => {
-  const { error } = await supabase
-    .from('notes')
-    .delete()
-    .eq('id', noteId);
+  const { error } = await supabase.from('notes').delete().eq('id', noteId);
 
   if (error) {
     console.error('Error deleting note:', error);

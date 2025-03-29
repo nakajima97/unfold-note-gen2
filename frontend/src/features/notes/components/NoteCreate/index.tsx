@@ -1,13 +1,18 @@
 'use client';
 
 import { Button } from '@/components/shadcn/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/shadcn/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/shadcn/ui/card';
 import { Input } from '@/components/shadcn/ui/input';
 import { Label } from '@/components/shadcn/ui/label';
-import { Note } from '@/features/notes/types';
-import { ArrowLeft, Save } from 'lucide-react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import type { Note } from '@/features/notes/types';
+import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { ArrowLeft, Save } from 'lucide-react';
 import React from 'react';
 
 export interface NoteCreateProps {
@@ -29,9 +34,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   const [content, setContent] = React.useState(initialContent);
 
   const editor = useEditor({
-    extensions: [
-      StarterKit,
-    ],
+    extensions: [StarterKit],
     content: initialContent,
     onUpdate: ({ editor }) => {
       setContent(editor.getHTML());
@@ -87,14 +90,21 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
               Content
             </Label>
             <div className="min-h-[300px] border rounded-md p-4">
-              <EditorContent editor={editor} className="prose max-w-none min-h-[300px]" />
+              <EditorContent
+                editor={editor}
+                className="prose max-w-none min-h-[300px]"
+              />
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onCancel}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="flex items-center gap-2">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex items-center gap-2"
+            >
               {isSubmitting ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white" />
               ) : (

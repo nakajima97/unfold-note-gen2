@@ -2,7 +2,7 @@
 
 import NoteCreateContainer from '@/features/notes/containers/NoteCreateContainer';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import type React from 'react';
 
 const NewNotePage: React.FC = () => {
   const params = useParams();
