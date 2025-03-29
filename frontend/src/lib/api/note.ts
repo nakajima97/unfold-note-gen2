@@ -74,3 +74,71 @@ export const searchNotes = async (
 
   return data || [];
 };
+
+/**
+ * Create a new note
+ */
+export const createNote = async (noteData: {
+  title: string;
+  content: string;
+  projectId: string;
+}): Promise<Note> => {
+  const { data, error } = await supabase
+    .from('notes')
+    .insert([
+      {
+        title: noteData.title,
+        content: noteData.content,
+        project_id: noteData.projectId,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating note:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Update an existing note
+ */
+export const updateNote = async (
+  noteId: string,
+  noteData: {
+    title?: string;
+    content?: string;
+  },
+): Promise<Note> => {
+  const { data, error } = await supabase
+    .from('notes')
+    .update(noteData)
+    .eq('id', noteId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating note:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Delete a note
+ */
+export const deleteNote = async (noteId: string): Promise<void> => {
+  const { error } = await supabase
+    .from('notes')
+    .delete()
+    .eq('id', noteId);
+
+  if (error) {
+    console.error('Error deleting note:', error);
+    throw error;
+  }
+};

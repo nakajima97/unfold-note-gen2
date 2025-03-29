@@ -5,7 +5,11 @@ import type { Note } from '@/lib/api/note';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export const useNoteListContainer = (projectId: string) => {
+export interface UseNoteListContainerProps {
+  projectId: string;
+}
+
+export const useNoteListContainer = ({ projectId }: UseNoteListContainerProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -66,6 +70,10 @@ export const useNoteListContainer = (projectId: string) => {
     router.push(`/projects/${projectId}/notes/${noteId}`);
   };
 
+  const handleNewNoteClick = () => {
+    router.push(`/projects/${projectId}/notes/new`);
+  };
+
   // Handle search change
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
@@ -78,5 +86,6 @@ export const useNoteListContainer = (projectId: string) => {
     searchTerm,
     handleNoteClick,
     handleSearchChange,
+    handleNewNoteClick,
   };
 };
