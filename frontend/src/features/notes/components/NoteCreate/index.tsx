@@ -14,6 +14,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { ArrowLeft, Save } from 'lucide-react';
 import React, { useEffect } from 'react';
+import './editor.css';
 
 export interface NoteCreateProps {
   isSubmitting: boolean;
@@ -41,7 +42,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'prose max-w-none focus:outline-none min-h-[300px]',
+        class: 'tiptap prose prose-sm sm:prose lg:prose-lg xl:prose-xl',
         placeholder: 'ノート内容をここに入力してください...',
       },
     },
@@ -102,7 +103,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
             <Label htmlFor="content" className="text-lg font-medium mb-2">
               内容
             </Label>
-            <div className="min-h-[300px] border rounded-md p-4">
+            <div className="min-h-[300px] border rounded-md p-4 editor-container">
               <EditorContent
                 editor={editor}
                 className="prose max-w-none min-h-[300px]"
