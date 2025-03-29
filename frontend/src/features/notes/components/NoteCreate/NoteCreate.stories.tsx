@@ -28,7 +28,8 @@ export const WithInitialValues: Story = {
     onSubmit: (note) => console.log('ノート保存:', note),
     onCancel: () => console.log('キャンセルがクリックされました'),
     initialTitle: '新しいノートのタイトル',
-    initialContent: 'これは新しいノートの内容です。\n\n#タグ #メモ #Unfold_Note',
+    initialContent:
+      'これは新しいノートの内容です。\n\n#タグ #メモ #Unfold_Note',
   },
 };
 

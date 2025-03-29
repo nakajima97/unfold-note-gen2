@@ -70,7 +70,8 @@ export const Default: Story = {
     onNoteClick: (id) => console.log(`ノートがクリックされました: ${id}`),
     onSearchChange: (term) => console.log(`検索ワード: ${term}`),
     searchTerm: '',
-    onNewNoteClick: () => console.log('新規ノート作成ボタンがクリックされました'),
+    onNewNoteClick: () =>
+      console.log('新規ノート作成ボタンがクリックされました'),
   },
 };
 
@@ -106,7 +107,8 @@ export const Empty: Story = {
     onNoteClick: () => {},
     onSearchChange: () => {},
     searchTerm: '',
-    onNewNoteClick: () => console.log('新規ノート作成ボタンがクリックされました'),
+    onNewNoteClick: () =>
+      console.log('新規ノート作成ボタンがクリックされました'),
   },
 };
 
@@ -120,6 +122,7 @@ export const WithSearchTerm: Story = {
     onNoteClick: (id) => console.log(`ノートがクリックされました: ${id}`),
     onSearchChange: (term) => console.log(`検索ワード: ${term}`),
     searchTerm: 'tag',
-    onNewNoteClick: () => console.log('新規ノート作成ボタンがクリックされました'),
+    onNewNoteClick: () =>
+      console.log('新規ノート作成ボタンがクリックされました'),
   },
 };

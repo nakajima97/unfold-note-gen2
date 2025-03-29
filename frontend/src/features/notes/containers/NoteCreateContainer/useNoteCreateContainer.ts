@@ -35,7 +35,9 @@ export const useNoteCreateContainer = ({
       // 新しく作成されたノートに遷移
       router.push(`/projects/${projectId}/notes/${newNote.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('ノートの作成に失敗しました'));
+      setError(
+        err instanceof Error ? err : new Error('ノートの作成に失敗しました'),
+      );
     } finally {
       setIsSubmitting(false);
     }
