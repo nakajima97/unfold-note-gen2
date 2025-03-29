@@ -67,9 +67,10 @@ export const Default: Story = {
     notes: sampleNotes,
     isLoading: false,
     error: null,
-    onNoteClick: (id) => console.log(`Note clicked: ${id}`),
-    onSearchChange: (term) => console.log(`Search term: ${term}`),
+    onNoteClick: (id) => console.log(`ノートがクリックされました: ${id}`),
+    onSearchChange: (term) => console.log(`検索ワード: ${term}`),
     searchTerm: '',
+    onNewNoteClick: () => console.log('新規ノート作成ボタンがクリックされました'),
   },
 };
 
@@ -81,6 +82,7 @@ export const Loading: Story = {
     onNoteClick: () => {},
     onSearchChange: () => {},
     searchTerm: '',
+    onNewNoteClick: () => {},
   },
 };
 
@@ -88,10 +90,11 @@ export const ErrorState: Story = {
   args: {
     notes: [],
     isLoading: false,
-    error: new Error('Failed to load notes'),
+    error: new Error('ノートの読み込みに失敗しました'),
     onNoteClick: () => {},
     onSearchChange: () => {},
     searchTerm: '',
+    onNewNoteClick: () => {},
   },
 };
 
@@ -103,6 +106,7 @@ export const Empty: Story = {
     onNoteClick: () => {},
     onSearchChange: () => {},
     searchTerm: '',
+    onNewNoteClick: () => console.log('新規ノート作成ボタンがクリックされました'),
   },
 };
 
@@ -113,8 +117,9 @@ export const WithSearchTerm: Story = {
     ),
     isLoading: false,
     error: null,
-    onNoteClick: (id) => console.log(`Note clicked: ${id}`),
-    onSearchChange: (term) => console.log(`Search term: ${term}`),
+    onNoteClick: (id) => console.log(`ノートがクリックされました: ${id}`),
+    onSearchChange: (term) => console.log(`検索ワード: ${term}`),
     searchTerm: 'tag',
+    onNewNoteClick: () => console.log('新規ノート作成ボタンがクリックされました'),
   },
 };
