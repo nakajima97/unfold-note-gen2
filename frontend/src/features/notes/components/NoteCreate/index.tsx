@@ -13,7 +13,7 @@ import type { Note } from '@/features/notes/types';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { ArrowLeft, Save } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export interface NoteCreateProps {
   isSubmitting: boolean;
@@ -42,10 +42,21 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
     editorProps: {
       attributes: {
         class: 'prose max-w-none focus:outline-none min-h-[300px]',
-        placeholder: 'Write your note here...',
+        placeholder: 'ノート内容をここに入力してください...',
       },
     },
+    immediatelyRender: false,
   });
+
+  useEffect(() => {
+    if (editor && initialContent) {
+      editor.commands.setContent(initialContent);
+    }
+  }, [editor, initialContent]);
+
+  useEffect(() => {
+    setTitle(initialTitle);
+  }, [initialTitle]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,27 +78,29 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
         >
           <ArrowLeft size={20} />
         </Button>
-        <h1 className="text-3xl font-bold">Create New Note</h1>
+        <h1 className="text-3xl font-bold">
+          {initialTitle ? 'ノートを編集' : '新規ノート作成'}
+        </h1>
       </div>
 
       <form onSubmit={handleSubmit}>
         <Card className="mb-6">
           <CardHeader>
             <Label htmlFor="title" className="text-lg font-medium mb-2">
-              Title
+              タイトル
             </Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter note title"
+              placeholder="ノートタイトルを入力"
               className="text-xl"
               required
             />
           </CardHeader>
           <CardContent>
             <Label htmlFor="content" className="text-lg font-medium mb-2">
-              Content
+              内容
             </Label>
             <div className="min-h-[300px] border rounded-md p-4">
               <EditorContent
@@ -98,7 +111,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onCancel}>
-              Cancel
+              キャンセル
             </Button>
             <Button
               type="submit"
@@ -110,7 +123,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
               ) : (
                 <Save size={16} />
               )}
-              Save Note
+              保存
             </Button>
           </CardFooter>
         </Card>
