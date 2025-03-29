@@ -18,7 +18,7 @@ export const useNoteCreateContainer = ({
 
   const handleSubmit = async (note: Partial<Note>) => {
     if (!note.title || !note.content) {
-      setError(new Error('Title and content are required'));
+      setError(new Error('タイトルと内容は必須です'));
       return;
     }
 
@@ -32,17 +32,17 @@ export const useNoteCreateContainer = ({
         projectId,
       });
 
-      // Navigate to the newly created note
+      // 新しく作成されたノートに遷移
       router.push(`/projects/${projectId}/notes/${newNote.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to create note'));
+      setError(err instanceof Error ? err : new Error('ノートの作成に失敗しました'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    // Navigate back to the notes list
+    // ノート一覧に戻る
     router.push(`/projects/${projectId}/notes`);
   };
 

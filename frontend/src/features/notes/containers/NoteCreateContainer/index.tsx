@@ -18,7 +18,7 @@ const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
 
   // エラーがある場合は表示
   if (error) {
-    console.error('Error creating note:', error);
+    console.error('ノート作成エラー:', error);
     // エラーは実際のUIでは適切に処理する必要があります
   }
 
