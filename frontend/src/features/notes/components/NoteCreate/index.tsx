@@ -38,11 +38,15 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   const [title, setTitle] = React.useState(initialTitle);
   const [content, setContent] = React.useState(initialContent);
   const [isUploading, setIsUploading] = useState(false);
+  const [editorInitialized, setEditorInitialized] = useState(false);
 
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image,
+      Image.configure({
+        allowBase64: true, // 重要: base64画像を許可
+        inline: false,
+      }),
       FileHandler.configure({
         allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'],
         onDrop: async (currentEditor, files, pos) => {
@@ -150,11 +154,31 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
     immediatelyRender: false,
   });
 
+  // エディタの初期化を検出
   useEffect(() => {
-    if (editor && initialContent) {
-      editor.commands.setContent(initialContent);
+    if (editor) {
+      setEditorInitialized(true);
     }
-  }, [editor, initialContent]);
+  }, [editor]);
+
+  // エディタが初期化されたら、初期コンテンツを適切に設定
+  useEffect(() => {
+    if (editor && editorInitialized && initialContent) {
+      // 少し遅延させて確実にエディタが準備できた状態で実行
+      const timer = setTimeout(() => {
+        // 既存のコンテンツをクリア
+        editor.commands.clearContent();
+        
+        // HTMLコンテンツを設定
+        editor.commands.setContent(initialContent);
+        
+        // 初期コンテンツの設定後、カーソルを先頭に移動
+        editor.commands.focus('start');
+      }, 50);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [editor, editorInitialized, initialContent]);
 
   useEffect(() => {
     setTitle(initialTitle);
