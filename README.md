@@ -46,28 +46,47 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=あなたのSupabaseプロジェクト匿名キー
 ENABLE_PASSWORD_LOGIN=true  # 開発環境でID/パスワードログインを有効にする場合
 ```
 
-5. データベースマイグレーションを実行する
+5. yarnrc.ymlを設定する
+
+```yml
+nodeLinker: node-modules
+
+yarnPath: .yarn/releases/yarn-4.3.1.cjs
+
+npmRegistries:
+  "https://registry.tiptap.dev/":
+    npmAlwaysAuth: true
+    npmAuthToken: "あなたのトークン"
+
+npmScopes:
+  tiptap-pro:
+    npmRegistryServer: "https://registry.tiptap.dev/"
+    npmAlwaysAuth: true
+    npmAuthToken: "あなたのトークン"
+```
+
+6. データベースマイグレーションを実行する
 
 ```bash
 cd frontend
 yarn supabase migration up
 ```
 
-6. 開発サーバーを起動する
+7. 開発サーバーを起動する
 
 ```bash
 yarn dev
 ```
 
-7. ブラウザで http://localhost:3000 にアクセスする
+8. ブラウザで http://localhost:3000 にアクセスする
 
-8. storybookを起動する
+9. storybookを起動する
 
 ```bash
 yarn storybook
 ```
 
-9. ブラウザで http://localhost:6006 にアクセスする
+10. ブラウザで http://localhost:6006 にアクセスする
 
 ### 管理者設定
 

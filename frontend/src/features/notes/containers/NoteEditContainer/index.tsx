@@ -19,7 +19,7 @@ const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
       noteId,
     });
 
-  // ローディング中の表示
+  // ロード中の表示
   if (isLoading) {
     return (
       <div className="container mx-auto py-6">
@@ -59,6 +59,7 @@ const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
       onCancel={handleCancel}
       initialTitle={note.title}
       initialContent={note.content}
+      projectId={projectId}
     />
   );
 };
