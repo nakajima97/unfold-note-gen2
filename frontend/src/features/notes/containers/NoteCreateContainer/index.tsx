@@ -27,6 +27,7 @@ const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
       isSubmitting={isSubmitting}
       onSubmit={handleSubmit}
       onCancel={handleCancel}
+      projectId={projectId}
     />
   );
 };
