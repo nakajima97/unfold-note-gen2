@@ -1,8 +1,8 @@
 'use client';
 
 import NoteCreate from '@/features/notes/components/NoteCreate';
-import { useNoteEditContainer } from './useNoteEditContainer';
 import type React from 'react';
+import { useNoteEditContainer } from './useNoteEditContainer';
 
 export interface NoteEditContainerProps {
   projectId: string;

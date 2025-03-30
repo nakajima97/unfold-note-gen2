@@ -10,10 +10,10 @@ import {
 import { Input } from '@/components/shadcn/ui/input';
 import { Label } from '@/components/shadcn/ui/label';
 import type { Note } from '@/features/notes/types';
+import FileHandler from '@tiptap-pro/extension-file-handler';
+import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
-import FileHandler from '@tiptap-pro/extension-file-handler';
 import { ArrowLeft, Save } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import './editor.css';
@@ -48,22 +48,29 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
         inline: false,
       }),
       FileHandler.configure({
-        allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'],
+        allowedMimeTypes: [
+          'image/png',
+          'image/jpeg',
+          'image/gif',
+          'image/webp',
+          'image/svg+xml',
+        ],
         onDrop: async (currentEditor, files, pos) => {
           if (!files.length) return;
-          
+
           setIsUploading(true);
-          
+
           try {
             for (const file of files) {
-              if (file.size > 10 * 1024 * 1024) { // 10MB制限
+              if (file.size > 10 * 1024 * 1024) {
+                // 10MB制限
                 alert('画像サイズは10MB以下にしてください');
                 continue;
               }
-              
+
               // Base64エンコーディングを使用して画像を直接埋め込む
               const fileReader = new FileReader();
-              
+
               // Promise化したFileReaderを使用
               const dataUrl = await new Promise<string>((resolve, reject) => {
                 fileReader.onload = () => {
@@ -76,15 +83,19 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
                 fileReader.onerror = () => reject(fileReader.error);
                 fileReader.readAsDataURL(file);
               });
-              
+
               // エディタに画像を挿入
-              currentEditor.chain().insertContentAt(pos, {
-                type: 'image',
-                attrs: {
-                  src: dataUrl,
-                  alt: file.name,
-                },
-              }).focus().run();
+              currentEditor
+                .chain()
+                .insertContentAt(pos, {
+                  type: 'image',
+                  attrs: {
+                    src: dataUrl,
+                    alt: file.name,
+                  },
+                })
+                .focus()
+                .run();
             }
           } catch (error) {
             console.error('画像アップロードエラー:', error);
@@ -95,22 +106,23 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
         },
         onPaste: async (currentEditor, files, htmlContent) => {
           if (!files.length) return;
-          
+
           // HTMLコンテンツがある場合は他の拡張機能に処理を任せる
           if (htmlContent) return false;
-          
+
           setIsUploading(true);
-          
+
           try {
             for (const file of files) {
-              if (file.size > 10 * 1024 * 1024) { // 10MB制限
+              if (file.size > 10 * 1024 * 1024) {
+                // 10MB制限
                 alert('画像サイズは10MB以下にしてください');
                 continue;
               }
-              
+
               // Base64エンコーディングを使用して画像を直接埋め込む
               const fileReader = new FileReader();
-              
+
               // Promise化したFileReaderを使用
               const dataUrl = await new Promise<string>((resolve, reject) => {
                 fileReader.onload = () => {
@@ -123,15 +135,19 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
                 fileReader.onerror = () => reject(fileReader.error);
                 fileReader.readAsDataURL(file);
               });
-              
+
               // エディタに画像を挿入（現在のカーソル位置）
-              currentEditor.chain().insertContentAt(currentEditor.state.selection.anchor, {
-                type: 'image',
-                attrs: {
-                  src: dataUrl,
-                  alt: file.name,
-                },
-              }).focus().run();
+              currentEditor
+                .chain()
+                .insertContentAt(currentEditor.state.selection.anchor, {
+                  type: 'image',
+                  attrs: {
+                    src: dataUrl,
+                    alt: file.name,
+                  },
+                })
+                .focus()
+                .run();
             }
           } catch (error) {
             console.error('画像アップロードエラー:', error);
@@ -168,14 +184,14 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
       const timer = setTimeout(() => {
         // 既存のコンテンツをクリア
         editor.commands.clearContent();
-        
+
         // HTMLコンテンツを設定
         editor.commands.setContent(initialContent);
-        
+
         // 初期コンテンツの設定後、カーソルを先頭に移動
         editor.commands.focus('start');
       }, 50);
-      
+
       return () => clearTimeout(timer);
     }
   }, [editor, editorInitialized, initialContent]);
@@ -233,7 +249,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
             <div className="min-h-[300px] border rounded-md p-4 editor-container relative">
               {isUploading && (
                 <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
                 </div>
               )}
               <div className="mb-2 text-sm text-muted-foreground">
