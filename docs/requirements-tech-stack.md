@@ -2,7 +2,7 @@
 
 ## 技術スタック
 
-### 5.1 フロントエンド
+### 1.1 フロントエンド
 - **フレームワーク**: Next.js
 - **言語**: TypeScript
 - **スタイリング**: Tailwind CSS, Shadcn UI
@@ -10,12 +10,12 @@
 - **エディタ**: Tiptap
 - **テスト**: Vitest, React Testing Library, Storybook, PlayWright
 
-### 5.2 バックエンド
+### 1.2 バックエンド
 - **BaaS**: Supabase
 - **データベース**: Supabase Database
 - **認証**: Supabase Authentication
 
-### 5.3 インフラストラクチャ
+### 1.3 インフラストラクチャ
 - **ホスティング**: Vercel
 - **データベースホスティング**: Supabase
 - **ストレージ**: Supabase Storage
