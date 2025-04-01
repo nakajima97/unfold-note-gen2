@@ -2,7 +2,7 @@
 
 ## データモデル
 
-### 4.1 ユーザーモデル
+### 1.1 ユーザーモデル
 ```
 User {
   id: string (primary key)
@@ -14,7 +14,7 @@ User {
 }
 ```
 
-### 4.2 プロジェクトモデル
+### 1.2 プロジェクトモデル
 ```
 Project {
   id: string (primary key)
@@ -27,7 +27,7 @@ Project {
 }
 ```
 
-### 4.3 ノートモデル
+### 1.3 ノートモデル
 ```
 Note {
   id: string (primary key)
@@ -39,7 +39,7 @@ Note {
 }
 ```
 
-### 4.4 タグモデル
+### 1.4 タグモデル
 ```
 Tag {
   id: string (primary key)
@@ -49,7 +49,7 @@ Tag {
 }
 ```
 
-### 4.5 ノートタグ関連モデル
+### 1.5 ノートタグ関連モデル
 ```
 NoteTag {
   noteId: string (foreign key -> Note.id)
@@ -58,7 +58,7 @@ NoteTag {
 }
 ```
 
-### 4.6 ファイルモデル
+### 1.6 ファイルモデル
 ```
 File {
   id: string (primary key)
@@ -73,7 +73,7 @@ File {
 }
 ```
 
-### 4.7 許可メールモデル
+### 1.7 許可メールモデル
 ```
 AllowedEmail {
   id: string (primary key)
@@ -83,16 +83,16 @@ AllowedEmail {
 }
 ```
 
-### 4.8 データベース設計
+### 1.8 データベース設計
 
-#### 4.8.1 インデックス
+#### 1.8.1 インデックス
 - ユーザーテーブル: email列にユニークインデックス
 - プロジェクトテーブル: ownerId列にインデックス
 - ノートテーブル: projectId列にインデックス、title列にインデックス
 - タグテーブル: name列とprojectId列の複合インデックス
 - ファイルテーブル: noteId列とprojectId列にインデックス
 
-#### 4.8.2 RLSポリシー（Row Level Security）
+#### 1.8.2 RLSポリシー（Row Level Security）
 - **ユーザーテーブル**: 自分自身のデータのみ読み取り/更新可能
 - **プロジェクトテーブル**: 所有者のみ読み取り/更新/削除可能
 - **ノートテーブル**: プロジェクト所有者のみ読み取り/更新/削除可能

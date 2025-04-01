@@ -31,12 +31,12 @@
 
 ## 付録
 
-### 10.1 参考資料
+### 2.1 参考資料
 - Next.js ドキュメント: [Next.js](https://nextjs.org/docs)
 - Supabase ドキュメント: [Supabase](https://supabase.com/docs)
 - Tiptap ドキュメント: [Tiptap](https://tiptap.dev/docs)
 
-### 10.2 UI/UXデザイン参考
+### 2.2 UI/UXデザイン参考
 - 基本的なカラーパレット: ダークモード/ライトモード対応
 - フォント: システムフォントスタック（読みやすさ重視）
 - アイコン: Heroicons または Material Icons
