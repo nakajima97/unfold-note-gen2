@@ -24,7 +24,7 @@ jobs:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
       - name: Check yarnrc.yml
-        run: cat .yarnrc.yml | sed "s/npmAuthToken: \".*\"/npmAuthToken: \"***\"/g"
+        run: cat .yarnrc.yml | sed 's/npmAuthToken: ".*"/npmAuthToken: "***"/g'
 
       - name: Install dependencies
         run:  YARN_ENABLE_HARDENED_MODE=0 yarn install
