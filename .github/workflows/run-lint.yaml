@@ -23,15 +23,10 @@ jobs:
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
-      - name: Configure Tiptap Pro registry
-        run: |
-          npm config set "@tiptap-pro:registry" https://registry.tiptap.dev/
-          npm config set "//registry.tiptap.dev/:_authToken" ${{ secrets.TIPTAP_TOKEN }}
-
       - name: Install dependencies
-        run: npm install --force
+        run: yarn install
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
       - name: Run Lint
-        run: npm run lint
+        run: yarn lint
