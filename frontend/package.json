@@ -12,8 +12,7 @@
     "bc": "biome check --write .",
     "format": "biome format .",
     "lint": "biome lint .",
-    "type-check": "tsc --noEmit",
-    "generate-yarnrc": "ts-node --project scripts/tsconfig.json scripts/generate-yarnrc.ts"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.2",

@@ -15,8 +15,11 @@ jobs:
         with:
           node-version: 22.x
 
+      - name: Set execute permission for script
+        run: chmod +x scripts/generate-yarnrc.sh
+
       - name: Create yarnrc.yml
-        run: yarn generate-yarnrc
+        run: ./scripts/generate-yarnrc.sh
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
