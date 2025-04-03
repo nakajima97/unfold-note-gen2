@@ -1,32 +1,32 @@
-# on: [pull_request]
+on: []
 
-# jobs:
-#   run-lint:
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: ./frontend
-#     steps:
-#       - name: checkout
-#         uses: actions/checkout@v4
+jobs:
+  run-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
 
-#       - name: Set up Next.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: 22.x
+      - name: Set up Next.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
 
-#       - name: Set execute permission for script
-#         run: chmod +x scripts/generate-yarnrc.sh
+      - name: Set execute permission for script
+        run: chmod +x scripts/generate-yarnrc.sh
 
-#       - name: Create yarnrc.yml
-#         run: ./scripts/generate-yarnrc.sh
-#         env:
-#           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
+      - name: Create yarnrc.yml
+        run: ./scripts/generate-yarnrc.sh
+        env:
+          TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
-#       - name: Install dependencies
-#         run: yarn install
-#         env:
-#           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
+      - name: Install dependencies
+        run: yarn install
+        env:
+          TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
-#       - name: Run Lint
-#         run: yarn lint
+      - name: Run Lint
+        run: yarn lint
