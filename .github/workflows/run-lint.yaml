@@ -25,14 +25,13 @@ jobs:
 
       - name: Configure Tiptap Pro registry
         run: |
-          yarn config set npmScopes['@tiptap-pro'].npmRegistryServer https://registry.tiptap.dev/
-          yarn config set npmScopes['@tiptap-pro'].npmAuthToken "${{ secrets.TIPTAP_TOKEN }}"
-          yarn config set npmScopes['@tiptap-pro'].npmAlwaysAuth true
+          npm config set "@tiptap-pro:registry" https://registry.tiptap.dev/
+          npm config set "//registry.tiptap.dev/:_authToken" ${{ secrets.TIPTAP_TOKEN }}
 
       - name: Install dependencies
-        run: yarn install
+        run: npm install
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
       - name: Run Lint
-        run: yarn lint
+        run: npm run lint
