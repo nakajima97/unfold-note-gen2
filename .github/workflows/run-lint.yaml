@@ -27,7 +27,9 @@ jobs:
         run: ls -la
 
       - name: Install dependencies
-        run: ls -la && yarn install
+        run:  YARN_ENABLE_HARDENED_MODE=0 yarn install
+        env:
+          TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
       - name: Run Lint
         run: yarn lint
