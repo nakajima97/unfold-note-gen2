@@ -1,4 +1,4 @@
-on: []
+on: [pull-request]
 
 jobs:
   run-lint:
@@ -23,7 +23,7 @@ jobs:
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
-      - name: Install dependencies
+      - name: cat yarnrc.yml && Install dependencies
         run: yarn install
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
