@@ -23,6 +23,15 @@ jobs:
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
+      - name: Check yarnrc.yml structure
+        run: |
+          echo "npmRegistries section exists:" 
+          grep -q "npmRegistries:" .yarnrc.yml && echo "Yes" || echo "No"
+          echo "tiptap-pro section exists:" 
+          grep -q "tiptap-pro:" .yarnrc.yml && echo "Yes" || echo "No"
+          echo "Number of npmAuthToken entries:" 
+          grep -c "npmAuthToken:" .yarnrc.yml
+
       - name: Install dependencies
         run:  YARN_ENABLE_HARDENED_MODE=0 yarn install
         env:
