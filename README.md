@@ -52,7 +52,8 @@ TipTap Proのトークンを使用して.yarnrc.ymlを生成するスクリプ�
 
 ```bash
 cd frontend
-yarn generate-yarnrc
+chmod +x scripts/generate-yarnrc.sh
+./scripts/generate-yarnrc.sh
 ```
 
 このスクリプトは`.env.local`から`TIPTAP_TOKEN`を読み取り、.yarnrc.ymlファイルを生成します。
