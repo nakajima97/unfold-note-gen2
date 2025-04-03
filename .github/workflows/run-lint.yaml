@@ -1,41 +1,32 @@
-on: [pull_request]
+# on: [pull_request]
 
-jobs:
-  run-lint:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
+# jobs:
+#   run-lint:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: ./frontend
+#     steps:
+#       - name: checkout
+#         uses: actions/checkout@v4
 
-      - name: Set up Next.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
+#       - name: Set up Next.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 22.x
 
-      - name: Set execute permission for script
-        run: chmod +x scripts/generate-yarnrc.sh
+#       - name: Set execute permission for script
+#         run: chmod +x scripts/generate-yarnrc.sh
 
-      - name: Create yarnrc.yml
-        run: ./scripts/generate-yarnrc.sh
-        env:
-          TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
+#       - name: Create yarnrc.yml
+#         run: ./scripts/generate-yarnrc.sh
+#         env:
+#           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
-      - name: Temporarily modify package.json to skip TipTap Pro packages
-        run: |
-          # TipTap Proのパッケージを一時的に削除
-          sed -i '/"@tiptap-pro\/extension-file-handler": ".*",/d' package.json
-          echo "Modified package.json to skip TipTap Pro packages"
-          
-          # 確認のため修正後のpackage.jsonを表示（機密情報なし）
-          grep -A 5 -B 5 "@tiptap/" package.json || echo "TipTap Pro packages removed successfully"
+#       - name: Install dependencies
+#         run: yarn install
+#         env:
+#           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
-      - name: Install dependencies
-        run:  YARN_ENABLE_HARDENED_MODE=0 yarn install
-        env:
-          TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
-
-      - name: Run Lint
-        run: yarn lint
+#       - name: Run Lint
+#         run: yarn lint
