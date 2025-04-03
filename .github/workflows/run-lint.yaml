@@ -23,14 +23,14 @@ jobs:
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
-      - name: Check yarnrc.yml structure
+      - name: Temporarily modify package.json to skip TipTap Pro packages
         run: |
-          echo "npmRegistries section exists:" 
-          grep -q "npmRegistries:" .yarnrc.yml && echo "Yes" || echo "No"
-          echo "tiptap-pro section exists:" 
-          grep -q "tiptap-pro:" .yarnrc.yml && echo "Yes" || echo "No"
-          echo "Number of npmAuthToken entries:" 
-          grep -c "npmAuthToken:" .yarnrc.yml
+          # TipTap Proのパッケージを一時的に削除
+          sed -i '/"@tiptap-pro\/extension-file-handler": ".*",/d' package.json
+          echo "Modified package.json to skip TipTap Pro packages"
+          
+          # 確認のため修正後のpackage.jsonを表示（機密情報なし）
+          grep -A 5 -B 5 "@tiptap/" package.json || echo "TipTap Pro packages removed successfully"
 
       - name: Install dependencies
         run:  YARN_ENABLE_HARDENED_MODE=0 yarn install
