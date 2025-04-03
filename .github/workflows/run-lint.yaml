@@ -23,7 +23,7 @@ jobs:
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
-      - name: cat yarnrc.yml && Install dependencies
+      - name: ls -la && cat .yarnrc.yml && Install dependencies
         run: yarn install
         env:
           TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
