@@ -48,6 +48,18 @@ ENABLE_PASSWORD_LOGIN=true  # 開発環境でID/パスワードログインを�
 
 5. yarnrc.ymlを設定する
 
+TipTap Proのトークンを使用して.yarnrc.ymlを生成するスクリプトを実行します：
+
+```bash
+cd frontend
+yarn generate-yarnrc
+```
+
+このスクリプトは`.env.local`から`TIPTAP_TOKEN`を読み取り、.yarnrc.ymlファイルを生成します。
+トークンが見つからない場合は、入力を求められます。
+
+または、以下のテンプレートを使用して手動で`frontend/.yarnrc.yml`を作成することもできます：
+
 ```yml
 nodeLinker: node-modules
 
@@ -64,6 +76,8 @@ npmScopes:
     npmAlwaysAuth: true
     npmAuthToken: "あなたのトークン"
 ```
+
+「あなたのトークン」の部分は、TipTap Proのアクセストークンに置き換えてください。
 
 6. データベースマイグレーションを実行する
 

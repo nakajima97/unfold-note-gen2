@@ -18,7 +18,13 @@ https://github.com/nakajima97/next-template-page-router
 
 1. リポジトリをクローンします。
 2. 依存関係をインストールします: `yarn install`
-3. プロジェクトを起動します: `yarn dev`
+3. TipTap Proを使用する場合は、.yarnrc.ymlを設定します:
+   ```bash
+   yarn generate-yarnrc
+   ```
+   このスクリプトは`.env.local`から`TIPTAP_TOKEN`を読み取り、.yarnrc.ymlファイルを生成します。
+   トークンが見つからない場合は、入力を求められます。
+4. プロジェクトを起動します: `yarn dev`
 
 ## テスト
 
