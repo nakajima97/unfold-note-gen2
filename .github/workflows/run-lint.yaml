@@ -20,6 +20,8 @@ jobs:
 
       - name: Create yarnrc.yml
         run: yarn generate-yarnrc
+        env:
+          TIPTAP_TOKEN: ${{ secrets.TIPTAP_TOKEN }}
 
       - name: Run Lint
         run: yarn lint
