@@ -18,5 +18,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Create yarnrc.yml
+        run: yarn generate-yarnrc
+
       - name: Run Lint
         run: yarn lint
