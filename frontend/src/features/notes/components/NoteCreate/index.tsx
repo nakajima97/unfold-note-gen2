@@ -14,6 +14,7 @@ import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Tag from '@/features/notes/extensions/tag';
 import { ArrowLeft, Save } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import './editor.css';
@@ -47,6 +48,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
         allowBase64: true, // 重要: base64画像を許可
         inline: false,
       }),
+      Tag, // タグ拡張を追加
       FileHandler.configure({
         allowedMimeTypes: [
           'image/png',
@@ -254,6 +256,13 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
               )}
               <div className="mb-2 text-sm text-muted-foreground">
                 画像はドラッグ＆ドロップまたは貼り付けで追加できます（最大10MB）
+                <br />
+                <span className="tag-highlight">#タグ</span> のように入力するとタグとして認識されます
+                <br />
+                <span style={{ fontSize: '0.8em' }}>
+                  タグの色: <span style={{ color: '#ff69b4', fontWeight: 600 }}>ピンク</span> = 同名のノートが存在しない、
+                  <span style={{ color: '#1e90ff', fontWeight: 600 }}>青</span> = 同名のノートが存在する
+                </span>
               </div>
               <EditorContent
                 editor={editor}

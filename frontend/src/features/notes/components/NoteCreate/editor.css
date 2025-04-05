@@ -105,13 +105,19 @@
 }
 
 /* タグスタイル */
-.tiptap span[data-type="tag"] {
-  color: var(--primary);
-  font-weight: 500;
-  background-color: var(--accent);
+.tiptap span[data-type="tag"],
+.tiptap .tag-highlight {
+  color: #ff69b4; /* ピンク: 同名のノートが存在しない場合 */
+  font-weight: 600;
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   cursor: pointer;
+  text-decoration: underline;
+}
+
+/* 同名のノートが存在する場合のタグスタイル (将来的に実装) */
+.tiptap .tag-highlight.has-matching-note {
+  color: #1e90ff; /* 青: 同名のノートが存在する場合 */
 }
 
 /* プレースホルダースタイル */
