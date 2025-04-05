@@ -2,6 +2,7 @@
 
 import type { Note } from '@/features/notes/types';
 import { createNote } from '@/lib/api/note';
+import { updateNoteTags } from '@/lib/api/tag';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -26,11 +27,15 @@ export const useNoteCreateContainer = ({
     setError(null);
 
     try {
+      // ノートを作成
       const newNote = await createNote({
         title: note.title,
         content: note.content,
         projectId,
       });
+
+      // ノートからタグを抽出して保存
+      await updateNoteTags(newNote.id, note.content, projectId);
 
       // 新しく作成されたノートに遷移
       router.push(`/projects/${projectId}/notes/${newNote.id}`);
