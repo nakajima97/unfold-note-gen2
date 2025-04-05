@@ -9,6 +9,7 @@ import {
 } from '@/components/shadcn/ui/card';
 import { Input } from '@/components/shadcn/ui/input';
 import { Label } from '@/components/shadcn/ui/label';
+import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import Tag from '@/features/notes/extensions/tag';
 import type { Note } from '@/features/notes/types';
 import FileHandler from '@tiptap-pro/extension-file-handler';
@@ -16,7 +17,7 @@ import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { ArrowLeft, Save } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './editor.css';
 
 export interface NoteCreateProps {
@@ -26,6 +27,7 @@ export interface NoteCreateProps {
   initialTitle?: string;
   initialContent?: string;
   projectId: string;
+  noteId?: string; // 編集時のノートID
 }
 
 const NoteCreate: React.FC<NoteCreateProps> = ({
@@ -35,9 +37,12 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   initialTitle = '',
   initialContent = '',
   projectId,
+  noteId,
 }) => {
   const [title, setTitle] = React.useState(initialTitle);
   const [content, setContent] = React.useState(initialContent);
+  const [debouncedContent, setDebouncedContent] = useState(initialContent);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [editorInitialized, setEditorInitialized] = useState(false);
 
@@ -162,7 +167,18 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
     ],
     content: initialContent,
     onUpdate: ({ editor }) => {
-      setContent(editor.getHTML());
+      const newContent = editor.getHTML();
+      setContent(newContent);
+
+      // 既存のタイマーをクリア
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      // 500ms後にdebouncedContentを更新
+      debounceTimerRef.current = setTimeout(() => {
+        setDebouncedContent(newContent);
+      }, 500);
     },
     editorProps: {
       attributes: {
@@ -200,7 +216,18 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
 
   useEffect(() => {
     setTitle(initialTitle);
-  }, [initialTitle]);
+    setContent(initialContent);
+    setDebouncedContent(initialContent);
+  }, [initialTitle, initialContent]);
+
+  // コンポーネントのアンマウント時にタイマーをクリア
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -308,6 +335,17 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
           </div>
         </CardFooter>
       </form>
+
+      {/* 同じタグがついているノートの表示 */}
+      {initialContent && noteId && (
+        <div className="px-6 pb-6">
+          <RelatedNotesByTagContainer
+            currentNoteId={noteId}
+            projectId={projectId}
+            content={debouncedContent}
+          />
+        </div>
+      )}
     </Card>
   );
 };
