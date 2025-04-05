@@ -1,7 +1,7 @@
 'use client';
 
 import NoteCard from '@/features/notes/components/NoteCard';
-import { Note } from '@/lib/api/note';
+import type { Note } from '@/lib/api/note';
 import type React from 'react';
 
 export interface RelatedNotesByTagProps {
@@ -21,7 +21,6 @@ const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
   projectId,
   onNoteClick,
 }) => {
-
   // タグがない場合は何も表示しない
   if (tags.length === 0) {
     return null;
@@ -52,7 +51,9 @@ const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
   }
 
   // 関連ノートがない場合（すべてのタグに関連ノートがない）
-  const hasAnyNotes = Object.values(groupedNotes).some(notes => notes.length > 0);
+  const hasAnyNotes = Object.values(groupedNotes).some(
+    (notes) => notes.length > 0,
+  );
   if (!hasAnyNotes) {
     return (
       <div className="mt-6">

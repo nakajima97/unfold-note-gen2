@@ -1,8 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useRelatedNotesByTag } from '@/features/notes/hooks/useRelatedNotesByTag';
 import RelatedNotesByTag from '@/features/notes/components/RelatedNotesByTag';
+import { useRelatedNotesByTag } from '@/features/notes/hooks/useRelatedNotesByTag';
+import { useRouter } from 'next/navigation';
 
 export interface RelatedNotesByTagContainerProps {
   currentNoteId: string;
@@ -16,7 +16,7 @@ const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
   content,
 }) => {
   const router = useRouter();
-  
+
   const { groupedNotes, isLoading, error, tags } = useRelatedNotesByTag({
     currentNoteId,
     projectId,

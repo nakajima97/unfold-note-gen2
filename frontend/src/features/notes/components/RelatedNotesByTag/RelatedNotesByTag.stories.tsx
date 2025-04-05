@@ -8,7 +8,8 @@ const sampleNotes: Note[] = [
   {
     id: '2',
     title: 'How to use tags',
-    content: 'Tags are a powerful way to organize your notes. Simply add a #tag1 to your note and it will be automatically tagged.',
+    content:
+      'Tags are a powerful way to organize your notes. Simply add a #tag1 to your note and it will be automatically tagged.',
     project_id: 'project-1',
     created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -16,7 +17,8 @@ const sampleNotes: Note[] = [
   {
     id: '3',
     title: 'Project Planning',
-    content: 'Here are some ideas for the project:\n- Implement search functionality\n- Add #tag1 and #tag2 support\n- Create mobile app',
+    content:
+      'Here are some ideas for the project:\n- Implement search functionality\n- Add #tag1 and #tag2 support\n- Create mobile app',
     project_id: 'project-1',
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
@@ -24,7 +26,8 @@ const sampleNotes: Note[] = [
   {
     id: '4',
     title: 'Meeting Notes',
-    content: 'Meeting with the team on 2025-03-25:\n- Discussed project timeline\n- Assigned #tag2 tasks\n- Next meeting scheduled for next week',
+    content:
+      'Meeting with the team on 2025-03-25:\n- Discussed project timeline\n- Assigned #tag2 tasks\n- Next meeting scheduled for next week',
     project_id: 'project-1',
     created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -53,8 +56,8 @@ type Story = StoryObj<typeof RelatedNotesByTag>;
 export const Default: Story = {
   args: {
     groupedNotes: {
-      'tag1': sampleNotes.slice(0, 2),
-      'tag2': sampleNotes.slice(1, 3)
+      tag1: sampleNotes.slice(0, 2),
+      tag2: sampleNotes.slice(1, 3),
     },
     isLoading: false,
     error: null,
@@ -80,7 +83,7 @@ export const NoTags: Story = {
 export const NoRelatedNotes: Story = {
   args: {
     groupedNotes: {
-      'unknowntag': []
+      unknowntag: [],
     },
     isLoading: false,
     error: null,
@@ -118,12 +121,12 @@ export const ErrorState: Story = {
 export const ManyTags: Story = {
   args: {
     groupedNotes: {
-      'tag1': sampleNotes.slice(0, 1),
-      'tag2': sampleNotes.slice(1, 2),
-      'tag3': sampleNotes.slice(2, 3),
-      'tag4': sampleNotes.slice(0, 2),
-      'tag5': sampleNotes.slice(1, 3),
-      'tag6': sampleNotes
+      tag1: sampleNotes.slice(0, 1),
+      tag2: sampleNotes.slice(1, 2),
+      tag3: sampleNotes.slice(2, 3),
+      tag4: sampleNotes.slice(0, 2),
+      tag5: sampleNotes.slice(1, 3),
+      tag6: sampleNotes,
     },
     isLoading: false,
     error: null,
