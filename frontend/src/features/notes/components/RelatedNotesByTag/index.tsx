@@ -1,28 +1,26 @@
 'use client';
 
 import NoteCard from '@/features/notes/components/NoteCard';
-import { useRouter } from 'next/navigation';
+import { Note } from '@/lib/api/note';
 import type React from 'react';
-import { useRelatedNotesByTag } from './useRelatedNotesByTag';
 
 export interface RelatedNotesByTagProps {
-  currentNoteId: string;
+  groupedNotes: Record<string, Note[]>;
+  isLoading: boolean;
+  error: Error | null;
+  tags: string[];
   projectId: string;
-  content: string;
+  onNoteClick: (noteId: string) => void;
 }
 
 const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
-  currentNoteId,
+  groupedNotes,
+  isLoading,
+  error,
+  tags,
   projectId,
-  content,
+  onNoteClick,
 }) => {
-  const router = useRouter();
-  
-  const { groupedNotes, isLoading, error, tags } = useRelatedNotesByTag({
-    currentNoteId,
-    projectId,
-    content,
-  });
 
   // タグがない場合は何も表示しない
   if (tags.length === 0) {
@@ -79,7 +77,7 @@ const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
                 <NoteCard
                   key={`${tagName}-${note.id}`}
                   note={note}
-                  onClick={(noteId) => router.push(`/projects/${projectId}/notes/${noteId}`)}
+                  onClick={onNoteClick}
                 />
               ))}
             </div>

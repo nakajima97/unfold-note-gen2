@@ -17,7 +17,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { ArrowLeft, Save } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
-import RelatedNotesByTag from '../RelatedNotesByTag';
+import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import './editor.css';
 
 export interface NoteCreateProps {
@@ -339,7 +339,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
       {/* 同じタグがついているノートの表示 */}
       {initialContent && noteId && (
         <div className="px-6 pb-6">
-          <RelatedNotesByTag
+          <RelatedNotesByTagContainer
             currentNoteId={noteId}
             projectId={projectId}
             content={debouncedContent}
