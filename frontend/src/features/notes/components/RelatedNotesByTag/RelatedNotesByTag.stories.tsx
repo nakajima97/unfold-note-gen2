@@ -41,14 +41,14 @@ const MockRelatedNotesByTag = ({
   projectId: string;
   content: string;
   mockState: {
-    relatedNotes: Note[];
+    groupedNotes: Record<string, Note[]>;
     isLoading: boolean;
     error: { message: string } | null;
     tags: string[];
   };
 }) => {
   // Render different states based on mockState
-  const { relatedNotes, isLoading, error, tags } = mockState;
+  const { groupedNotes, isLoading, error, tags } = mockState;
   
   // タグがない場合は何も表示しない
   if (tags.length === 0) {
@@ -79,8 +79,9 @@ const MockRelatedNotesByTag = ({
     );
   }
 
-  // 関連ノートがない場合
-  if (relatedNotes.length === 0) {
+  // 関連ノートがない場合（すべてのタグに関連ノートがない）
+  const hasAnyNotes = Object.values(groupedNotes).some(notes => notes.length > 0);
+  if (!hasAnyNotes) {
     return (
       <div className="mt-6">
         <h3 className="text-lg font-medium mb-4">同じタグがついているノート</h3>
@@ -91,34 +92,42 @@ const MockRelatedNotesByTag = ({
     );
   }
 
-  // 関連ノートの表示
+  // タグごとにグループ化された関連ノートの表示
   return (
     <div className="mt-6">
       <h3 className="text-lg font-medium mb-4">同じタグがついているノート</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {relatedNotes.map((note) => (
-          <div
-            key={note.id}
-            className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-          >
-            <h4 className="font-medium text-lg mb-1 line-clamp-1">{note.title}</h4>
-            <p className="text-sm text-gray-500 mb-2">
-              {new Date(note.updated_at).toLocaleDateString()}
-            </p>
-            <p className="text-sm line-clamp-3">{note.content.replace(/#[a-zA-Z0-9_\-]+/g, '')}</p>
-            <div className="mt-2 flex flex-wrap gap-1">
-              {tags.map((tag) => (
-                <span
-                  key={`${note.id}-${tag}`}
-                  className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full"
+      {Object.entries(groupedNotes).map(([tagName, notes]) => (
+        <div key={tagName} className="mb-6">
+          <h4 className="text-md font-medium mb-2">## {tagName}タグ</h4>
+          {notes.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {notes.map((note) => (
+                <div
+                  key={`${tagName}-${note.id}`}
+                  className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                 >
-                  #{tag}
-                </span>
+                  <h4 className="font-medium text-lg mb-1 line-clamp-1">{note.title}</h4>
+                  <p className="text-sm text-gray-500 mb-2">
+                    {new Date(note.updated_at).toLocaleDateString()}
+                  </p>
+                  <p className="text-sm line-clamp-3">{note.content.replace(/#[a-zA-Z0-9_\-]+/g, '')}</p>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    <span
+                      className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full"
+                    >
+                      #{tagName}
+                    </span>
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
-        ))}
-      </div>
+          ) : (
+            <p className="text-muted-foreground text-center py-2">
+              このタグがついている他のノートはありません
+            </p>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
@@ -151,7 +160,10 @@ export const Default: Story = {
     projectId: 'project-1',
     content: 'This is a note with #tag1 and #tag2 tags.',
     mockState: {
-      relatedNotes: sampleNotes,
+      groupedNotes: {
+        'tag1': sampleNotes.slice(0, 2),
+        'tag2': sampleNotes.slice(1, 3)
+      },
       isLoading: false,
       error: null,
       tags: ['tag1', 'tag2'],
@@ -166,7 +178,7 @@ export const NoTags: Story = {
     projectId: 'project-1',
     content: 'This note does not have any tags.',
     mockState: {
-      relatedNotes: [],
+      groupedNotes: {},
       isLoading: false,
       error: null,
       tags: [],
@@ -181,7 +193,9 @@ export const NoRelatedNotes: Story = {
     projectId: 'project-1',
     content: 'This note has a #unknowntag that has no related notes.',
     mockState: {
-      relatedNotes: [],
+      groupedNotes: {
+        'unknowntag': []
+      },
       isLoading: false,
       error: null,
       tags: ['unknowntag'],
@@ -196,7 +210,7 @@ export const Loading: Story = {
     projectId: 'project-1',
     content: 'This is a note with #tag1 and #tag2 tags.',
     mockState: {
-      relatedNotes: [],
+      groupedNotes: {},
       isLoading: true,
       error: null,
       tags: ['tag1', 'tag2'],
@@ -211,7 +225,7 @@ export const ErrorState: Story = {
     projectId: 'project-1',
     content: 'This is a note with #tag1 and #tag2 tags.',
     mockState: {
-      relatedNotes: [],
+      groupedNotes: {},
       isLoading: false,
       error: { message: '関連ノートの取得に失敗しました' },
       tags: ['tag1', 'tag2'],
@@ -226,7 +240,14 @@ export const ManyTags: Story = {
     projectId: 'project-1',
     content: 'This note has many tags: #tag1 #tag2 #tag3 #tag4 #tag5 #tag6',
     mockState: {
-      relatedNotes: sampleNotes,
+      groupedNotes: {
+        'tag1': sampleNotes.slice(0, 1),
+        'tag2': sampleNotes.slice(1, 2),
+        'tag3': sampleNotes.slice(2, 3),
+        'tag4': sampleNotes.slice(0, 2),
+        'tag5': sampleNotes.slice(1, 3),
+        'tag6': sampleNotes
+      },
       isLoading: false,
       error: null,
       tags: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6'],

@@ -18,7 +18,7 @@ const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
 }) => {
   const router = useRouter();
   
-  const { relatedNotes, isLoading, error, tags } = useRelatedNotesByTag({
+  const { groupedNotes, isLoading, error, tags } = useRelatedNotesByTag({
     currentNoteId,
     projectId,
     content,
@@ -53,8 +53,9 @@ const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
     );
   }
 
-  // 関連ノートがない場合
-  if (relatedNotes.length === 0) {
+  // 関連ノートがない場合（すべてのタグに関連ノートがない）
+  const hasAnyNotes = Object.values(groupedNotes).some(notes => notes.length > 0);
+  if (!hasAnyNotes) {
     return (
       <div className="mt-6">
         <h3 className="text-lg font-medium mb-4">同じタグがついているノート</h3>
@@ -65,19 +66,30 @@ const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
     );
   }
 
-  // 関連ノートの表示
+  // タグごとにグループ化された関連ノートの表示
   return (
     <div className="mt-6">
       <h3 className="text-lg font-medium mb-4">同じタグがついているノート</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {relatedNotes.map((note) => (
-          <NoteCard
-            key={note.id}
-            note={note}
-            onClick={(noteId) => router.push(`/projects/${projectId}/notes/${noteId}`)}
-          />
-        ))}
-      </div>
+      {Object.entries(groupedNotes).map(([tagName, notes]) => (
+        <div key={tagName} className="mb-6">
+          <h4 className="text-md font-medium mb-2">{tagName}</h4>
+          {notes.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {notes.map((note) => (
+                <NoteCard
+                  key={`${tagName}-${note.id}`}
+                  note={note}
+                  onClick={(noteId) => router.push(`/projects/${projectId}/notes/${noteId}`)}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-center py-2">
+              このタグがついている他のノートはありません
+            </p>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

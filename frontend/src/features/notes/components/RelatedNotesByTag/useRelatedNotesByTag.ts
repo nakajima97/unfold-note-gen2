@@ -15,7 +15,7 @@ export const useRelatedNotesByTag = ({
   projectId,
   content,
 }: UseRelatedNotesByTagProps) => {
-  const [relatedNotes, setRelatedNotes] = useState<Note[]>([]);
+  const [groupedNotes, setGroupedNotes] = useState<Record<string, Note[]>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [tags, setTags] = useState<string[]>([]);
@@ -42,7 +42,7 @@ export const useRelatedNotesByTag = ({
   useEffect(() => {
     const fetchRelatedNotes = async () => {
       if (!tags.length) {
-        setRelatedNotes([]);
+        setGroupedNotes({});
         setIsLoading(false);
         return;
       }
@@ -51,27 +51,34 @@ export const useRelatedNotesByTag = ({
         setIsLoading(true);
         setError(null);
 
-        // 各タグに関連するノートIDを取得
-        const noteIdsPromises = tags.map((tag) => getNotesByTagName(tag, projectId));
-        const noteIdsArrays = await Promise.all(noteIdsPromises);
-
-        // すべてのノートIDを平坦化して重複を削除
-        const allNoteIds = Array.from(
-          new Set(noteIdsArrays.flat())
-        ).filter((noteId) => noteId !== currentNoteId); // 現在のノートを除外
-
-        if (allNoteIds.length === 0) {
-          setRelatedNotes([]);
-          setIsLoading(false);
-          return;
+        // タグごとにノートをグループ化
+        const grouped: Record<string, Note[]> = {};
+        
+        // 各タグについて処理
+        for (const tag of tags) {
+          // そのタグを持つノートIDを取得
+          const noteIds = await getNotesByTagName(tag, projectId);
+          
+          // 現在のノートを除外
+          const filteredNoteIds = noteIds.filter(id => id !== currentNoteId);
+          
+          if (filteredNoteIds.length > 0) {
+            // ノートの詳細情報を取得
+            const notesPromises = filteredNoteIds.map(id => getNoteById(id));
+            const notes = await Promise.all(notesPromises);
+            
+            // nullを除外
+            const validNotes = notes.filter((note): note is Note => note !== null);
+            
+            // タグをキーとしてノートを格納
+            grouped[tag] = validNotes;
+          } else {
+            // 関連ノートがない場合は空配列
+            grouped[tag] = [];
+          }
         }
-
-        // 各ノートの詳細情報を取得
-        const notesPromises = allNoteIds.map((noteId) => getNoteById(noteId));
-        const notes = await Promise.all(notesPromises);
-
-        // nullを除外して結果を設定
-        setRelatedNotes(notes.filter((note): note is Note => note !== null));
+        
+        setGroupedNotes(grouped);
       } catch (err) {
         setError(
           err instanceof Error ? err : new Error('関連ノートの取得に失敗しました')
@@ -85,7 +92,7 @@ export const useRelatedNotesByTag = ({
   }, [currentNoteId, projectId, tags]);
 
   return {
-    relatedNotes,
+    groupedNotes,
     isLoading,
     error,
     tags,
