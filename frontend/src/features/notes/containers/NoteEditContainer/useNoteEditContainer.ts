@@ -2,6 +2,7 @@
 
 import type { Note } from '@/features/notes/types';
 import { getNoteById, updateNote } from '@/lib/api/note';
+import { updateNoteTags } from '@/lib/api/tag';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -61,10 +62,14 @@ export const useNoteEditContainer = ({
     setError(null);
 
     try {
+      // ノート内容を更新
       await updateNote(noteId, {
         title: updatedNote.title,
         content: updatedNote.content,
       });
+
+      // ノートからタグを抽出して保存
+      await updateNoteTags(noteId, updatedNote.content, projectId);
 
       // 更新後、ノート一覧ページに戻る
       router.push(`/projects/${projectId}/notes`);
