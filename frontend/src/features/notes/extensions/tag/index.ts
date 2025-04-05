@@ -11,7 +11,7 @@ export const Tag = Extension.create({
 
   addProseMirrorPlugins() {
     const tagRegExp = /#[\p{L}\p{N}_-]+/gu;
-    
+
     return [
       new Plugin({
         key: new PluginKey('tag'),
@@ -25,19 +25,22 @@ export const Tag = Extension.create({
               if (!node.isText) return;
 
               const text = node.text || '';
-              let match;
 
               // テキスト内のすべてのタグを検索
-              while ((match = tagRegExp.exec(text)) !== null) {
+              const matches = Array.from(text.matchAll(tagRegExp));
+
+              for (const match of matches) {
+                if (match.index === undefined) continue;
+
                 const start = pos + match.index;
                 const end = start + match[0].length;
-                
+
                 // タグ装飾を追加
                 decorations.push(
                   Decoration.inline(start, end, {
                     class: 'tag-highlight',
                     'data-type': 'tag',
-                  })
+                  }),
                 );
               }
             });

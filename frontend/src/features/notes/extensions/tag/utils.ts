@@ -13,12 +13,12 @@ export const checkIfMatchingNoteExists = async (
   try {
     // タグに関連付けられたノートIDを取得
     const noteIds = await getNotesByTagName(tagName, projectId);
-    
+
     // ノートが存在しない場合はfalse
     if (noteIds.length === 0) {
       return false;
     }
-    
+
     // 将来的には、ここでノートのタイトルとタグ名が一致するかをチェックする
     // 現段階では、タグが付けられたノートが存在すれば、同名のノートが存在すると仮定
     return true;

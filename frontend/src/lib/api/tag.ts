@@ -71,14 +71,12 @@ export const associateTagWithNote = async (
   noteId: string,
   tagId: string,
 ): Promise<void> => {
-  const { error } = await supabase
-    .from('note_tags')
-    .insert([
-      {
-        note_id: noteId,
-        tag_id: tagId,
-      },
-    ]);
+  const { error } = await supabase.from('note_tags').insert([
+    {
+      note_id: noteId,
+      tag_id: tagId,
+    },
+  ]);
 
   if (error) {
     // 既に関連付けが存在する場合は無視（一意制約違反）
@@ -125,8 +123,8 @@ export const getTagsByNoteId = async (noteId: string): Promise<Tag[]> => {
   }
 
   // 取得したタグIDを使ってタグ情報を取得
-  const tagIdArray = tagIds.map(item => item.tag_id);
-  
+  const tagIdArray = tagIds.map((item) => item.tag_id);
+
   const { data: tags, error: tagsError } = await supabase
     .from('tags')
     .select('*')
@@ -186,11 +184,11 @@ export const getNotesByTagName = async (
 export const extractTagsFromText = (text: string): string[] => {
   // HTMLタグを除去
   const plainText = text.replace(/<[^>]*>/g, ' ');
-  
+
   // タグを抽出（#で始まり、文字、数字、アンダースコア、ハイフンを含む単語）
   const tagRegex = /#([\p{L}\p{N}_-]+)/gu;
-  const matches = [...plainText.matchAll(tagRegex)];
-  
+  const matches = Array.from(plainText.matchAll(tagRegex));
+
   // 重複を除去して返す
   return [...new Set(matches.map((match) => match[1]))];
 };
@@ -206,10 +204,10 @@ export const updateNoteTags = async (
   try {
     // コンテンツからタグを抽出
     const tagNames = extractTagsFromText(content);
-    
+
     // 既存のタグ関連付けをすべて削除
     await removeAllTagsFromNote(noteId);
-    
+
     // 新しいタグを作成または取得して関連付け
     for (const tagName of tagNames) {
       const tag = await getOrCreateTag(tagName, projectId);
