@@ -29,6 +29,10 @@ ALTER COLUMN urlId SET NOT NULL;
 ALTER TABLE public.notes
 ALTER COLUMN urlId SET NOT NULL;
 
+-- Disable the automatic project creation trigger
+DROP TRIGGER IF EXISTS create_default_project_after_signup ON auth.users;
+DROP FUNCTION IF EXISTS public.create_default_project_for_new_user();
+
 -- Create trigger function to ensure urlId is set on new records
 CREATE OR REPLACE FUNCTION public.set_url_id_if_not_provided()
 RETURNS TRIGGER AS $$
@@ -52,28 +56,3 @@ CREATE TRIGGER set_url_id_before_insert_notes
 BEFORE INSERT ON public.notes
 FOR EACH ROW
 EXECUTE FUNCTION public.set_url_id_if_not_provided();
-
--- Update the default project creation function to include urlId
-CREATE OR REPLACE FUNCTION public.create_default_project_for_new_user()
-RETURNS TRIGGER AS $$
-DECLARE
-  display_name TEXT;
-  new_url_id TEXT;
-BEGIN
-  -- Get user's display name or email
-  IF NEW.raw_user_meta_data->>'full_name' IS NOT NULL THEN
-    display_name := NEW.raw_user_meta_data->>'full_name';
-  ELSE
-    display_name := split_part(NEW.email, '@', 1);
-  END IF;
-  
-  -- Generate a random urlId (placeholder)
-  new_url_id := encode(gen_random_bytes(10), 'hex');
-  
-  -- Create default project with urlId
-  INSERT INTO public.projects (name, description, owner_id, urlId)
-  VALUES (display_name || '''s Project', 'Default project', NEW.id, new_url_id);
-  
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
