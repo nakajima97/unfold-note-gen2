@@ -1,7 +1,9 @@
 import { supabase } from '@/lib/supabase';
+import { generateUniqueUrlId } from '@/lib/utils/urlId';
 
 export interface Note {
   id: string;
+  url_id: string;
   title: string;
   content: string;
   project_id: string;
@@ -50,6 +52,46 @@ export const getNoteById = async (noteId: string): Promise<Note | null> => {
 };
 
 /**
+ * urlIdによる単一ノートの取得
+ */
+export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
+  try {
+    // まずRPCを試す
+    const { data: rpcData, error: rpcError } = await supabase.rpc('get_note_by_url_id', {
+      url_id_param: urlId
+    });
+    
+    if (rpcError) {
+      console.error('Error fetching note by URL ID using RPC:', rpcError);
+      
+      // RPCが失敗した場合、直接クエリを実行
+      console.log('Falling back to direct query for note');
+      const { data: queryData, error: queryError } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('url_id', urlId)
+        .single();
+        
+      if (queryError) {
+        if (queryError.code === 'PGRST116') {
+          // PGRST116は「行が返されなかった」エラーコード
+          return null;
+        }
+        console.error('Error fetching note by URL ID using direct query:', queryError);
+        return null;
+      }
+      
+      return queryData;
+    }
+    
+    return rpcData;
+  } catch (error) {
+    console.error('Error in getNoteByUrlId:', error);
+    return null;
+  }
+};
+
+/**
  * タイトル、内容、またはタグによるノート検索
  */
 export const searchNotes = async (
@@ -83,24 +125,71 @@ export const createNote = async (noteData: {
   content: string;
   projectId: string;
 }): Promise<Note> => {
-  const { data, error } = await supabase
-    .from('notes')
-    .insert([
-      {
-        title: noteData.title,
-        content: noteData.content,
-        project_id: noteData.projectId,
-      },
-    ])
-    .select()
-    .single();
+  try {
+    // URL識別子の生成
+    const urlId = await generateUniqueUrlId(async (id) => {
+      try {
+        const { data, error } = await supabase
+          .from('notes')
+          .select('id', { count: 'exact', head: true })
+          .eq('url_id', id);
+          
+        if (error) {
+          console.error('Error checking urlId existence:', error);
+          return false;
+        }
+        
+        return (data?.length ?? 0) > 0;
+      } catch (error) {
+        console.error('Error checking urlId existence:', error);
+        return false;
+      }
+    });
 
-  if (error) {
+    console.log('Generated urlId for note:', urlId);
+
+    try {
+      // まずRPCを使用してノートを作成
+      const { data: rpcData, error: rpcError } = await supabase.rpc('create_note_with_url_id', {
+        title_param: noteData.title,
+        content_param: noteData.content,
+        project_id_param: noteData.projectId,
+        url_id_param: urlId
+      });
+
+      if (rpcError) {
+        console.error('Error creating note with RPC:', rpcError);
+        
+        // RPCが失敗した場合、直接挿入を試みる
+        console.log('Falling back to direct insert for note');
+        const { data: insertData, error: insertError } = await supabase
+          .from('notes')
+          .insert({
+            title: noteData.title,
+            content: noteData.content,
+            project_id: noteData.projectId,
+            url_id: urlId,
+          })
+          .select()
+          .single();
+          
+        if (insertError) {
+          console.error('Error in direct insert fallback:', insertError);
+          throw insertError;
+        }
+        
+        return insertData;
+      }
+
+      return rpcData;
+    } catch (createError) {
+      console.error('Error in note creation process:', createError);
+      throw createError;
+    }
+  } catch (error) {
     console.error('ノート作成エラー:', error);
     throw error;
   }
-
-  return data;
 };
 
 /**

@@ -3,12 +3,19 @@
 import NoteList from '@/features/notes/components/NoteList';
 import type React from 'react';
 import { useNoteListContainer } from './useNoteListContainer';
+import type { Note } from '@/lib/api/note';
 
 interface NoteListContainerProps {
-  projectId: string;
+  projectUrlId: string;
+  projectId?: string; 
+  initialNotes?: Note[]; // サーバーから取得した初期ノートデータ
 }
 
-const NoteListContainer: React.FC<NoteListContainerProps> = ({ projectId }) => {
+const NoteListContainer: React.FC<NoteListContainerProps> = ({ 
+  projectUrlId, 
+  projectId,
+  initialNotes = [] 
+}) => {
   const {
     notes,
     isLoading,
@@ -17,7 +24,11 @@ const NoteListContainer: React.FC<NoteListContainerProps> = ({ projectId }) => {
     handleNoteClick,
     handleSearchChange,
     handleNewNoteClick,
-  } = useNoteListContainer({ projectId });
+  } = useNoteListContainer({ 
+    projectUrlId, 
+    projectId,
+    initialNotes
+  });
 
   return (
     <NoteList

@@ -7,16 +7,19 @@ import { useNoteEditContainer } from './useNoteEditContainer';
 export interface NoteEditContainerProps {
   projectId: string;
   noteId: string;
+  projectUrlId?: string;
 }
 
 const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
   projectId,
   noteId,
+  projectUrlId,
 }) => {
   const { note, isLoading, isSubmitting, error, handleSubmit, handleCancel } =
     useNoteEditContainer({
       projectId,
       noteId,
+      projectUrlId,
     });
 
   // ロード中の表示
