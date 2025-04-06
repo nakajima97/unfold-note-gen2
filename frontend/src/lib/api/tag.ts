@@ -150,7 +150,7 @@ export const getTagsByNoteId = async (noteId: string): Promise<Tag[]> => {
 export const getNotesByTagName = async (
   tagName: string,
   projectId: string,
-): Promise<string[]> => {
+): Promise<{ id: string; url_id: string }[]> => {
   const { data, error } = await supabase
     .from('tags')
     .select('id')
@@ -169,6 +169,7 @@ export const getNotesByTagName = async (
 
   const tagId = data.id;
 
+  // まず、note_tagsテーブルからnote_idのみを取得
   const { data: noteTagsData, error: noteTagsError } = await supabase
     .from('note_tags')
     .select('note_id')
@@ -179,7 +180,26 @@ export const getNotesByTagName = async (
     throw noteTagsError;
   }
 
-  return noteTagsData.map((item) => item.note_id);
+  if (noteTagsData.length === 0) {
+    return [];
+  }
+
+  // 取得したnote_idを使って、notesテーブルからid, url_idを取得
+  const noteIds = noteTagsData.map(item => item.note_id);
+  const { data: notesData, error: notesError } = await supabase
+    .from('notes')
+    .select('id, url_id')
+    .in('id', noteIds);
+
+  if (notesError) {
+    console.error('ノート情報の取得エラー:', notesError);
+    throw notesError;
+  }
+
+  return notesData.map(note => ({
+    id: note.id,
+    url_id: note.url_id
+  }));
 };
 
 /**

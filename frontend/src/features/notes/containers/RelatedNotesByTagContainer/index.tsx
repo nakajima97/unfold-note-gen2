@@ -23,8 +23,27 @@ const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
     content,
   });
 
-  const handleNoteClick = (noteId: string) => {
-    router.push(`/projects/${projectId}/notes/${noteId}`);
+  const handleNoteClick = (noteUrlId: string) => {
+    console.log('RelatedNotesByTagContainer.handleNoteClick called with:', noteUrlId);
+    console.log('noteUrlId type:', typeof noteUrlId);
+    console.log('projectId:', projectId);
+    
+    // noteUrlIdが空文字列やundefinedの場合は、エラーログを出力
+    if (!noteUrlId) {
+      console.error('Error: noteUrlId is empty or undefined');
+      return;
+    }
+    
+    const url = `/projects/${projectId}/notes/${noteUrlId}`;
+    console.log('Navigating to URL:', url);
+    
+    try {
+      console.log('About to call router.push with:', url);
+      router.push(url);
+      console.log('router.push called successfully');
+    } catch (error) {
+      console.error('Error during navigation:', error);
+    }
   };
 
   return (

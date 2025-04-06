@@ -15,14 +15,34 @@ import type React from 'react';
 
 export interface NoteCardProps {
   note: Note;
-  onClick: (noteId: string) => void;
+  onClick: (noteUrlId: string) => void;
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
+  // デバッグ用にノート情報をログ出力
+  console.log('NoteCard rendering with note id:', note.id);
+  console.log('NoteCard rendering with note url_id:', note.url_id);
+  console.log('NoteCard rendering with note title:', note.title);
+  
+  // クリックハンドラー
+  const handleClick = () => {
+    // url_idが存在する場合はそれを使用し、存在しない場合はidを使用
+    const idToUse = note.url_id || note.id;
+    console.log('NoteCard clicked with id:', idToUse);
+    console.log('url_id type:', typeof note.url_id);
+    console.log('url_id value:', note.url_id);
+    console.log('onClick function:', onClick);
+    
+    // 実際にクリックハンドラーを呼び出す前にログを出力
+    console.log('About to call onClick with:', idToUse);
+    onClick(idToUse);
+    console.log('onClick called successfully');
+  };
+
   return (
     <Card
       className="cursor-pointer hover:shadow-md transition-shadow"
-      onClick={() => onClick(note.id)}
+      onClick={handleClick}
     >
       <CardHeader className="pb-2">
         <CardTitle className="line-clamp-1">{note.title}</CardTitle>
