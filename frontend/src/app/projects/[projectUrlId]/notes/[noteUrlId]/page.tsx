@@ -15,43 +15,28 @@ const NotePage = async ({ params }: NotePageProps) => {
   const resolvedParams = await params;
   const { projectUrlId, noteUrlId } = resolvedParams;
 
-  console.log('NotePage: Fetching project and note with URL IDs:', { projectUrlId, noteUrlId });
-
   // urlIdからプロジェクトを取得
   const projectData = await getProjectByUrlId(projectUrlId);
   
   if (!projectData) {
-    console.error('NotePage: Project not found with URL ID:', projectUrlId);
     notFound();
   }
 
   // プロジェクトデータが配列の場合は最初の要素を取得
   const project = Array.isArray(projectData) ? projectData[0] : projectData;
-  console.log('NotePage: Project found:', project);
 
   // urlIdからノートを取得
   const noteData = await getNoteByUrlId(noteUrlId);
   
   if (!noteData) {
-    console.error('NotePage: Note not found with URL ID:', noteUrlId);
     notFound();
   }
 
   // ノートデータが配列の場合は最初の要素を取得
   const note = Array.isArray(noteData) ? noteData[0] : noteData;
-  console.log('NotePage: Note found:', note);
 
   // プロジェクトIDが一致するか確認
-  console.log('NotePage: Checking project relationship:', {
-    noteProjectId: note.project_id,
-    projectId: project.id
-  });
-  
   if (note.project_id !== project.id) {
-    console.error('NotePage: Note does not belong to this project', {
-      noteProjectId: note.project_id,
-      projectId: project.id
-    });
     notFound();
   }
 

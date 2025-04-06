@@ -13,20 +13,15 @@ const NewNotePage = async ({ params }: NewNotePageProps) => {
   const resolvedParams = await params;
   const projectUrlId = resolvedParams.projectUrlId;
   
-  console.log('NewNotePage: Fetching project with URL ID:', projectUrlId);
-  
   // urlIdからプロジェクトを取得
   const projectData = await getProjectByUrlId(projectUrlId);
   
   if (!projectData) {
-    console.error('NewNotePage: Project not found with URL ID:', projectUrlId);
     notFound();
   }
 
   // プロジェクトデータが配列の場合は最初の要素を取得
   const project = Array.isArray(projectData) ? projectData[0] : projectData;
-  
-  console.log('NewNotePage: Project found:', project);
 
   return (
     <NoteCreateContainer 

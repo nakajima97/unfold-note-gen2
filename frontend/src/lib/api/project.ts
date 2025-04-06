@@ -57,10 +57,7 @@ export const getProjectById = async (projectId: string): Promise<Project | null>
  */
 export const getProjectByUrlId = async (urlId: string): Promise<Project | null> => {
   try {
-    console.log('getProjectByUrlId called with:', urlId);
-    
     // 直接SQLを使用してプロジェクトを取得
-    console.log('Attempting to fetch project using RPC');
     const { data, error } = await supabase
       .rpc('get_project_by_url_id', {
         url_id_param: urlId
@@ -70,7 +67,6 @@ export const getProjectByUrlId = async (urlId: string): Promise<Project | null> 
       console.error('Error fetching project by URL ID using RPC:', error);
       
       // RPCが失敗した場合、直接クエリを試みる
-      console.log('Falling back to direct query');
       const { data: queryData, error: queryError } = await supabase
         .from('projects')
         .select('*')
@@ -82,13 +78,11 @@ export const getProjectByUrlId = async (urlId: string): Promise<Project | null> 
         return null;
       }
       
-      console.log('Project found using direct query:', queryData);
       return queryData;
     }
 
     // RPCから返されたデータが配列の場合は最初の要素を取得
     const project = Array.isArray(data) ? data[0] : data;
-    console.log('Project found using RPC:', project);
     return project;
   } catch (error) {
     console.error('Error in getProjectByUrlId:', error);
@@ -125,8 +119,6 @@ export const createProject = async (
         return false;
       }
     });
-
-    console.log('Generated urlId:', urlId);
 
     try {
       // 直接SQLを使用してプロジェクトを作成
