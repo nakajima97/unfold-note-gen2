@@ -9,11 +9,13 @@ import { useEffect, useState } from 'react';
 export interface UseNoteEditContainerProps {
   projectId: string;
   noteId: string;
+  projectUrlId?: string; // プロジェクトのURLID
 }
 
 export const useNoteEditContainer = ({
   projectId,
   noteId,
+  projectUrlId,
 }: UseNoteEditContainerProps) => {
   const router = useRouter();
   const [note, setNote] = useState<Note | null>(null);
@@ -72,7 +74,12 @@ export const useNoteEditContainer = ({
       await updateNoteTags(noteId, updatedNote.content, projectId);
 
       // 更新後、ノート一覧ページに戻る
-      router.push(`/projects/${projectId}/notes`);
+      if (projectUrlId) {
+        router.push(`/projects/${projectUrlId}/notes`);
+      } else {
+        // フォールバック: 内部IDを使用
+        router.push(`/projects/${projectId}/notes`);
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err : new Error('ノートの更新に失敗しました'),
@@ -85,7 +92,12 @@ export const useNoteEditContainer = ({
   // キャンセル処理
   const handleCancel = () => {
     // ノート一覧に戻る
-    router.push(`/projects/${projectId}/notes`);
+    if (projectUrlId) {
+      router.push(`/projects/${projectUrlId}/notes`);
+    } else {
+      // フォールバック: 内部IDを使用
+      router.push(`/projects/${projectId}/notes`);
+    }
   };
 
   return {

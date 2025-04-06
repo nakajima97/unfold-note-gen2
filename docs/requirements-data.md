@@ -18,6 +18,7 @@ User {
 ```
 Project {
   id: string (primary key)
+  urlId: string (unique, 15文字のランダム値)
   name: string
   description: string (optional)
   ownerId: string (foreign key -> User.id)
@@ -31,6 +32,7 @@ Project {
 ```
 Note {
   id: string (primary key)
+  urlId: string (unique, 15文字のランダム値)
   title: string
   content: string (markdown)
   projectId: string (foreign key -> Project.id)
@@ -87,8 +89,8 @@ AllowedEmail {
 
 #### 1.8.1 インデックス
 - ユーザーテーブル: email列にユニークインデックス
-- プロジェクトテーブル: ownerId列にインデックス
-- ノートテーブル: projectId列にインデックス、title列にインデックス
+- プロジェクトテーブル: ownerId列にインデックス、urlId列にユニークインデックス
+- ノートテーブル: projectId列にインデックス、title列にインデックス、urlId列にユニークインデックス
 - タグテーブル: name列とprojectId列の複合インデックス
 - ファイルテーブル: noteId列とprojectId列にインデックス
 

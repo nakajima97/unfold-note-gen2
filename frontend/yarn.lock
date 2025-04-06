@@ -11113,6 +11113,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^5.1.5":
+  version: 5.1.5
+  resolution: "nanoid@npm:5.1.5"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 10c0/e6004f1ad6c7123eeb037062c4441d44982037dc043aabb162457ef6986e99964ba98c63c975f96c547403beb0bf95bc537bd7bf9a09baf381656acdc2975c3c
+  languageName: node
+  linkType: hard
+
 "natural-compare@npm:^1.4.0":
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
@@ -11169,6 +11178,7 @@ __metadata:
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
     lucide-react: "npm:^0.483.0"
+    nanoid: "npm:^5.1.5"
     next: "npm:15.0.1"
     postcss: "npm:^8.5.3"
     react: "npm:19.0.0-rc-69d4b800-20241021"

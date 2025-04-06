@@ -7,6 +7,7 @@ import RelatedNotesByTag from './index';
 const sampleNotes: Note[] = [
   {
     id: '2',
+    url_id: 'how-to-use-tags',
     title: 'How to use tags',
     content:
       'Tags are a powerful way to organize your notes. Simply add a #tag1 to your note and it will be automatically tagged.',
@@ -16,6 +17,7 @@ const sampleNotes: Note[] = [
   },
   {
     id: '3',
+    url_id: 'project-planning',
     title: 'Project Planning',
     content:
       'Here are some ideas for the project:\n- Implement search functionality\n- Add #tag1 and #tag2 support\n- Create mobile app',
@@ -25,6 +27,7 @@ const sampleNotes: Note[] = [
   },
   {
     id: '4',
+    url_id: 'meeting-notes',
     title: 'Meeting Notes',
     content:
       'Meeting with the team on 2025-03-25:\n- Discussed project timeline\n- Assigned #tag2 tasks\n- Next meeting scheduled for next week',

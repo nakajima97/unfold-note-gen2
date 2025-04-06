@@ -23,8 +23,13 @@ const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
     content,
   });
 
-  const handleNoteClick = (noteId: string) => {
-    router.push(`/projects/${projectId}/notes/${noteId}`);
+  const handleNoteClick = (noteUrlId: string) => {
+    if (!noteUrlId) {
+      return;
+    }
+
+    const url = `/projects/${projectId}/notes/${noteUrlId}`;
+    router.push(url);
   };
 
   return (

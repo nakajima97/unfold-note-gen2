@@ -10,12 +10,19 @@ export interface UseRelatedNotesByTagProps {
   content: string;
 }
 
+// Note型を拡張してurl_idを明示的に含める
+interface NoteWithUrlId extends Note {
+  url_id: string;
+}
+
 export const useRelatedNotesByTag = ({
   currentNoteId,
   projectId,
   content,
 }: UseRelatedNotesByTagProps) => {
-  const [groupedNotes, setGroupedNotes] = useState<Record<string, Note[]>>({});
+  const [groupedNotes, setGroupedNotes] = useState<
+    Record<string, NoteWithUrlId[]>
+  >({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [tags, setTags] = useState<string[]>([]);
@@ -52,24 +59,55 @@ export const useRelatedNotesByTag = ({
         setError(null);
 
         // タグごとにノートをグループ化
-        const grouped: Record<string, Note[]> = {};
+        const grouped: Record<string, NoteWithUrlId[]> = {};
 
         // 各タグについて処理
         for (const tag of tags) {
-          // そのタグを持つノートIDを取得
-          const noteIds = await getNotesByTagName(tag, projectId);
+          // そのタグを持つノート情報（id, url_id）を取得
+          const taggedNotes = await getNotesByTagName(tag, projectId);
 
           // 現在のノートを除外
-          const filteredNoteIds = noteIds.filter((id) => id !== currentNoteId);
+          const filteredNotes = taggedNotes.filter(
+            (note) => note.id !== currentNoteId,
+          );
 
-          if (filteredNoteIds.length > 0) {
+          if (filteredNotes.length > 0) {
             // ノートの詳細情報を取得
-            const notesPromises = filteredNoteIds.map((id) => getNoteById(id));
+            const notesPromises = filteredNotes.map(async (note) => {
+              try {
+                const noteData = await getNoteById(note.id);
+
+                if (noteData) {
+                  // 重要: url_idを明示的に上書き
+                  const noteWithUrlId = {
+                    ...noteData,
+                    url_id: note.url_id, // getNotesByTagNameから取得したurl_idを使用
+                  } as NoteWithUrlId;
+
+                  return noteWithUrlId;
+                }
+              } catch (error) {
+                // エラーが発生した場合は静かに処理
+              }
+
+              // getNoteByIdでエラーが発生した場合や、ノートが見つからなかった場合は、
+              // タグから取得したノート情報を最低限の情報として返す
+              return {
+                id: note.id,
+                url_id: note.url_id,
+                title: 'タイトル不明',
+                content: '',
+                project_id: projectId,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              } as NoteWithUrlId;
+            });
+
             const notes = await Promise.all(notesPromises);
 
-            // nullを除外
+            // nullを除外（この実装では常にnullではないはずだが、型安全のため）
             const validNotes = notes.filter(
-              (note): note is Note => note !== null,
+              (note): note is NoteWithUrlId => note !== null && !!note.url_id,
             );
 
             // タグをキーとしてノートを格納

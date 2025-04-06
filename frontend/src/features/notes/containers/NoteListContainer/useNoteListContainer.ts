@@ -1,45 +1,94 @@
 'use client';
 
-import { getProjectNotes, searchNotes } from '@/lib/api/note';
+import { getNoteByUrlId, getProjectNotes, searchNotes } from '@/lib/api/note';
 import type { Note } from '@/lib/api/note';
+import { getProjectByUrlId } from '@/lib/api/project';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export interface UseNoteListContainerProps {
-  projectId: string;
+  projectUrlId: string;
+  projectId?: string;
+  initialNotes?: Note[];
 }
 
 export const useNoteListContainer = ({
-  projectId,
+  projectUrlId,
+  projectId: initialProjectId,
+  initialNotes = [],
 }: UseNoteListContainerProps) => {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [notes, setNotes] = useState<Note[]>(initialNotes);
+  const [isLoading, setIsLoading] = useState(initialNotes.length === 0);
   const [error, setError] = useState<Error | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [projectId, setProjectId] = useState<string | null>(
+    initialProjectId || null,
+  );
   const router = useRouter();
 
-  // Fetch notes when component mounts or projectId changes
+  // Fetch project to get internal ID (only if not provided)
   useEffect(() => {
+    // 既にプロジェクトIDが提供されている場合はスキップ
+    if (projectId) {
+      return;
+    }
+
+    const fetchProject = async () => {
+      try {
+        setIsLoading(true);
+        const project = await getProjectByUrlId(projectUrlId);
+
+        if (project) {
+          setProjectId(project.id);
+        } else {
+          setError(new Error(`Project with URL ID ${projectUrlId} not found`));
+        }
+      } catch (err) {
+        console.error('Error fetching project:', err);
+        setError(
+          err instanceof Error ? err : new Error('Failed to fetch project'),
+        );
+      }
+    };
+
+    fetchProject();
+  }, [projectUrlId, projectId]);
+
+  // Fetch notes when projectId is available (only if initialNotes is empty)
+  useEffect(() => {
+    // 初期ノートデータが提供されている場合はスキップ
+    if (initialNotes.length > 0) {
+      setIsLoading(false);
+      return;
+    }
+
+    if (!projectId) {
+      return;
+    }
+
     const fetchNotes = async () => {
       try {
         setIsLoading(true);
         const fetchedNotes = await getProjectNotes(projectId);
         setNotes(fetchedNotes);
         setError(null);
+        setIsLoading(false);
       } catch (err) {
+        console.error('Error fetching notes:', err);
         setError(
           err instanceof Error ? err : new Error('Failed to fetch notes'),
         );
-      } finally {
         setIsLoading(false);
       }
     };
 
     fetchNotes();
-  }, [projectId]);
+  }, [projectId, initialNotes.length]);
 
   // Handle search term changes with debounce
   useEffect(() => {
+    if (!projectId) return;
+
     const debounceTimeout = setTimeout(async () => {
       if (searchTerm.trim() === '') {
         // If search term is empty, fetch all notes
@@ -47,6 +96,7 @@ export const useNoteListContainer = ({
           const fetchedNotes = await getProjectNotes(projectId);
           setNotes(fetchedNotes);
         } catch (err) {
+          console.error('Error fetching notes during search:', err);
           setError(
             err instanceof Error ? err : new Error('Failed to fetch notes'),
           );
@@ -57,6 +107,7 @@ export const useNoteListContainer = ({
           const searchResults = await searchNotes(projectId, searchTerm);
           setNotes(searchResults);
         } catch (err) {
+          console.error('Error searching notes:', err);
           setError(
             err instanceof Error ? err : new Error('Failed to search notes'),
           );
@@ -68,12 +119,13 @@ export const useNoteListContainer = ({
   }, [searchTerm, projectId]);
 
   // Handle note click
-  const handleNoteClick = (noteId: string) => {
-    router.push(`/projects/${projectId}/notes/${noteId}`);
+  const handleNoteClick = (noteUrlId: string) => {
+    // noteUrlIdを直接使用してページ遷移
+    router.push(`/projects/${projectUrlId}/notes/${noteUrlId}`);
   };
 
   const handleNewNoteClick = () => {
-    router.push(`/projects/${projectId}/notes/new`);
+    router.push(`/projects/${projectUrlId}/notes/new`);
   };
 
   // Handle search change

@@ -4,13 +4,18 @@ import NoteCard from '@/features/notes/components/NoteCard';
 import type { Note } from '@/lib/api/note';
 import type React from 'react';
 
+// Note型を拡張してurl_idを明示的に含める
+interface NoteWithUrlId extends Note {
+  url_id: string;
+}
+
 export interface RelatedNotesByTagProps {
-  groupedNotes: Record<string, Note[]>;
+  groupedNotes: Record<string, NoteWithUrlId[]>;
   isLoading: boolean;
   error: Error | null;
   tags: string[];
   projectId: string;
-  onNoteClick: (noteId: string) => void;
+  onNoteClick: (noteUrlId: string) => void;
 }
 
 const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({

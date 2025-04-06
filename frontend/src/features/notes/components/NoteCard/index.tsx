@@ -15,14 +15,20 @@ import type React from 'react';
 
 export interface NoteCardProps {
   note: Note;
-  onClick: (noteId: string) => void;
+  onClick: (noteUrlId: string) => void;
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
+  // クリックハンドラー
+  const handleClick = () => {
+    // 常にurl_idを使用する
+    onClick(note.url_id);
+  };
+
   return (
     <Card
       className="cursor-pointer hover:shadow-md transition-shadow"
-      onClick={() => onClick(note.id)}
+      onClick={handleClick}
     >
       <CardHeader className="pb-2">
         <CardTitle className="line-clamp-1">{note.title}</CardTitle>
@@ -43,7 +49,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
       <CardFooter className="pt-2 flex flex-wrap gap-2">
         {extractTags(note.content).map((tag) => (
           <span
-            key={`tag-${note.id}-${tag}`}
+            key={`tag-${note.url_id}-${tag}`}
             className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
           >
             #{tag}

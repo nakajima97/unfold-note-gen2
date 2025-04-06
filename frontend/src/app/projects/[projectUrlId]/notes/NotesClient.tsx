@@ -3,11 +3,11 @@
 import NoteListContainer from '@/features/notes/containers/NoteListContainer';
 
 interface NotesClientProps {
-  projectId: string;
+  projectUrlId: string;
 }
 
-const NotesClient = ({ projectId }: NotesClientProps) => {
-  return <NoteListContainer projectId={projectId} />;
+const NotesClient = ({ projectUrlId }: NotesClientProps) => {
+  return <NoteListContainer projectUrlId={projectUrlId} />;
 };
 
 export default NotesClient;
