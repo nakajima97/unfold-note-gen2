@@ -17,7 +17,7 @@ const NotePage = async ({ params }: NotePageProps) => {
 
   // urlIdからプロジェクトを取得
   const projectData = await getProjectByUrlId(projectUrlId);
-  
+
   if (!projectData) {
     notFound();
   }
@@ -27,7 +27,7 @@ const NotePage = async ({ params }: NotePageProps) => {
 
   // urlIdからノートを取得
   const noteData = await getNoteByUrlId(noteUrlId);
-  
+
   if (!noteData) {
     notFound();
   }
@@ -40,7 +40,13 @@ const NotePage = async ({ params }: NotePageProps) => {
     notFound();
   }
 
-  return <NoteEditContainer noteId={note.id} projectId={project.id} projectUrlId={projectUrlId} />;
+  return (
+    <NoteEditContainer
+      noteId={note.id}
+      projectId={project.id}
+      projectUrlId={projectUrlId}
+    />
+  );
 };
 
 export default NotePage;

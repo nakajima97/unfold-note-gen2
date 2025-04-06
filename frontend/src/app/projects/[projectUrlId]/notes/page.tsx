@@ -1,6 +1,6 @@
 import NoteListContainer from '@/features/notes/containers/NoteListContainer';
-import { getProjectByUrlId } from '@/lib/api/project';
 import { getProjectNotes } from '@/lib/api/note';
+import { getProjectByUrlId } from '@/lib/api/project';
 import { notFound } from 'next/navigation';
 
 type NoteListPageProps = {
@@ -13,10 +13,10 @@ const NotesPage = async ({ params }: NoteListPageProps) => {
   // paramsオブジェクト自体をawaitする
   const resolvedParams = await params;
   const projectUrlId = resolvedParams.projectUrlId;
-  
+
   // urlIdからプロジェクトを取得
   const projectData = await getProjectByUrlId(projectUrlId);
-  
+
   if (!projectData) {
     notFound();
   }
@@ -29,10 +29,10 @@ const NotesPage = async ({ params }: NoteListPageProps) => {
 
   // プロジェクトのIDとURLID、およびノートデータをクライアントコンポーネントに渡す
   return (
-    <NoteListContainer 
-      projectId={project.id} 
-      projectUrlId={projectUrlId} 
-      initialNotes={notes} 
+    <NoteListContainer
+      projectId={project.id}
+      projectUrlId={projectUrlId}
+      initialNotes={notes}
     />
   );
 };

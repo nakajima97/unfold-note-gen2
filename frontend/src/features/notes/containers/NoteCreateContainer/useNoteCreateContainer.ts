@@ -38,15 +38,19 @@ export const useNoteCreateContainer = ({
 
       // 作成されたノートのIDとurl_idが存在することを確認
       if (!newNote) {
-        throw new Error('ノートの作成に失敗しました: ノートデータが取得できません');
+        throw new Error(
+          'ノートの作成に失敗しました: ノートデータが取得できません',
+        );
       }
-      
+
       if (!newNote.id) {
         throw new Error('ノートの作成に失敗しました: ノートIDが取得できません');
       }
-      
+
       if (!newNote.url_id) {
-        throw new Error('ノートの作成に失敗しました: ノートのURL IDが取得できません');
+        throw new Error(
+          'ノートの作成に失敗しました: ノートのURL IDが取得できません',
+        );
       }
 
       // ノートからタグを抽出して保存

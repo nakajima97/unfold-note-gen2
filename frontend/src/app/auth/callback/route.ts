@@ -14,7 +14,7 @@ export const GET = async (request: NextRequest) => {
       // If we have a user, redirect to their notes page
       if (data.user) {
         console.log('User authenticated:', data.user.id);
-        
+
         try {
           // Get user's projects
           const projects = await getUserProjects(data.user.id);
@@ -23,23 +23,27 @@ export const GET = async (request: NextRequest) => {
           // If user has no projects, create a default project
           if (projects.length === 0) {
             console.log('Creating default project for user');
-            
-            const displayName = data.user.user_metadata?.full_name || 
-                               data.user.email?.split('@')[0] || 
-                               'My';
-            
+
+            const displayName =
+              data.user.user_metadata?.full_name ||
+              data.user.email?.split('@')[0] ||
+              'My';
+
             try {
               const defaultProject = await createProject(
-                `${displayName}'s Project`, 
-                data.user.id, 
-                'Default project'
+                `${displayName}'s Project`,
+                data.user.id,
+                'Default project',
               );
-              
+
               console.log('Default project created:', defaultProject);
-              
+
               // Redirect to the newly created project
               return NextResponse.redirect(
-                new URL(`/projects/${defaultProject.url_id}/notes`, requestUrl.origin),
+                new URL(
+                  `/projects/${defaultProject.url_id}/notes`,
+                  requestUrl.origin,
+                ),
               );
             } catch (projectError) {
               console.error('Error creating default project:', projectError);
@@ -48,9 +52,12 @@ export const GET = async (request: NextRequest) => {
           } else {
             // If user has projects, redirect to the first project's notes page
             console.log('Redirecting to existing project:', projects[0].url_id);
-            
+
             return NextResponse.redirect(
-              new URL(`/projects/${projects[0].url_id}/notes`, requestUrl.origin),
+              new URL(
+                `/projects/${projects[0].url_id}/notes`,
+                requestUrl.origin,
+              ),
             );
           }
         } catch (error) {

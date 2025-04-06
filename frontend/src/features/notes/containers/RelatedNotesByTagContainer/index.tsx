@@ -27,7 +27,7 @@ const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
     if (!noteUrlId) {
       return;
     }
-    
+
     const url = `/projects/${projectId}/notes/${noteUrlId}`;
     router.push(url);
   };

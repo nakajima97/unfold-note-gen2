@@ -6,7 +6,7 @@ import { useNoteCreateContainer } from './useNoteCreateContainer';
 
 export interface NoteCreateContainerProps {
   projectId: string;
-  projectUrlId: string; 
+  projectUrlId: string;
 }
 
 const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({

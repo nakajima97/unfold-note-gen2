@@ -12,23 +12,25 @@ export const generateUrlId = customAlphabet(alphabet, 15);
  * @returns 一意のURL識別子
  */
 export const generateUniqueUrlId = async (
-  checkExistence: (urlId: string) => Promise<boolean>
+  checkExistence: (urlId: string) => Promise<boolean>,
 ): Promise<string> => {
   // 最大試行回数
   const maxAttempts = 10;
   let attempts = 0;
-  
+
   while (attempts < maxAttempts) {
     const urlId = generateUrlId();
     // IDが既に存在するかチェック
     const exists = await checkExistence(urlId);
-    
+
     if (!exists) {
       return urlId;
     }
-    
+
     attempts++;
   }
-  
-  throw new Error('一意のURL識別子を生成できませんでした。後でもう一度お試しください。');
+
+  throw new Error(
+    '一意のURL識別子を生成できませんでした。後でもう一度お試しください。',
+  );
 };

@@ -17,7 +17,7 @@ const Home = () => {
       try {
         const { data } = await supabase.auth.getUser();
         setUser(data.user);
-        
+
         // ユーザーがログインしている場合、プロジェクトを確認
         if (data.user) {
           console.log('User logged in:', data.user.id);
@@ -43,18 +43,17 @@ const Home = () => {
       if (projects.length === 0) {
         // プロジェクトがない場合は作成
         console.log('Creating default project for user');
-        const displayName = user.user_metadata?.full_name || 
-                           user.email?.split('@')[0] || 
-                           'My';
-        
+        const displayName =
+          user.user_metadata?.full_name || user.email?.split('@')[0] || 'My';
+
         const defaultProject = await createProject(
-          `${displayName}'s Project`, 
-          user.id, 
-          'Default project'
+          `${displayName}'s Project`,
+          user.id,
+          'Default project',
         );
-        
+
         console.log('Default project created:', defaultProject);
-        
+
         // 作成したプロジェクトのノート一覧ページにリダイレクト
         router.push(`/projects/${defaultProject.url_id}/notes`);
       } else {

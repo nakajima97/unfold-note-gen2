@@ -33,7 +33,9 @@ export const getUserProjects = async (userId: string): Promise<Project[]> => {
 /**
  * Get a project by its ID
  */
-export const getProjectById = async (projectId: string): Promise<Project | null> => {
+export const getProjectById = async (
+  projectId: string,
+): Promise<Project | null> => {
   const { data, error } = await supabase
     .from('projects')
     .select('*')
@@ -55,29 +57,33 @@ export const getProjectById = async (projectId: string): Promise<Project | null>
 /**
  * Get a project by its URL ID
  */
-export const getProjectByUrlId = async (urlId: string): Promise<Project | null> => {
+export const getProjectByUrlId = async (
+  urlId: string,
+): Promise<Project | null> => {
   try {
     // 直接SQLを使用してプロジェクトを取得
-    const { data, error } = await supabase
-      .rpc('get_project_by_url_id', {
-        url_id_param: urlId
-      });
+    const { data, error } = await supabase.rpc('get_project_by_url_id', {
+      url_id_param: urlId,
+    });
 
     if (error) {
       console.error('Error fetching project by URL ID using RPC:', error);
-      
+
       // RPCが失敗した場合、直接クエリを試みる
       const { data: queryData, error: queryError } = await supabase
         .from('projects')
         .select('*')
         .eq('url_id', urlId)
         .single();
-        
+
       if (queryError) {
-        console.error('Error fetching project by URL ID using direct query:', queryError);
+        console.error(
+          'Error fetching project by URL ID using direct query:',
+          queryError,
+        );
         return null;
       }
-      
+
       return queryData;
     }
 
@@ -107,12 +113,12 @@ export const createProject = async (
           .from('projects')
           .select('id', { count: 'exact', head: true })
           .eq('url_id', id);
-          
+
         if (error) {
           console.error('Error checking urlId existence:', error);
           return false;
         }
-        
+
         return (data?.length ?? 0) > 0;
       } catch (error) {
         console.error('Error checking urlId existence:', error);
@@ -136,22 +142,24 @@ export const createProject = async (
 
       if (error) {
         console.error('Error creating project with direct insert:', error);
-        
+
         // 直接挿入が失敗した場合、RPCを試みる
         console.log('Falling back to RPC for project creation');
-        const { data: rpcData, error: rpcError } = await supabase
-          .rpc('create_project_with_url_id', {
+        const { data: rpcData, error: rpcError } = await supabase.rpc(
+          'create_project_with_url_id',
+          {
             name_param: name,
             description_param: description,
             owner_id_param: ownerId,
-            url_id_param: urlId
-          });
-          
+            url_id_param: urlId,
+          },
+        );
+
         if (rpcError) {
           console.error('Error creating project with RPC:', rpcError);
           throw rpcError;
         }
-        
+
         return rpcData;
       }
 

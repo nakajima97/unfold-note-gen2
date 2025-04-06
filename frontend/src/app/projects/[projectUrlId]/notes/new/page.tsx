@@ -12,10 +12,10 @@ const NewNotePage = async ({ params }: NewNotePageProps) => {
   // paramsオブジェクト自体をawaitする
   const resolvedParams = await params;
   const projectUrlId = resolvedParams.projectUrlId;
-  
+
   // urlIdからプロジェクトを取得
   const projectData = await getProjectByUrlId(projectUrlId);
-  
+
   if (!projectData) {
     notFound();
   }
@@ -24,10 +24,7 @@ const NewNotePage = async ({ params }: NewNotePageProps) => {
   const project = Array.isArray(projectData) ? projectData[0] : projectData;
 
   return (
-    <NoteCreateContainer 
-      projectId={project.id} 
-      projectUrlId={projectUrlId} 
-    />
+    <NoteCreateContainer projectId={project.id} projectUrlId={projectUrlId} />
   );
 };
 

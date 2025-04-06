@@ -62,34 +62,40 @@ export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
       .select('*')
       .eq('url_id', urlId)
       .single();
-      
+
     if (!queryError) {
       return queryData;
     }
-    
+
     if (queryError.code !== 'PGRST116') {
       // PGRST116以外のエラーの場合はエラーを投げる
-      console.error('Error fetching note by URL ID using direct query:', queryError);
+      console.error(
+        'Error fetching note by URL ID using direct query:',
+        queryError,
+      );
       throw queryError;
     }
-    
+
     // 直接クエリで見つからなかった場合はRPCを試みる
-    const { data: rpcData, error: rpcError } = await supabase.rpc('get_note_by_url_id', {
-      url_id_param: urlId
-    });
-    
+    const { data: rpcData, error: rpcError } = await supabase.rpc(
+      'get_note_by_url_id',
+      {
+        url_id_param: urlId,
+      },
+    );
+
     if (rpcError) {
       console.error('Error fetching note by URL ID using RPC:', rpcError);
       return null;
     }
-    
+
     if (Array.isArray(rpcData)) {
       if (rpcData.length === 0) {
         return null;
       }
       return rpcData[0];
     }
-    
+
     return rpcData;
   } catch (error) {
     console.error('Error in getNoteByUrlId:', error);
@@ -138,12 +144,12 @@ export const createNote = async (noteData: {
           .from('notes')
           .select('id', { count: 'exact', head: true })
           .eq('url_id', id);
-          
+
         if (error) {
           console.error('Error checking urlId existence:', error);
           return false;
         }
-        
+
         return (data?.length ?? 0) > 0;
       } catch (error) {
         console.error('Error checking urlId existence:', error);
@@ -152,16 +158,19 @@ export const createNote = async (noteData: {
     });
 
     try {
-      const { data: rpcData, error: rpcError } = await supabase.rpc('create_note_with_url_id', {
-        title_param: noteData.title,
-        content_param: noteData.content,
-        project_id_param: noteData.projectId,
-        url_id_param: urlId
-      });
+      const { data: rpcData, error: rpcError } = await supabase.rpc(
+        'create_note_with_url_id',
+        {
+          title_param: noteData.title,
+          content_param: noteData.content,
+          project_id_param: noteData.projectId,
+          url_id_param: urlId,
+        },
+      );
 
       if (rpcError) {
         console.error('Error creating note with RPC:', rpcError);
-        
+
         const { data: insertData, error: insertError } = await supabase
           .from('notes')
           .insert({
@@ -172,22 +181,22 @@ export const createNote = async (noteData: {
           })
           .select()
           .single();
-          
+
         if (insertError) {
           console.error('Error in direct insert fallback:', insertError);
           throw insertError;
         }
-        
+
         return insertData;
       }
-      
+
       if (Array.isArray(rpcData)) {
         if (rpcData.length === 0) {
           throw new Error('ノート作成に失敗しました: 空の配列が返されました');
         }
         return rpcData[0];
       }
-      
+
       if (!rpcData) {
         throw new Error('ノート作成に失敗しました: データが返されませんでした');
       }

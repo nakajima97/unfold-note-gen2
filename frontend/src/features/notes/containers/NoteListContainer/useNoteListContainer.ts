@@ -1,14 +1,14 @@
 'use client';
 
-import { getProjectByUrlId } from '@/lib/api/project';
 import { getNoteByUrlId, getProjectNotes, searchNotes } from '@/lib/api/note';
 import type { Note } from '@/lib/api/note';
+import { getProjectByUrlId } from '@/lib/api/project';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export interface UseNoteListContainerProps {
   projectUrlId: string;
-  projectId?: string; 
+  projectId?: string;
   initialNotes?: Note[];
 }
 
@@ -21,7 +21,9 @@ export const useNoteListContainer = ({
   const [isLoading, setIsLoading] = useState(initialNotes.length === 0);
   const [error, setError] = useState<Error | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [projectId, setProjectId] = useState<string | null>(initialProjectId || null);
+  const [projectId, setProjectId] = useState<string | null>(
+    initialProjectId || null,
+  );
   const router = useRouter();
 
   // Fetch project to get internal ID (only if not provided)
@@ -35,7 +37,7 @@ export const useNoteListContainer = ({
       try {
         setIsLoading(true);
         const project = await getProjectByUrlId(projectUrlId);
-        
+
         if (project) {
           setProjectId(project.id);
         } else {

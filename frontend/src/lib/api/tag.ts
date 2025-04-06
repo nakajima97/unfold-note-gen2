@@ -97,7 +97,7 @@ export const removeAllTagsFromNote = async (noteId: string): Promise<void> => {
     console.error('Invalid note ID provided to removeAllTagsFromNote:', noteId);
     throw new Error('有効なノートIDが提供されていません');
   }
-  
+
   const { error } = await supabase
     .from('note_tags')
     .delete()
@@ -185,7 +185,7 @@ export const getNotesByTagName = async (
   }
 
   // 取得したnote_idを使って、notesテーブルからid, url_idを取得
-  const noteIds = noteTagsData.map(item => item.note_id);
+  const noteIds = noteTagsData.map((item) => item.note_id);
   const { data: notesData, error: notesError } = await supabase
     .from('notes')
     .select('id, url_id')
@@ -196,9 +196,9 @@ export const getNotesByTagName = async (
     throw notesError;
   }
 
-  return notesData.map(note => ({
+  return notesData.map((note) => ({
     id: note.id,
-    url_id: note.url_id
+    url_id: note.url_id,
   }));
 };
 
