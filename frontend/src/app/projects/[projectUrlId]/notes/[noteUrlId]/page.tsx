@@ -1,6 +1,7 @@
 import NoteEditContainer from '@/features/notes/containers/NoteEditContainer';
 import { getNoteByUrlId } from '@/lib/api/note';
 import { getProjectByUrlId } from '@/lib/api/project';
+import { notFound } from 'next/navigation';
 
 type NotePageProps = {
   params: {
@@ -14,22 +15,44 @@ const NotePage = async ({ params }: NotePageProps) => {
   const resolvedParams = await params;
   const { projectUrlId, noteUrlId } = resolvedParams;
 
-  // urlIdからプロジェクトとノートを取得
-  const project = await getProjectByUrlId(projectUrlId);
+  console.log('NotePage: Fetching project and note with URL IDs:', { projectUrlId, noteUrlId });
+
+  // urlIdからプロジェクトを取得
+  const projectData = await getProjectByUrlId(projectUrlId);
   
-  if (!project) {
-    throw new Error(`Project with URL ID ${projectUrlId} not found`);
+  if (!projectData) {
+    console.error('NotePage: Project not found with URL ID:', projectUrlId);
+    notFound();
   }
 
-  const note = await getNoteByUrlId(noteUrlId);
+  // プロジェクトデータが配列の場合は最初の要素を取得
+  const project = Array.isArray(projectData) ? projectData[0] : projectData;
+  console.log('NotePage: Project found:', project);
+
+  // urlIdからノートを取得
+  const noteData = await getNoteByUrlId(noteUrlId);
   
-  if (!note) {
-    throw new Error(`Note with URL ID ${noteUrlId} not found`);
+  if (!noteData) {
+    console.error('NotePage: Note not found with URL ID:', noteUrlId);
+    notFound();
   }
+
+  // ノートデータが配列の場合は最初の要素を取得
+  const note = Array.isArray(noteData) ? noteData[0] : noteData;
+  console.log('NotePage: Note found:', note);
 
   // プロジェクトIDが一致するか確認
+  console.log('NotePage: Checking project relationship:', {
+    noteProjectId: note.project_id,
+    projectId: project.id
+  });
+  
   if (note.project_id !== project.id) {
-    throw new Error('Note does not belong to this project');
+    console.error('NotePage: Note does not belong to this project', {
+      noteProjectId: note.project_id,
+      projectId: project.id
+    });
+    notFound();
   }
 
   return <NoteEditContainer noteId={note.id} projectId={project.id} projectUrlId={projectUrlId} />;

@@ -8,10 +8,12 @@ import { useState } from 'react';
 
 export interface UseNoteCreateContainerProps {
   projectId: string;
+  projectUrlId: string; 
 }
 
 export const useNoteCreateContainer = ({
   projectId,
+  projectUrlId,
 }: UseNoteCreateContainerProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,6 +29,8 @@ export const useNoteCreateContainer = ({
     setError(null);
 
     try {
+      console.log('Creating note with project ID:', projectId);
+      
       // ノートを作成
       const newNote = await createNote({
         title: note.title,
@@ -34,12 +38,35 @@ export const useNoteCreateContainer = ({
         projectId,
       });
 
-      // ノートからタグを抽出して保存
-      await updateNoteTags(newNote.id, note.content, projectId);
+      console.log('Note created successfully:', newNote);
 
-      // 新しく作成されたノートに遷移
-      router.push(`/projects/${projectId}/notes/${newNote.id}`);
+      // 作成されたノートのIDとurl_idが存在することを確認
+      if (!newNote) {
+        throw new Error('ノートの作成に失敗しました: ノートデータが取得できません');
+      }
+      
+      if (!newNote.id) {
+        throw new Error('ノートの作成に失敗しました: ノートIDが取得できません');
+      }
+      
+      if (!newNote.url_id) {
+        throw new Error('ノートの作成に失敗しました: ノートのURL IDが取得できません');
+      }
+
+      // ノートからタグを抽出して保存
+      try {
+        await updateNoteTags(newNote.id, note.content || '', projectId);
+        console.log('Tags updated successfully');
+      } catch (tagError) {
+        console.error('Tag update error:', tagError);
+        // タグ更新エラーはノート作成自体を失敗とはしない
+      }
+
+      // 新しく作成されたノートに遷移（url_idを使用）
+      console.log('Redirecting to new note:', `/projects/${projectUrlId}/notes/${newNote.url_id}`);
+      router.push(`/projects/${projectUrlId}/notes/${newNote.url_id}`);
     } catch (err) {
+      console.error('Note creation error:', err);
       setError(
         err instanceof Error ? err : new Error('ノートの作成に失敗しました'),
       );
@@ -50,7 +77,7 @@ export const useNoteCreateContainer = ({
 
   const handleCancel = () => {
     // ノート一覧に戻る
-    router.push(`/projects/${projectId}/notes`);
+    router.push(`/projects/${projectUrlId}/notes`);
   };
 
   return {

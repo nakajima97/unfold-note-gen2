@@ -92,6 +92,14 @@ export const associateTagWithNote = async (
  * ノートに関連付けられたすべてのタグを削除する
  */
 export const removeAllTagsFromNote = async (noteId: string): Promise<void> => {
+  // ノートIDが存在するか確認
+  if (!noteId || noteId === 'undefined') {
+    console.error('Invalid note ID provided to removeAllTagsFromNote:', noteId);
+    throw new Error('有効なノートIDが提供されていません');
+  }
+
+  console.log('Removing all tags from note:', noteId);
+  
   const { error } = await supabase
     .from('note_tags')
     .delete()
@@ -202,17 +210,30 @@ export const updateNoteTags = async (
   projectId: string,
 ): Promise<void> => {
   try {
+    console.log('Updating tags for note:', { noteId, projectId });
+    
+    // ノートIDが存在するか確認
+    if (!noteId || noteId === 'undefined') {
+      console.error('Invalid note ID provided:', noteId);
+      throw new Error('有効なノートIDが提供されていません');
+    }
+
     // コンテンツからタグを抽出
     const tagNames = extractTagsFromText(content);
+    console.log('Extracted tags:', tagNames);
 
     // 既存のタグ関連付けをすべて削除
     await removeAllTagsFromNote(noteId);
+    console.log('Removed all existing tags from note');
 
     // 新しいタグを作成または取得して関連付け
     for (const tagName of tagNames) {
       const tag = await getOrCreateTag(tagName, projectId);
       await associateTagWithNote(noteId, tag.id);
+      console.log('Associated tag with note:', tagName);
     }
+    
+    console.log('Tags update completed successfully');
   } catch (error) {
     console.error('ノートのタグ更新エラー:', error);
     throw error;

@@ -56,7 +56,10 @@ export const getNoteById = async (noteId: string): Promise<Note | null> => {
  */
 export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
   try {
+    console.log('getNoteByUrlId called with:', urlId);
+    
     // まずRPCを試す
+    console.log('Attempting to fetch note using RPC');
     const { data: rpcData, error: rpcError } = await supabase.rpc('get_note_by_url_id', {
       url_id_param: urlId
     });
@@ -75,13 +78,28 @@ export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
       if (queryError) {
         if (queryError.code === 'PGRST116') {
           // PGRST116は「行が返されなかった」エラーコード
+          console.log('Note not found with URL ID:', urlId);
           return null;
         }
         console.error('Error fetching note by URL ID using direct query:', queryError);
         return null;
       }
       
+      console.log('Note found using direct query:', queryData);
       return queryData;
+    }
+    
+    // RPCから返されるデータをログに出力
+    console.log('RPC returned note data:', rpcData);
+    
+    // RPCから返されるデータが配列の場合は最初の要素を取得
+    if (Array.isArray(rpcData)) {
+      console.log('RPC returned an array for note, extracting first element');
+      if (rpcData.length === 0) {
+        console.log('Note not found (empty array) with URL ID:', urlId);
+        return null;
+      }
+      return rpcData[0];
     }
     
     return rpcData;
@@ -178,7 +196,25 @@ export const createNote = async (noteData: {
           throw insertError;
         }
         
+        console.log('Note created via direct insert:', insertData);
         return insertData;
+      }
+
+      // RPCから返されるデータをログに出力
+      console.log('RPC returned data:', rpcData);
+      
+      // RPCから返されるデータが配列の場合は最初の要素を取得
+      if (Array.isArray(rpcData)) {
+        console.log('RPC returned an array, extracting first element');
+        if (rpcData.length === 0) {
+          throw new Error('ノート作成に失敗しました: 空の配列が返されました');
+        }
+        return rpcData[0];
+      }
+      
+      // nullやundefinedの場合はエラーを投げる
+      if (!rpcData) {
+        throw new Error('ノート作成に失敗しました: データが返されませんでした');
       }
 
       return rpcData;

@@ -6,14 +6,17 @@ import { useNoteCreateContainer } from './useNoteCreateContainer';
 
 export interface NoteCreateContainerProps {
   projectId: string;
+  projectUrlId: string; 
 }
 
 const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
   projectId,
+  projectUrlId,
 }) => {
   const { isSubmitting, error, handleSubmit, handleCancel } =
     useNoteCreateContainer({
       projectId,
+      projectUrlId,
     });
 
   // エラーがある場合は表示
