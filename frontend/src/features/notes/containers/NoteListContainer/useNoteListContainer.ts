@@ -117,12 +117,9 @@ export const useNoteListContainer = ({
   }, [searchTerm, projectId]);
 
   // Handle note click
-  const handleNoteClick = (noteId: string) => {
-    // Find the note to get its urlId
-    const note = notes.find(n => n.id === noteId);
-    if (note) {
-      router.push(`/projects/${projectUrlId}/notes/${note.url_id}`);
-    }
+  const handleNoteClick = (noteUrlId: string) => {
+    // noteUrlIdを直接使用してページ遷移
+    router.push(`/projects/${projectUrlId}/notes/${noteUrlId}`);
   };
 
   const handleNewNoteClick = () => {

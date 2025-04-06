@@ -33,8 +33,6 @@ export const getProjectNotes = async (projectId: string): Promise<Note[]> => {
  * IDによる単一ノートの取得
  */
 export const getNoteById = async (noteId: string): Promise<Note | null> => {
-  console.log('getNoteById called with id:', noteId);
-  
   const { data, error } = await supabase
     .from('notes')
     .select('*')
@@ -44,19 +42,10 @@ export const getNoteById = async (noteId: string): Promise<Note | null> => {
   if (error) {
     if (error.code === 'PGRST116') {
       // PGRST116は「行が返されなかった」エラーコード
-      console.log('getNoteById: ノートが見つかりませんでした');
       return null;
     }
     console.error('ノート取得エラー:', error);
     throw error;
-  }
-
-  console.log('getNoteById result:', data);
-  console.log('getNoteById url_id:', data?.url_id);
-  
-  // url_idが存在しない場合は、エラーログを出力
-  if (!data.url_id) {
-    console.error('Error: Note does not have url_id', data);
   }
 
   return data;
@@ -66,22 +55,15 @@ export const getNoteById = async (noteId: string): Promise<Note | null> => {
  * urlIdによる単一ノートの取得
  */
 export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
-  console.log('getNoteByUrlId called with urlId:', urlId);
-  
   try {
     // まず直接クエリを試みる（RPCよりも信頼性が高い）
-    console.log('Attempting to get note by URL ID using direct query first');
     const { data: queryData, error: queryError } = await supabase
       .from('notes')
       .select('*')
       .eq('url_id', urlId)
       .single();
-    
-    console.log('Direct query result:', queryData);
-    console.log('Direct query error:', queryError);
       
     if (!queryError) {
-      console.log('Note found with direct query:', queryData);
       return queryData;
     }
     
@@ -92,13 +74,9 @@ export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
     }
     
     // 直接クエリで見つからなかった場合はRPCを試みる
-    console.log('Note not found with direct query, attempting RPC');
     const { data: rpcData, error: rpcError } = await supabase.rpc('get_note_by_url_id', {
       url_id_param: urlId
     });
-    
-    console.log('RPC result:', rpcData);
-    console.log('RPC error:', rpcError);
     
     if (rpcError) {
       console.error('Error fetching note by URL ID using RPC:', rpcError);
@@ -107,14 +85,11 @@ export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
     
     if (Array.isArray(rpcData)) {
       if (rpcData.length === 0) {
-        console.log('RPC returned empty array');
         return null;
       }
-      console.log('RPC returned array with data:', rpcData[0]);
       return rpcData[0];
     }
     
-    console.log('RPC returned data:', rpcData);
     return rpcData;
   } catch (error) {
     console.error('Error in getNoteByUrlId:', error);

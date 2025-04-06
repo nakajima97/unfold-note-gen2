@@ -19,24 +19,10 @@ export interface NoteCardProps {
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
-  // デバッグ用にノート情報をログ出力
-  console.log('NoteCard rendering with note id:', note.id);
-  console.log('NoteCard rendering with note url_id:', note.url_id);
-  console.log('NoteCard rendering with note title:', note.title);
-  
   // クリックハンドラー
   const handleClick = () => {
-    // url_idが存在する場合はそれを使用し、存在しない場合はidを使用
-    const idToUse = note.url_id || note.id;
-    console.log('NoteCard clicked with id:', idToUse);
-    console.log('url_id type:', typeof note.url_id);
-    console.log('url_id value:', note.url_id);
-    console.log('onClick function:', onClick);
-    
-    // 実際にクリックハンドラーを呼び出す前にログを出力
-    console.log('About to call onClick with:', idToUse);
-    onClick(idToUse);
-    console.log('onClick called successfully');
+    // 常にurl_idを使用する
+    onClick(note.url_id);
   };
 
   return (
@@ -63,7 +49,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
       <CardFooter className="pt-2 flex flex-wrap gap-2">
         {extractTags(note.content).map((tag) => (
           <span
-            key={`tag-${note.id}-${tag}`}
+            key={`tag-${note.url_id}-${tag}`}
             className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
           >
             #{tag}
