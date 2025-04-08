@@ -7,12 +7,14 @@ import { useRouter } from 'next/navigation';
 export interface RelatedNotesByTagContainerProps {
   currentNoteId: string;
   projectId: string;
+  projectUrlId?: string; // Add projectUrlId prop
   content: string;
 }
 
 const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
   currentNoteId,
   projectId,
+  projectUrlId,
   content,
 }) => {
   const router = useRouter();
@@ -28,7 +30,9 @@ const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
       return;
     }
 
-    const url = `/projects/${projectId}/notes/${noteUrlId}`;
+    // Use projectUrlId if available, otherwise fall back to projectId
+    const projectIdentifier = projectUrlId || projectId;
+    const url = `/projects/${projectIdentifier}/notes/${noteUrlId}`;
     router.push(url);
   };
 
