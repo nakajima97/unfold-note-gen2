@@ -63,6 +63,7 @@ const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
       initialTitle={note.title}
       initialContent={note.content}
       projectId={projectId}
+      projectUrlId={projectUrlId}
       noteId={noteId}
     />
   );

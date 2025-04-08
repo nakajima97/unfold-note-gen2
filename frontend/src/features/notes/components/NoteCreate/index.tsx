@@ -27,6 +27,7 @@ export interface NoteCreateProps {
   initialTitle?: string;
   initialContent?: string;
   projectId: string;
+  projectUrlId?: string; // プロジェクトのURL ID
   noteId?: string; // 編集時のノートID
 }
 
@@ -37,6 +38,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   initialTitle = '',
   initialContent = '',
   projectId,
+  projectUrlId,
   noteId,
 }) => {
   const [title, setTitle] = React.useState(initialTitle);
@@ -342,6 +344,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
           <RelatedNotesByTagContainer
             currentNoteId={noteId}
             projectId={projectId}
+            projectUrlId={projectUrlId}
             content={debouncedContent}
           />
         </div>
