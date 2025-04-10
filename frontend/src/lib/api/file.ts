@@ -77,9 +77,10 @@ export const uploadImage = async (projectId: string, file: File) => {
         }
 
         // publicバケットから署名付きURLを取得（60分間有効）
-        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-          .from('public')
-          .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
+        const { data: signedUrlData, error: signedUrlError } =
+          await supabase.storage
+            .from('public')
+            .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
 
         if (signedUrlError) {
           throw new Error(`署名付きURL生成エラー: ${signedUrlError.message}`);
@@ -92,9 +93,10 @@ export const uploadImage = async (projectId: string, file: File) => {
     }
 
     // 画像の署名付きURLを取得（60分間有効）
-    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-      .from(bucketName)
-      .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
+    const { data: signedUrlData, error: signedUrlError } =
+      await supabase.storage
+        .from(bucketName)
+        .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
 
     if (signedUrlError) {
       throw new Error(`署名付きURL生成エラー: ${signedUrlError.message}`);
