@@ -38,7 +38,6 @@ export const uploadImage = async (projectId: string, file: File) => {
             console.error('バケット作成エラー:', createError);
             // エラーがあっても処理を続行
           } else {
-            console.log(`バケット '${bucketName}' を作成しました`);
           }
         }
       }
@@ -63,8 +62,6 @@ export const uploadImage = async (projectId: string, file: File) => {
     if (error) {
       // バケットが見つからない場合は、publicバケットを試す
       if (error.message.includes('Bucket not found')) {
-        console.log('バケットが見つからないため、publicバケットを使用します');
-
         // publicバケットにアップロード
         const { data: publicData, error: publicError } = await supabase.storage
           .from('public')
