@@ -109,14 +109,18 @@ export const getFileInfoFromUrl = (url: string) => {
     // URLからパスを抽出
     const parsedUrl = new URL(url);
     const pathParts = parsedUrl.pathname.split('/');
-    
+
     // Supabase Storageの標準パスフォーマット: /storage/v1/object/public/[bucket]/[path]
-    if (pathParts.length >= 6 && pathParts[1] === 'storage' && pathParts[2] === 'v1') {
+    if (
+      pathParts.length >= 6 &&
+      pathParts[1] === 'storage' &&
+      pathParts[2] === 'v1'
+    ) {
       const bucket = pathParts[5];
       const filePath = pathParts.slice(6).join('/');
       return { bucket, filePath };
     }
-    
+
     return null;
   } catch (error) {
     console.error('URL解析エラー:', error);
@@ -130,17 +134,20 @@ export const getFileInfoFromUrl = (url: string) => {
  * @param bucketName バケット名（デフォルト: 'notes'）
  * @returns 画像ファイルの一覧
  */
-export const getProjectImages = async (projectId: string, bucketName = 'notes') => {
+export const getProjectImages = async (
+  projectId: string,
+  bucketName = 'notes',
+) => {
   try {
     const { data, error } = await supabase.storage
       .from(bucketName)
       .list(projectId);
-    
+
     if (error) {
       console.error('プロジェクト画像一覧取得エラー:', error);
       return [];
     }
-    
+
     return data || [];
   } catch (error) {
     console.error('プロジェクト画像一覧取得エラー:', error);
