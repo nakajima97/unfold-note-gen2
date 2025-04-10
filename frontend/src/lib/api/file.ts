@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
  * 画像ファイルをアップロードする
  * @param projectId プロジェクトID
  * @param file アップロードするファイル
- * @returns アップロードされたファイルのURL
+ * @returns アップロードされたファイルの署名付きURL
  */
 export const uploadImage = async (projectId: string, file: File) => {
   try {
@@ -30,7 +30,7 @@ export const uploadImage = async (projectId: string, file: File) => {
           const { error: createError } = await supabase.storage.createBucket(
             bucketName,
             {
-              public: true, // 公開バケットとして作成
+              public: false, // プライベートバケットとして作成
             },
           );
 
@@ -38,7 +38,6 @@ export const uploadImage = async (projectId: string, file: File) => {
             console.error('バケット作成エラー:', createError);
             // エラーがあっても処理を続行
           } else {
-            console.log(`バケット '${bucketName}' を作成しました`);
           }
         }
       }
@@ -63,8 +62,6 @@ export const uploadImage = async (projectId: string, file: File) => {
     if (error) {
       // バケットが見つからない場合は、publicバケットを試す
       if (error.message.includes('Bucket not found')) {
-        console.log('バケットが見つからないため、publicバケットを使用します');
-
         // publicバケットにアップロード
         const { data: publicData, error: publicError } = await supabase.storage
           .from('public')
@@ -79,25 +76,91 @@ export const uploadImage = async (projectId: string, file: File) => {
           );
         }
 
-        // publicバケットからURLを取得
-        const { data: publicUrlData } = supabase.storage
-          .from('public')
-          .getPublicUrl(filePath);
+        // publicバケットから署名付きURLを取得（60分間有効）
+        const { data: signedUrlData, error: signedUrlError } =
+          await supabase.storage
+            .from('public')
+            .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
 
-        return publicUrlData.publicUrl;
+        if (signedUrlError) {
+          throw new Error(`署名付きURL生成エラー: ${signedUrlError.message}`);
+        }
+
+        return signedUrlData.signedUrl;
       }
 
       throw new Error(`画像のアップロードに失敗しました: ${error.message}`);
     }
 
-    // 画像のURLを取得
-    const { data: urlData } = supabase.storage
-      .from(bucketName)
-      .getPublicUrl(filePath);
+    // 画像の署名付きURLを取得（60分間有効）
+    const { data: signedUrlData, error: signedUrlError } =
+      await supabase.storage
+        .from(bucketName)
+        .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
 
-    return urlData.publicUrl;
+    if (signedUrlError) {
+      throw new Error(`署名付きURL生成エラー: ${signedUrlError.message}`);
+    }
+
+    return signedUrlData.signedUrl;
   } catch (error) {
     console.error('画像アップロードエラー:', error);
     throw error;
+  }
+};
+
+/**
+ * Supabase Storage URLからファイル情報を抽出する
+ * @param url Supabase Storage URL
+ * @returns バケット名とファイルパスを含むオブジェクト、または解析できない場合はnull
+ */
+export const getFileInfoFromUrl = (url: string) => {
+  try {
+    // URLからパスを抽出
+    const parsedUrl = new URL(url);
+    const pathParts = parsedUrl.pathname.split('/');
+
+    // Supabase Storageの標準パスフォーマット: /storage/v1/object/public/[bucket]/[path]
+    if (
+      pathParts.length >= 6 &&
+      pathParts[1] === 'storage' &&
+      pathParts[2] === 'v1'
+    ) {
+      const bucket = pathParts[5];
+      const filePath = pathParts.slice(6).join('/');
+      return { bucket, filePath };
+    }
+
+    return null;
+  } catch (error) {
+    console.error('URL解析エラー:', error);
+    return null;
+  }
+};
+
+/**
+ * プロジェクトに関連する全ての画像を取得する
+ * @param projectId プロジェクトID
+ * @param bucketName バケット名（デフォルト: 'notes'）
+ * @returns 画像ファイルの一覧
+ */
+export const getProjectImages = async (
+  projectId: string,
+  bucketName = 'notes',
+) => {
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .list(projectId);
+
+    if (error) {
+      console.error('プロジェクト画像一覧取得エラー:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('プロジェクト画像一覧取得エラー:', error);
+    return [];
   }
 };

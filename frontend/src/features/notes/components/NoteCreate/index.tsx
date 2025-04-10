@@ -12,6 +12,7 @@ import { Label } from '@/components/shadcn/ui/label';
 import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import Tag from '@/features/notes/extensions/tag';
 import type { Note } from '@/features/notes/types';
+import { uploadImage } from '@/lib/api/file';
 import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -52,7 +53,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
     extensions: [
       StarterKit,
       Image.configure({
-        allowBase64: true, // 重要: base64画像を許可
+        allowBase64: true, // 一時的な画像表示のために残す
         inline: false,
       }),
       Tag, // タグ拡張を追加
@@ -77,21 +78,8 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
                 continue;
               }
 
-              // Base64エンコーディングを使用して画像を直接埋め込む
-              const fileReader = new FileReader();
-
-              // Promise化したFileReaderを使用
-              const dataUrl = await new Promise<string>((resolve, reject) => {
-                fileReader.onload = () => {
-                  if (typeof fileReader.result === 'string') {
-                    resolve(fileReader.result);
-                  } else {
-                    reject(new Error('FileReader result is not a string'));
-                  }
-                };
-                fileReader.onerror = () => reject(fileReader.error);
-                fileReader.readAsDataURL(file);
-              });
+              // Supabase Storageに画像をアップロード
+              const imageUrl = await uploadImage(projectId, file);
 
               // エディタに画像を挿入
               currentEditor
@@ -99,7 +87,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
                 .insertContentAt(pos, {
                   type: 'image',
                   attrs: {
-                    src: dataUrl,
+                    src: imageUrl,
                     alt: file.name,
                   },
                 })
@@ -108,7 +96,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
             }
           } catch (error) {
             console.error('画像アップロードエラー:', error);
-            alert('画像の処理に失敗しました');
+            alert('画像のアップロードに失敗しました');
           } finally {
             setIsUploading(false);
           }
@@ -129,21 +117,8 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
                 continue;
               }
 
-              // Base64エンコーディングを使用して画像を直接埋め込む
-              const fileReader = new FileReader();
-
-              // Promise化したFileReaderを使用
-              const dataUrl = await new Promise<string>((resolve, reject) => {
-                fileReader.onload = () => {
-                  if (typeof fileReader.result === 'string') {
-                    resolve(fileReader.result);
-                  } else {
-                    reject(new Error('FileReader result is not a string'));
-                  }
-                };
-                fileReader.onerror = () => reject(fileReader.error);
-                fileReader.readAsDataURL(file);
-              });
+              // Supabase Storageに画像をアップロード
+              const imageUrl = await uploadImage(projectId, file);
 
               // エディタに画像を挿入（現在のカーソル位置）
               currentEditor
@@ -151,7 +126,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
                 .insertContentAt(currentEditor.state.selection.anchor, {
                   type: 'image',
                   attrs: {
-                    src: dataUrl,
+                    src: imageUrl,
                     alt: file.name,
                   },
                 })
@@ -160,7 +135,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
             }
           } catch (error) {
             console.error('画像アップロードエラー:', error);
-            alert('画像の処理に失敗しました');
+            alert('画像のアップロードに失敗しました');
           } finally {
             setIsUploading(false);
           }
