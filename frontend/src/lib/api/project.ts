@@ -79,7 +79,10 @@ export const getProjectByUrlId = async (
         .single();
 
       if (queryError) {
-        console.error('URL IDによるプロジェクト取得エラー(直接クエリ):', queryError);
+        console.error(
+          'URL IDによるプロジェクト取得エラー(直接クエリ):',
+          queryError,
+        );
         return null;
       }
 
