@@ -13,7 +13,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Clock } from 'lucide-react';
 import type React from 'react';
 
-export interface NoteCardProps {
+export type NoteCardProps = {
   note: Note;
   onClick: (noteUrlId: string) => void;
 }

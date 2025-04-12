@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-interface PrivateLayoutProps {
+type PrivateLayoutProps = {
   children: React.ReactNode;
 }
 

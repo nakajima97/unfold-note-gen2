@@ -6,7 +6,7 @@ import { getProjectByUrlId } from '@/lib/api/project';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export interface UseNoteListContainerProps {
+export type UseNoteListContainerProps = {
   projectUrlId: string;
   projectId?: string;
   initialNotes?: Note[];

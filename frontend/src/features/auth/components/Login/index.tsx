@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/shadcn/ui/input';
 import Image from 'next/image';
 
-interface LoginComponentProps {
+type LoginComponentProps = {
   email: string;
   setEmail: (email: string) => void;
   password: string;

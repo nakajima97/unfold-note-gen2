@@ -6,7 +6,7 @@ import { updateNoteTags } from '@/lib/api/tag';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export interface UseNoteEditContainerProps {
+export type UseNoteEditContainerProps = {
   projectId: string;
   noteId: string;
   projectUrlId?: string; // プロジェクトのURLID

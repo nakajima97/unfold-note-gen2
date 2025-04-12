@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-interface NotesLayoutProps {
+type NotesLayoutProps = {
   children: ReactNode;
 }
 

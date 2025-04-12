@@ -6,7 +6,7 @@ import { updateNoteTags } from '@/lib/api/tag';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export interface UseNoteCreateContainerProps {
+export type UseNoteCreateContainerProps = {
   projectId: string;
   projectUrlId: string;
 }

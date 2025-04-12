@@ -2,7 +2,7 @@ import type { Note } from '@/lib/api/note';
 
 export type { Note };
 
-export interface NoteListProps {
+export type NoteListProps = {
   notes: Note[];
   isLoading: boolean;
   error: Error | null;

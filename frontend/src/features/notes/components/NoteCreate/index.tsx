@@ -21,7 +21,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import './editor.css';
 
-export interface NoteCreateProps {
+export type NoteCreateProps = {
   isSubmitting: boolean;
   onSubmit: (note: Partial<Note>) => void;
   onCancel: () => void;

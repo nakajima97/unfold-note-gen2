@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { generateUniqueUrlId } from '@/lib/utils/urlId';
 
-export interface Note {
+export type Note = {
   id: string;
   urlId: string;
   title: string;

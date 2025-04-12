@@ -5,18 +5,18 @@ import type { Note } from '@/lib/api/note';
 import type React from 'react';
 
 // Note型を拡張してurlIdを明示的に含める
-interface NoteWithUrlId extends Note {
+type NoteWithUrlId = Note & {
   urlId: string;
-}
+};
 
-export interface RelatedNotesByTagProps {
+export type RelatedNotesByTagProps = {
   groupedNotes: Record<string, NoteWithUrlId[]>;
   isLoading: boolean;
   error: Error | null;
   tags: string[];
   projectId: string;
   onNoteClick: (noteUrlId: string) => void;
-}
+};
 
 const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
   groupedNotes,
