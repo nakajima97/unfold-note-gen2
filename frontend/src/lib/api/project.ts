@@ -27,6 +27,7 @@ export const getUserProjects = async (userId: string): Promise<Project[]> => {
     throw error;
   }
 
+  // url_idをurlIdに変換
   return data?.map(project => ({ ...project, urlId: project.url_id })) || [];
 };
 
