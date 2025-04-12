@@ -24,7 +24,6 @@ export const useLoginContainer = () => {
 
       // If user has projects, redirect to the first project's notes page
       if (projects.length > 0) {
-        console.log(projects[0]);
         router.push(`/projects/${projects[0].urlId}/notes`);
       } else {
         // This should not happen as per requirements, but just in case
