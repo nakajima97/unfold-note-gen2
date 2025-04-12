@@ -30,7 +30,7 @@ export type NoteCreateProps = {
   projectId: string;
   projectUrlId?: string; // プロジェクトのURL ID
   noteId?: string; // 編集時のノートID
-}
+};
 
 const NoteCreate: React.FC<NoteCreateProps> = ({
   isSubmitting,

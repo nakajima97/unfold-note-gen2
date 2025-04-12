@@ -9,7 +9,7 @@ export type RelatedNotesByTagContainerProps = {
   projectId: string;
   projectUrlId?: string; // projectUrlIdプロパティを追加
   content: string;
-}
+};
 
 const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
   currentNoteId,

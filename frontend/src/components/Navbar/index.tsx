@@ -7,7 +7,7 @@ import Link from 'next/link';
 type NavbarProps = {
   onLogout: () => void;
   isLoggingOut: boolean;
-}
+};
 
 const Navbar = ({ onLogout, isLoggingOut }: NavbarProps) => {
   return (

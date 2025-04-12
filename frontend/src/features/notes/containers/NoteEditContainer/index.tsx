@@ -8,7 +8,7 @@ export type NoteEditContainerProps = {
   projectId: string;
   noteId: string;
   projectUrlId?: string;
-}
+};
 
 const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
   projectId,

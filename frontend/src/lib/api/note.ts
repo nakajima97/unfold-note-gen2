@@ -9,7 +9,7 @@ export type Note = {
   project_id: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 /**
  * プロジェクトの全ノートを取得する

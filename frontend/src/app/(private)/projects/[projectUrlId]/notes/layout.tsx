@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 type NotesLayoutProps = {
   children: ReactNode;
-}
+};
 
 const NotesLayout = ({ children }: NotesLayoutProps) => {
   return (

@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 type PrivateLayoutProps = {
   children: React.ReactNode;
-}
+};
 
 const PrivateLayout = ({ children }: PrivateLayoutProps) => {
   const router = useRouter();

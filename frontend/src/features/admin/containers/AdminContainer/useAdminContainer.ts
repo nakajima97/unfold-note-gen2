@@ -5,13 +5,13 @@ import { useEffect, useState } from 'react';
 // エラー型の定義
 type ErrorWithMessage = {
   message: string;
-}
+};
 
 type AllowedEmail = {
   id: string;
   email: string;
   created_at: string;
-}
+};
 
 export const useAdminContainer = () => {
   const [allowedEmails, setAllowedEmails] = useState<AllowedEmail[]>([]);

@@ -8,12 +8,12 @@ export type UseRelatedNotesByTagProps = {
   currentNoteId: string;
   projectId: string;
   content: string;
-}
+};
 
 // Note型を拡張してurlIdを明示的に含める
 type NoteWithUrlId = Note & {
   urlId: string;
-}
+};
 
 export const useRelatedNotesByTag = ({
   currentNoteId,

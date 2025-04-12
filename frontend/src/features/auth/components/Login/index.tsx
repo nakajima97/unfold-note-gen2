@@ -23,7 +23,7 @@ type LoginComponentProps = {
   handleSignUp: (e: React.FormEvent) => Promise<void>;
   handleGoogleLogin: () => Promise<void>;
   toggleSignUp: () => void;
-}
+};
 
 const LoginComponent = ({
   email,

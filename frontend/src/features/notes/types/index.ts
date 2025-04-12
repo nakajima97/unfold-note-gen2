@@ -10,4 +10,4 @@ export type NoteListProps = {
   onSearchChange: (searchTerm: string) => void;
   searchTerm: string;
   onNewNoteClick?: () => void;
-}
+};

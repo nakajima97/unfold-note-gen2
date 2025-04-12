@@ -16,7 +16,7 @@ import type React from 'react';
 export type NoteCardProps = {
   note: Note;
   onClick: (noteUrlId: string) => void;
-}
+};
 
 const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
   // クリックハンドラー

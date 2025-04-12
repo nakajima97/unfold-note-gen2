@@ -13,7 +13,7 @@ type AllowedEmail = {
   id: string;
   email: string;
   created_at: string;
-}
+};
 
 type AdminPageComponentProps = {
   allowedEmails: AllowedEmail[];
@@ -25,7 +25,7 @@ type AdminPageComponentProps = {
   addAllowedEmail: (e: React.FormEvent) => Promise<void>;
   removeAllowedEmail: (id: string) => Promise<void>;
   navigateToHome: () => void;
-}
+};
 
 const AdminPageComponent = ({
   allowedEmails,

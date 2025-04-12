@@ -10,7 +10,7 @@ export type Project = {
   is_archived: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
 /**
  * ユーザーの全プロジェクトを取得

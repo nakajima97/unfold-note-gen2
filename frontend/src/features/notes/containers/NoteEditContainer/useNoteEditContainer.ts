@@ -10,7 +10,7 @@ export type UseNoteEditContainerProps = {
   projectId: string;
   noteId: string;
   projectUrlId?: string; // プロジェクトのURLID
-}
+};
 
 export const useNoteEditContainer = ({
   projectId,

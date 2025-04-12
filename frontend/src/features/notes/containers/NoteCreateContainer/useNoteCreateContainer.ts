@@ -9,7 +9,7 @@ import { useState } from 'react';
 export type UseNoteCreateContainerProps = {
   projectId: string;
   projectUrlId: string;
-}
+};
 
 export const useNoteCreateContainer = ({
   projectId,

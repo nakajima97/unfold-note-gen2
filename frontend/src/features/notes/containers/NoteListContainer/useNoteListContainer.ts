@@ -10,7 +10,7 @@ export type UseNoteListContainerProps = {
   projectUrlId: string;
   projectId?: string;
   initialNotes?: Note[];
-}
+};
 
 export const useNoteListContainer = ({
   projectUrlId,

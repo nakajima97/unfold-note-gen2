@@ -9,7 +9,7 @@ type NoteListContainerProps = {
   projectUrlId: string;
   projectId?: string;
   initialNotes?: Note[]; // サーバーから取得した初期ノートデータ
-}
+};
 
 const NoteListContainer: React.FC<NoteListContainerProps> = ({
   projectUrlId,
