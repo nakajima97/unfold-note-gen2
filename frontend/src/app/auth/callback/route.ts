@@ -41,7 +41,7 @@ export const GET = async (request: NextRequest) => {
               // Redirect to the newly created project
               return NextResponse.redirect(
                 new URL(
-                  `/projects/${defaultProject.url_id}/notes`,
+                  `/projects/${defaultProject.urlId}/notes`,
                   requestUrl.origin,
                 ),
               );
@@ -51,11 +51,11 @@ export const GET = async (request: NextRequest) => {
             }
           } else {
             // If user has projects, redirect to the first project's notes page
-            console.log('Redirecting to existing project:', projects[0].url_id);
+            console.log('Redirecting to existing project:', projects[0].urlId);
 
             return NextResponse.redirect(
               new URL(
-                `/projects/${projects[0].url_id}/notes`,
+                `/projects/${projects[0].urlId}/notes`,
                 requestUrl.origin,
               ),
             );

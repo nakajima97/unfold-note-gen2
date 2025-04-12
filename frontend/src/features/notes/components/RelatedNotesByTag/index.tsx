@@ -4,9 +4,9 @@ import NoteCard from '@/features/notes/components/NoteCard';
 import type { Note } from '@/lib/api/note';
 import type React from 'react';
 
-// Note型を拡張してurl_idを明示的に含める
+// Note型を拡張してurlIdを明示的に含める
 interface NoteWithUrlId extends Note {
-  url_id: string;
+  urlId: string;
 }
 
 export interface RelatedNotesByTagProps {

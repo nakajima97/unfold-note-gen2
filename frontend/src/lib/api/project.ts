@@ -3,7 +3,7 @@ import { generateUniqueUrlId } from '@/lib/utils/urlId';
 
 export interface Project {
   id: string;
-  url_id: string;
+  urlId: string;
   name: string;
   description: string | null;
   owner_id: string;

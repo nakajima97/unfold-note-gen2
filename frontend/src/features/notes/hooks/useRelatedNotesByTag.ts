@@ -10,9 +10,9 @@ export interface UseRelatedNotesByTagProps {
   content: string;
 }
 
-// Note型を拡張してurl_idを明示的に含める
+// Note型を拡張してurlIdを明示的に含める
 interface NoteWithUrlId extends Note {
-  url_id: string;
+  urlId: string;
 }
 
 export const useRelatedNotesByTag = ({
@@ -63,7 +63,7 @@ export const useRelatedNotesByTag = ({
 
         // 各タグについて処理
         for (const tag of tags) {
-          // そのタグを持つノート情報（id, url_id）を取得
+          // そのタグを持つノート情報（id, urlId）を取得
           const taggedNotes = await getNotesByTagName(tag, projectId);
 
           // 現在のノートを除外
@@ -78,10 +78,10 @@ export const useRelatedNotesByTag = ({
                 const noteData = await getNoteById(note.id);
 
                 if (noteData) {
-                  // 重要: url_idを明示的に上書き
+                  // 重要: urlIdを明示的に上書き
                   const noteWithUrlId = {
                     ...noteData,
-                    url_id: note.url_id, // getNotesByTagNameから取得したurl_idを使用
+                    urlId: note.urlId, // getNotesByTagNameから取得したurlIdを使用
                   } as NoteWithUrlId;
 
                   return noteWithUrlId;
@@ -94,7 +94,7 @@ export const useRelatedNotesByTag = ({
               // タグから取得したノート情報を最低限の情報として返す
               return {
                 id: note.id,
-                url_id: note.url_id,
+                urlId: note.urlId,
                 title: 'タイトル不明',
                 content: '',
                 project_id: projectId,
@@ -107,7 +107,7 @@ export const useRelatedNotesByTag = ({
 
             // nullを除外（この実装では常にnullではないはずだが、型安全のため）
             const validNotes = notes.filter(
-              (note): note is NoteWithUrlId => note !== null && !!note.url_id,
+              (note): note is NoteWithUrlId => note !== null && !!note.urlId,
             );
 
             // タグをキーとしてノートを格納

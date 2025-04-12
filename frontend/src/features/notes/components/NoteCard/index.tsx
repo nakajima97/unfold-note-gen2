@@ -21,8 +21,8 @@ export interface NoteCardProps {
 const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
   // クリックハンドラー
   const handleClick = () => {
-    // 常にurl_idを使用する
-    onClick(note.url_id);
+    // 常にurlIdを使用する
+    onClick(note.urlId);
   };
 
   return (
@@ -49,7 +49,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
       <CardFooter className="pt-2 flex flex-wrap gap-2">
         {extractTags(note.content).map((tag) => (
           <span
-            key={`tag-${note.url_id}-${tag}`}
+            key={`tag-${note.urlId}-${tag}`}
             className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
           >
             #{tag}

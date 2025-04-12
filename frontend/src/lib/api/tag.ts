@@ -150,7 +150,7 @@ export const getTagsByNoteId = async (noteId: string): Promise<Tag[]> => {
 export const getNotesByTagName = async (
   tagName: string,
   projectId: string,
-): Promise<{ id: string; url_id: string }[]> => {
+): Promise<{ id: string; urlId: string }[]> => {
   const { data, error } = await supabase
     .from('tags')
     .select('id')
@@ -198,7 +198,7 @@ export const getNotesByTagName = async (
 
   return notesData.map((note) => ({
     id: note.id,
-    url_id: note.url_id,
+    urlId: note.url_id,
   }));
 };
 

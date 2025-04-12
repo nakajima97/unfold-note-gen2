@@ -36,7 +36,7 @@ export const useNoteCreateContainer = ({
         projectId,
       });
 
-      // 作成されたノートのIDとurl_idが存在することを確認
+      // 作成されたノートのIDとurlIdが存在することを確認
       if (!newNote) {
         throw new Error(
           'ノートの作成に失敗しました: ノートデータが取得できません',
@@ -47,7 +47,7 @@ export const useNoteCreateContainer = ({
         throw new Error('ノートの作成に失敗しました: ノートIDが取得できません');
       }
 
-      if (!newNote.url_id) {
+      if (!newNote.urlId) {
         throw new Error(
           'ノートの作成に失敗しました: ノートのURL IDが取得できません',
         );
@@ -61,8 +61,8 @@ export const useNoteCreateContainer = ({
         // タグ更新エラーはノート作成自体を失敗とはしない
       }
 
-      // 新しく作成されたノートに遷移（url_idを使用）
-      router.push(`/projects/${projectUrlId}/notes/${newNote.url_id}`);
+      // 新しく作成されたノートに遷移（urlIdを使用）
+      router.push(`/projects/${projectUrlId}/notes/${newNote.urlId}`);
     } catch (err) {
       console.error('Note creation error:', err);
       setError(

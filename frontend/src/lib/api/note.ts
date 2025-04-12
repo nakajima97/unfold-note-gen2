@@ -3,7 +3,7 @@ import { generateUniqueUrlId } from '@/lib/utils/urlId';
 
 export interface Note {
   id: string;
-  url_id: string;
+  urlId: string;
   title: string;
   content: string;
   project_id: string;
@@ -26,7 +26,7 @@ export const getProjectNotes = async (projectId: string): Promise<Note[]> => {
     throw error;
   }
 
-  return data || [];
+  return data.map((note) => ({ ...note, urlId: note.url_id })) || [];
 };
 
 /**
@@ -48,7 +48,7 @@ export const getNoteById = async (noteId: string): Promise<Note | null> => {
     throw error;
   }
 
-  return data;
+  return { ...data, urlId: data.url_id };
 };
 
 /**
@@ -64,7 +64,7 @@ export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
       .single();
 
     if (!queryError) {
-      return queryData;
+      return { ...queryData, urlId: queryData.url_id };
     }
 
     if (queryError.code !== 'PGRST116') {
@@ -93,10 +93,10 @@ export const getNoteByUrlId = async (urlId: string): Promise<Note | null> => {
       if (rpcData.length === 0) {
         return null;
       }
-      return rpcData[0];
+      return { ...rpcData[0], urlId: rpcData[0].url_id };
     }
 
-    return rpcData;
+    return { ...rpcData, urlId: rpcData.url_id };
   } catch (error) {
     console.error('Error in getNoteByUrlId:', error);
     return null;
@@ -126,7 +126,7 @@ export const searchNotes = async (
     throw error;
   }
 
-  return data || [];
+  return data.map((note) => ({ ...note, urlId: note.url_id })) || [];
 };
 
 /**
@@ -187,21 +187,21 @@ export const createNote = async (noteData: {
           throw insertError;
         }
 
-        return insertData;
+        return { ...insertData, urlId: insertData.url_id };
       }
 
       if (Array.isArray(rpcData)) {
         if (rpcData.length === 0) {
           throw new Error('ノート作成に失敗しました: 空の配列が返されました');
         }
-        return rpcData[0];
+        return { ...rpcData[0], urlId: rpcData[0].url_id };
       }
 
       if (!rpcData) {
         throw new Error('ノート作成に失敗しました: データが返されませんでした');
       }
 
-      return rpcData;
+      return { ...rpcData, urlId: rpcData.url_id };
     } catch (createError) {
       console.error('Error in note creation process:', createError);
       throw createError;
@@ -234,7 +234,7 @@ export const updateNote = async (
     throw error;
   }
 
-  return data;
+  return { ...data, urlId: data.url_id };
 };
 
 /**
