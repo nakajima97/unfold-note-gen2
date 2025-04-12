@@ -164,3 +164,89 @@ export const getProjectImages = async (
     return [];
   }
 };
+
+/**
+ * 画像URLを新しい署名付きURLに更新する
+ * @param imageUrl 元の画像URL
+ * @param expiresIn 有効期限（秒）、デフォルトは1日
+ * @returns 新しい署名付きURL、または処理できない場合は元のURL
+ */
+export const refreshImageUrl = async (
+  imageUrl: string,
+  expiresIn = 60 * 60 * 24,
+) => {
+  try {
+    // URLからファイル情報を抽出
+    const fileInfo = getFileInfoFromUrl(imageUrl);
+    if (!fileInfo) {
+      console.warn('URLからファイル情報を抽出できませんでした:', imageUrl);
+      return imageUrl; // 処理できない場合は元のURLを返す
+    }
+
+    // 新しい署名付きURLを生成
+    const { data, error } = await supabase.storage
+      .from(fileInfo.bucket)
+      .createSignedUrl(fileInfo.filePath, expiresIn);
+
+    if (error) {
+      console.error('署名付きURL生成エラー:', error);
+      return imageUrl; // エラーの場合は元のURLを返す
+    }
+
+    return data.signedUrl;
+  } catch (error) {
+    console.error('画像URL更新エラー:', error);
+    return imageUrl; // エラーの場合は元のURLを返す
+  }
+};
+
+/**
+ * ノートコンテンツ内のすべての画像URLを新しい署名付きURLに更新する
+ * @param content ノートのコンテンツ（HTML形式）
+ * @param expiresIn 有効期限（秒）、デフォルトは1日
+ * @returns 画像URLが更新されたコンテンツ
+ */
+export const refreshImageUrls = async (
+  content: string,
+  expiresIn = 60 * 60 * 24,
+) => {
+  if (!content) return content;
+
+  try {
+    // img要素のsrc属性からURLを抽出する正規表現
+    const imgRegex = /<img[^>]+src="([^"]+)"[^>]*>/g;
+    const urls = new Set<string>();
+    let match: RegExpExecArray | null = imgRegex.exec(content);
+
+    // すべての画像URLを抽出
+    while (match !== null) {
+      const url = match[1];
+      // Supabase Storageのパスを含むURLのみを処理
+      if (url.includes('/storage/v1/object/')) {
+        urls.add(url);
+      }
+      match = imgRegex.exec(content);
+    }
+
+    // URLがない場合は元のコンテンツを返す
+    if (urls.size === 0) {
+      return content;
+    }
+
+    // 各URLを新しい署名付きURLに更新
+    let updatedContent = content;
+    for (const url of urls) {
+      const newUrl = await refreshImageUrl(url, expiresIn);
+      // 元のURLを新しいURLで置換
+      updatedContent = updatedContent.replace(
+        new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+        newUrl,
+      );
+    }
+
+    return updatedContent;
+  } catch (error) {
+    console.error('コンテンツ内の画像URL更新エラー:', error);
+    return content; // エラーの場合は元のコンテンツを返す
+  }
+};

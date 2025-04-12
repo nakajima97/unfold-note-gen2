@@ -1,6 +1,7 @@
 'use client';
 
-import { getNoteByUrlId, getProjectNotes, searchNotes } from '@/lib/api/note';
+import { refreshImageUrls } from '@/lib/api/file';
+import { getProjectNotes, searchNotes } from '@/lib/api/note';
 import type { Note } from '@/lib/api/note';
 import { getProjectByUrlId } from '@/lib/api/project';
 import { useRouter } from 'next/navigation';
@@ -70,7 +71,25 @@ export const useNoteListContainer = ({
       try {
         setIsLoading(true);
         const fetchedNotes = await getProjectNotes(projectId);
-        setNotes(fetchedNotes);
+
+        // ノートコンテンツ内の画像URLを更新
+        const updatedNotes = await Promise.all(
+          fetchedNotes.map(async (note) => {
+            if (note.content) {
+              try {
+                const updatedContent = await refreshImageUrls(note.content);
+                return { ...note, content: updatedContent };
+              } catch (refreshError) {
+                console.error('画像URL更新エラー:', refreshError);
+                // エラーがあっても元のノートを返す
+                return note;
+              }
+            }
+            return note;
+          }),
+        );
+
+        setNotes(updatedNotes);
         setError(null);
         setIsLoading(false);
       } catch (err) {
@@ -94,7 +113,25 @@ export const useNoteListContainer = ({
         // 検索語が空の場合、すべてのノートを取得
         try {
           const fetchedNotes = await getProjectNotes(projectId);
-          setNotes(fetchedNotes);
+
+          // ノートコンテンツ内の画像URLを更新
+          const updatedNotes = await Promise.all(
+            fetchedNotes.map(async (note) => {
+              if (note.content) {
+                try {
+                  const updatedContent = await refreshImageUrls(note.content);
+                  return { ...note, content: updatedContent };
+                } catch (refreshError) {
+                  console.error('画像URL更新エラー:', refreshError);
+                  // エラーがあっても元のノートを返す
+                  return note;
+                }
+              }
+              return note;
+            }),
+          );
+
+          setNotes(updatedNotes);
         } catch (err) {
           console.error('Error fetching notes during search:', err);
           setError(
@@ -105,7 +142,25 @@ export const useNoteListContainer = ({
         // それ以外の場合、ノートを検索
         try {
           const searchResults = await searchNotes(projectId, searchTerm);
-          setNotes(searchResults);
+
+          // ノートコンテンツ内の画像URLを更新
+          const updatedResults = await Promise.all(
+            searchResults.map(async (note) => {
+              if (note.content) {
+                try {
+                  const updatedContent = await refreshImageUrls(note.content);
+                  return { ...note, content: updatedContent };
+                } catch (refreshError) {
+                  console.error('画像URL更新エラー:', refreshError);
+                  // エラーがあっても元のノートを返す
+                  return note;
+                }
+              }
+              return note;
+            }),
+          );
+
+          setNotes(updatedResults);
         } catch (err) {
           console.error('Error searching notes:', err);
           setError(
