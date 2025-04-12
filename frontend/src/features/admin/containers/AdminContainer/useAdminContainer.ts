@@ -3,15 +3,15 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 // エラー型の定義
-interface ErrorWithMessage {
+type ErrorWithMessage = {
   message: string;
-}
+};
 
-interface AllowedEmail {
+type AllowedEmail = {
   id: string;
   email: string;
   created_at: string;
-}
+};
 
 export const useAdminContainer = () => {
   const [allowedEmails, setAllowedEmails] = useState<AllowedEmail[]>([]);

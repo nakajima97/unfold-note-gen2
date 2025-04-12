@@ -21,7 +21,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import './editor.css';
 
-export interface NoteCreateProps {
+export type NoteCreateProps = {
   isSubmitting: boolean;
   onSubmit: (note: Partial<Note>) => void;
   onCancel: () => void;
@@ -30,7 +30,7 @@ export interface NoteCreateProps {
   projectId: string;
   projectUrlId?: string; // プロジェクトのURL ID
   noteId?: string; // 編集時のノートID
-}
+};
 
 const NoteCreate: React.FC<NoteCreateProps> = ({
   isSubmitting,

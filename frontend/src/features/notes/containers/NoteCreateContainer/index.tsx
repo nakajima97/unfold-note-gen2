@@ -4,10 +4,10 @@ import NoteCreate from '@/features/notes/components/NoteCreate';
 import type React from 'react';
 import { useNoteCreateContainer } from './useNoteCreateContainer';
 
-export interface NoteCreateContainerProps {
+export type NoteCreateContainerProps = {
   projectId: string;
   projectUrlId: string;
-}
+};
 
 const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
   projectId,

@@ -4,12 +4,12 @@ import RelatedNotesByTag from '@/features/notes/components/RelatedNotesByTag';
 import { useRelatedNotesByTag } from '@/features/notes/hooks/useRelatedNotesByTag';
 import { useRouter } from 'next/navigation';
 
-export interface RelatedNotesByTagContainerProps {
+export type RelatedNotesByTagContainerProps = {
   currentNoteId: string;
   projectId: string;
   projectUrlId?: string; // projectUrlIdプロパティを追加
   content: string;
-}
+};
 
 const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
   currentNoteId,

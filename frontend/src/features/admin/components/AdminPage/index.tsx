@@ -9,13 +9,13 @@ import {
 } from '@/components/shadcn/ui/card';
 import { Input } from '@/components/shadcn/ui/input';
 
-interface AllowedEmail {
+type AllowedEmail = {
   id: string;
   email: string;
   created_at: string;
-}
+};
 
-interface AdminPageComponentProps {
+type AdminPageComponentProps = {
   allowedEmails: AllowedEmail[];
   newEmail: string;
   setNewEmail: (email: string) => void;
@@ -25,7 +25,7 @@ interface AdminPageComponentProps {
   addAllowedEmail: (e: React.FormEvent) => Promise<void>;
   removeAllowedEmail: (id: string) => Promise<void>;
   navigateToHome: () => void;
-}
+};
 
 const AdminPageComponent = ({
   allowedEmails,

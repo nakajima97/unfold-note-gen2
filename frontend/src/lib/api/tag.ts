@@ -1,11 +1,11 @@
 import { supabase } from '@/lib/supabase';
 
-export interface Tag {
+export type Tag = {
   id: string;
   name: string;
   project_id: string;
   created_at: string;
-}
+};
 
 /**
  * プロジェクト内のすべてのタグを取得する

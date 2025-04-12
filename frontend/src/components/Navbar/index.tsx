@@ -4,10 +4,10 @@ import { Button } from '@/components/shadcn/ui/button';
 import { LogOut } from 'lucide-react';
 import Link from 'next/link';
 
-interface NavbarProps {
+type NavbarProps = {
   onLogout: () => void;
   isLoggingOut: boolean;
-}
+};
 
 const Navbar = ({ onLogout, isLoggingOut }: NavbarProps) => {
   return (

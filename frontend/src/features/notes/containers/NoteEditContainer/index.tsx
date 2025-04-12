@@ -4,11 +4,11 @@ import NoteCreate from '@/features/notes/components/NoteCreate';
 import type React from 'react';
 import { useNoteEditContainer } from './useNoteEditContainer';
 
-export interface NoteEditContainerProps {
+export type NoteEditContainerProps = {
   projectId: string;
   noteId: string;
   projectUrlId?: string;
-}
+};
 
 const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
   projectId,

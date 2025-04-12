@@ -4,16 +4,16 @@ import { type Note, getNoteById } from '@/lib/api/note';
 import { Tag, extractTagsFromText, getNotesByTagName } from '@/lib/api/tag';
 import { useEffect, useRef, useState } from 'react';
 
-export interface UseRelatedNotesByTagProps {
+export type UseRelatedNotesByTagProps = {
   currentNoteId: string;
   projectId: string;
   content: string;
-}
+};
 
 // Note型を拡張してurlIdを明示的に含める
-interface NoteWithUrlId extends Note {
+type NoteWithUrlId = Note & {
   urlId: string;
-}
+};
 
 export const useRelatedNotesByTag = ({
   currentNoteId,

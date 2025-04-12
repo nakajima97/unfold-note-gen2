@@ -5,11 +5,11 @@ import type { Note } from '@/lib/api/note';
 import type React from 'react';
 import { useNoteListContainer } from './useNoteListContainer';
 
-interface NoteListContainerProps {
+type NoteListContainerProps = {
   projectUrlId: string;
   projectId?: string;
   initialNotes?: Note[]; // サーバーから取得した初期ノートデータ
-}
+};
 
 const NoteListContainer: React.FC<NoteListContainerProps> = ({
   projectUrlId,

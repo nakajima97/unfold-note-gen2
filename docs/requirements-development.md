@@ -7,6 +7,7 @@
 - Biomeを使用したコード品質の維持
 - コンポーネント設計はPresentational/Containerパターンに従う
 - コメントは日本語で書く
+- 型定義は`type`キーワードを使用する
 - 関数宣言は`function`キーワードを使わず、`const`とアロー関数を使用する
   ```typescript
   // 推奨

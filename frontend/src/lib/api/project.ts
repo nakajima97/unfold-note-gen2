@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { generateUniqueUrlId } from '@/lib/utils/urlId';
 
-export interface Project {
+export type Project = {
   id: string;
   urlId: string;
   name: string;
@@ -10,7 +10,7 @@ export interface Project {
   is_archived: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
 /**
  * ユーザーの全プロジェクトを取得

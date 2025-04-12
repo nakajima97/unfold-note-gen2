@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 // エラー型の定義
-interface ErrorWithMessage {
+type ErrorWithMessage = {
   message: string;
-}
+};
 
 export const useLoginContainer = () => {
   const [email, setEmail] = useState('');
