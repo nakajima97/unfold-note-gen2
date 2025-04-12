@@ -27,7 +27,9 @@ export const getUserProjects = async (userId: string): Promise<Project[]> => {
     throw error;
   }
 
-  return data || [];
+  // url_idをurlIdに変換
+  // typescriptではキャメルケースを使いたいが、DBはスネークケースを使いたいため変換が必要
+  return data?.map((project) => ({ ...project, urlId: project.url_id })) || [];
 };
 
 /**
