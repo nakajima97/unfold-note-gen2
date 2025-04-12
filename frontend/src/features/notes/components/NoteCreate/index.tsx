@@ -128,9 +128,6 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
         onPaste: async (currentEditor, files, htmlContent) => {
           if (!files.length) return;
 
-          // HTMLコンテンツがある場合は他の拡張機能に処理を任せる
-          if (htmlContent) return false;
-
           setIsUploading(true);
 
           try {
@@ -144,7 +141,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
               // Supabase Storageに画像をアップロード
               const imageUrl = await uploadImage(projectId, file);
 
-              // エディタに画像を挿入（現在のカーソル位置）
+              // エディタに画像を挿入
               currentEditor
                 .chain()
                 .insertContentAt(currentEditor.state.selection.anchor, {
@@ -217,8 +214,11 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
 
   useEffect(() => {
     setTitle(initialTitle);
+  }, [initialTitle]);
+
+  useEffect(() => {
     setDebouncedContent(content);
-  }, [initialTitle, content]);
+  }, [content]);
 
   // コンポーネントのアンマウント時にタイマーをクリア
   useEffect(() => {
