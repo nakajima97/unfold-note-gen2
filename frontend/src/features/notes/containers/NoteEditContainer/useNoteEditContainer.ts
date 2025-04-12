@@ -3,6 +3,7 @@
 import type { Note } from '@/features/notes/types';
 import { getNoteById, updateNote } from '@/lib/api/note';
 import { updateNoteTags } from '@/lib/api/tag';
+import { refreshImageUrls } from '@/lib/api/file';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -38,6 +39,17 @@ export const useNoteEditContainer = ({
         if (fetchedNote.project_id !== projectId) {
           setError(new Error('このプロジェクトに属するノートではありません'));
           return;
+        }
+
+        // 画像URLを更新
+        if (fetchedNote.content) {
+          try {
+            const updatedContent = await refreshImageUrls(fetchedNote.content);
+            fetchedNote.content = updatedContent;
+          } catch (refreshError) {
+            console.error('画像URL更新エラー:', refreshError);
+            // エラーがあっても処理を続行
+          }
         }
 
         setNote(fetchedNote);

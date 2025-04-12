@@ -12,7 +12,7 @@ import { Label } from '@/components/shadcn/ui/label';
 import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import Tag from '@/features/notes/extensions/tag';
 import type { Note } from '@/features/notes/types';
-import { uploadImage } from '@/lib/api/file';
+import { uploadImage, refreshImageUrls } from '@/lib/api/file';
 import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -43,11 +43,35 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   noteId,
 }) => {
   const [title, setTitle] = React.useState(initialTitle);
-  const [content, setContent] = React.useState(initialContent);
-  const [debouncedContent, setDebouncedContent] = useState(initialContent);
+  const [content, setContent] = React.useState('');
+  const [debouncedContent, setDebouncedContent] = useState('');
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [editorInitialized, setEditorInitialized] = useState(false);
+  const [isRefreshingImages, setIsRefreshingImages] = useState(false);
+
+  // 初期コンテンツの画像URLを更新
+  useEffect(() => {
+    const updateInitialContent = async () => {
+      if (initialContent) {
+        setIsRefreshingImages(true);
+        try {
+          // 初期コンテンツ内の画像URLを更新
+          const updatedContent = await refreshImageUrls(initialContent);
+          setContent(updatedContent);
+        } catch (error) {
+          console.error('画像URL更新エラー:', error);
+          setContent(initialContent);
+        } finally {
+          setIsRefreshingImages(false);
+        }
+      } else {
+        setContent('');
+      }
+    };
+
+    updateInitialContent();
+  }, [initialContent]);
 
   const editor = useEditor({
     extensions: [
@@ -142,7 +166,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
         },
       }),
     ],
-    content: initialContent,
+    content: content,
     onUpdate: ({ editor }) => {
       const newContent = editor.getHTML();
       setContent(newContent);
@@ -174,14 +198,14 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
 
   // エディタが初期化されたら、初期コンテンツを適切に設定
   useEffect(() => {
-    if (editor && editorInitialized && initialContent) {
+    if (editor && editorInitialized && content) {
       // 少し遅延させて確実にエディタが準備できた状態で実行
       const timer = setTimeout(() => {
         // 既存のコンテンツをクリア
         editor.commands.clearContent();
 
         // HTMLコンテンツを設定
-        editor.commands.setContent(initialContent);
+        editor.commands.setContent(content);
 
         // 初期コンテンツの設定後、カーソルを先頭に移動
         editor.commands.focus('start');
@@ -189,13 +213,12 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
 
       return () => clearTimeout(timer);
     }
-  }, [editor, editorInitialized, initialContent]);
+  }, [editor, editorInitialized, content]);
 
   useEffect(() => {
     setTitle(initialTitle);
-    setContent(initialContent);
-    setDebouncedContent(initialContent);
-  }, [initialTitle, initialContent]);
+    setDebouncedContent(content);
+  }, [initialTitle, content]);
 
   // コンポーネントのアンマウント時にタイマーをクリア
   useEffect(() => {
