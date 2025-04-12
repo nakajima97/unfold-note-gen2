@@ -17,7 +17,7 @@ type Story = StoryObj<typeof NoteList>;
 const sampleNotes: Note[] = [
   {
     id: '1',
-    url_id: 'getting-started-with-unfold-note',
+    urlId: 'getting-started-with-unfold-note',
     title: 'Getting Started with Unfold Note',
     content:
       'Welcome to Unfold Note! This is a simple note-taking app that uses #markdown and #tags to organize your notes.',
@@ -27,7 +27,7 @@ const sampleNotes: Note[] = [
   },
   {
     id: '2',
-    url_id: 'how-to-use-tags',
+    urlId: 'how-to-use-tags',
     title: 'How to use tags',
     content:
       'Tags are a powerful way to organize your notes. Simply add a #hashtag to your note and it will be automatically tagged. You can use #multiple #tags in a single note.',
@@ -37,7 +37,7 @@ const sampleNotes: Note[] = [
   },
   {
     id: '3',
-    url_id: 'project-planning',
+    urlId: 'project-planning',
     title: 'Project Planning',
     content:
       'Here are some ideas for the #project:\n- Implement #search functionality\n- Add #darkmode support\n- Create mobile app',
@@ -47,7 +47,7 @@ const sampleNotes: Note[] = [
   },
   {
     id: '4',
-    url_id: 'meeting-notes',
+    urlId: 'meeting-notes',
     title: 'Meeting Notes',
     content:
       'Meeting with the #team on 2025-03-25:\n- Discussed #project timeline\n- Assigned tasks\n- Next meeting scheduled for next week',
@@ -57,7 +57,7 @@ const sampleNotes: Note[] = [
   },
   {
     id: '5',
-    url_id: 'research-on-markdown-editors',
+    urlId: 'research-on-markdown-editors',
     title: 'Research on Markdown Editors',
     content:
       'Looking into different #markdown editors for the #project:\n- Tiptap\n- ProseMirror\n- Slate\n- CodeMirror',

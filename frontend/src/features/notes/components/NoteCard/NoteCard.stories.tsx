@@ -23,7 +23,7 @@ type Story = StoryObj<typeof NoteCard>;
 // Sample note data
 const sampleNote: Note = {
   id: '1',
-  url_id: 'getting-started-with-unfold-note',
+  urlId: 'getting-started-with-unfold-note',
   title: 'Getting Started with Unfold Note',
   content:
     'Welcome to Unfold Note! This is a simple note-taking app that uses #markdown and #tags to organize your notes.',
@@ -34,7 +34,7 @@ const sampleNote: Note = {
 
 const longTitleNote: Note = {
   id: '2',
-  url_id: 'long-title-note',
+  urlId: 'long-title-note',
   title:
     'This is a very long title that should be truncated because it exceeds the available space in the card header',
   content:
@@ -46,7 +46,7 @@ const longTitleNote: Note = {
 
 const longContentNote: Note = {
   id: '3',
-  url_id: 'note-with-long-content',
+  urlId: 'note-with-long-content',
   title: 'Note with Long Content',
   content:
     'This note has a very long content that should be truncated. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl.',
@@ -57,7 +57,7 @@ const longContentNote: Note = {
 
 const manyTagsNote: Note = {
   id: '4',
-  url_id: 'note-with-many-tags',
+  urlId: 'note-with-many-tags',
   title: 'Note with Many Tags',
   content:
     'This note has many tags: #react #nextjs #typescript #tailwindcss #storybook #testing #frontend #development #javascript #webdev #coding #programming',
@@ -68,7 +68,7 @@ const manyTagsNote: Note = {
 
 const noTagsNote: Note = {
   id: '5',
-  url_id: 'note-without-tags',
+  urlId: 'note-without-tags',
   title: 'Note without Tags',
   content: 'This note does not have any tags.',
   project_id: 'project-1',
