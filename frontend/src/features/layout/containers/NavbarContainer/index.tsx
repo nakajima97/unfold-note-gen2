@@ -6,12 +6,7 @@ import { useNavbarContainer } from './useNavbarContainer';
 const NavbarContainer = () => {
   const { isLoggingOut, handleLogout } = useNavbarContainer();
 
-  return (
-    <Navbar 
-      onLogout={handleLogout}
-      isLoggingOut={isLoggingOut}
-    />
-  );
+  return <Navbar onLogout={handleLogout} isLoggingOut={isLoggingOut} />;
 };
 
 export default NavbarContainer;

@@ -10,11 +10,11 @@ export const useNavbarContainer = () => {
     try {
       setIsLoggingOut(true);
       const { error } = await supabase.auth.signOut();
-      
+
       if (error) {
         throw error;
       }
-      
+
       // ログアウト後はログインページにリダイレクト
       router.push('/login');
       router.refresh();

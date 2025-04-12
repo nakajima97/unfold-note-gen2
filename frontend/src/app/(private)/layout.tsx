@@ -17,13 +17,13 @@ const PrivateLayout = ({ children }: PrivateLayoutProps) => {
     const checkAuth = async () => {
       try {
         const { data } = await supabase.auth.getSession();
-        
+
         if (!data.session) {
           // 未認証ユーザーをログインページにリダイレクト
           router.push('/login');
           return;
         }
-        
+
         setIsLoading(false);
       } catch (error) {
         console.error('認証確認エラー:', error);
@@ -45,9 +45,7 @@ const PrivateLayout = ({ children }: PrivateLayoutProps) => {
   return (
     <div className="flex flex-col min-h-screen">
       <NavbarContainer />
-      <main className="flex-grow">
-        {children}
-      </main>
+      <main className="flex-grow">{children}</main>
     </div>
   );
 };
