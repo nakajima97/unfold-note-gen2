@@ -21,7 +21,7 @@ export const useAdminContainer = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
-  // Check if user is admin
+  // ユーザーが管理者かどうかを確認
   useEffect(() => {
     const checkAdmin = async () => {
       const {
@@ -33,11 +33,11 @@ export const useAdminContainer = () => {
         return;
       }
 
-      // Get user role from Supabase
+      // Supabaseからユーザーロールを取得
       const { data, error } = await supabase.rpc('is_admin');
 
       if (error) {
-        console.error('Error checking admin status:', error);
+        console.error('管理者ステータス確認エラー:', error);
         setIsAdmin(false);
         router.push('/');
         return;
@@ -70,7 +70,7 @@ export const useAdminContainer = () => {
       setAllowedEmails(data || []);
     } catch (error: unknown) {
       const errorWithMessage = error as ErrorWithMessage;
-      console.error('Error fetching allowed emails:', error);
+      console.error('許可メールの取得エラー:', error);
       setError(errorWithMessage.message);
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ export const useAdminContainer = () => {
       setLoading(true);
       setError(null);
 
-      // Validate email format
+      // メールフォーマットを検証
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(newEmail)) {
         throw new Error('有効なメールアドレスを入力してください');
@@ -103,7 +103,7 @@ export const useAdminContainer = () => {
       fetchAllowedEmails();
     } catch (error: unknown) {
       const errorWithMessage = error as ErrorWithMessage;
-      console.error('Error adding allowed email:', error);
+      console.error('許可メールの追加エラー:', error);
       setError(errorWithMessage.message);
     } finally {
       setLoading(false);
@@ -125,7 +125,7 @@ export const useAdminContainer = () => {
       fetchAllowedEmails();
     } catch (error: unknown) {
       const errorWithMessage = error as ErrorWithMessage;
-      console.error('Error removing allowed email:', error);
+      console.error('許可メールの削除エラー:', error);
       setError(errorWithMessage.message);
     } finally {
       setLoading(false);

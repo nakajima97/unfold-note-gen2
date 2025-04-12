@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import RelatedNotesByTag from './index';
 
-// Sample notes data
+// サンプルノートデータ
 const sampleNotes: Note[] = [
   {
     id: '2',
@@ -66,7 +66,7 @@ export const Default: Story = {
     error: null,
     tags: ['tag1', 'tag2'],
     projectId: 'project-1',
-    onNoteClick: (noteId) => console.log(`Clicked note: ${noteId}`),
+    onNoteClick: (noteId) => console.log(`クリックされたノート: ${noteId}`),
   },
 };
 
@@ -78,7 +78,7 @@ export const NoTags: Story = {
     error: null,
     tags: [],
     projectId: 'project-1',
-    onNoteClick: (noteId) => console.log(`Clicked note: ${noteId}`),
+    onNoteClick: (noteId) => console.log(`クリックされたノート: ${noteId}`),
   },
 };
 
@@ -92,7 +92,7 @@ export const NoRelatedNotes: Story = {
     error: null,
     tags: ['unknowntag'],
     projectId: 'project-1',
-    onNoteClick: (noteId) => console.log(`Clicked note: ${noteId}`),
+    onNoteClick: (noteId) => console.log(`クリックされたノート: ${noteId}`),
   },
 };
 
@@ -104,7 +104,7 @@ export const Loading: Story = {
     error: null,
     tags: ['tag1', 'tag2'],
     projectId: 'project-1',
-    onNoteClick: (noteId) => console.log(`Clicked note: ${noteId}`),
+    onNoteClick: (noteId) => console.log(`クリックされたノート: ${noteId}`),
   },
 };
 
@@ -116,7 +116,7 @@ export const ErrorState: Story = {
     error: new Error('関連ノートの取得に失敗しました'),
     tags: ['tag1', 'tag2'],
     projectId: 'project-1',
-    onNoteClick: (noteId) => console.log(`Clicked note: ${noteId}`),
+    onNoteClick: (noteId) => console.log(`クリックされたノート: ${noteId}`),
   },
 };
 
@@ -135,6 +135,6 @@ export const ManyTags: Story = {
     error: null,
     tags: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6'],
     projectId: 'project-1',
-    onNoteClick: (noteId) => console.log(`Clicked note: ${noteId}`),
+    onNoteClick: (noteId) => console.log(`クリックされたノート: ${noteId}`),
   },
 };

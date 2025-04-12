@@ -60,7 +60,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
   );
 };
 
-// Helper function to extract tags from content
+// コンテンツからタグを抽出するヘルパー関数
 const extractTags = (content: string): string[] => {
   const tagRegex = /#([a-zA-Z0-9_\-/\p{L}\p{N}]+)/gu;
   const matches = content.matchAll(tagRegex);

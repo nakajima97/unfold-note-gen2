@@ -2,17 +2,17 @@ import type { Config } from 'jest';
 import nextJest from 'next/jest.js';
 
 const createJestConfig = nextJest({
-  // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
+  // テスト環境でnext.config.jsと.envファイルを読み込むためのNext.jsアプリのパスを提供
   dir: './',
 });
 
-// Add any custom config to be passed to Jest
+// Jestに渡すカスタム設定を追加
 const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
-  // Add more setup options before each test is run
+  // 各テスト実行前に追加のセットアップオプションを追加
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
+// createJestConfigはこの方法でエクスポートされ、next/jestが非同期のNext.js設定を読み込めるようにする
 export default createJestConfig(config);
