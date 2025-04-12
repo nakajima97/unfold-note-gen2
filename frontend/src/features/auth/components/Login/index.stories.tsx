@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import type { Decorator } from '@storybook/react';
 import LoginComponent from './index';
 
-// Create a decorator that wraps the story in a div with proper styling
+// ストーリーを適切なスタイリングで包むデコレータを作成
 const withContainer: Decorator = (Story) => (
   <div>
     <Story />
@@ -14,7 +14,7 @@ const meta: Meta<typeof LoginComponent> = {
   title: 'Features/Auth/Login',
   component: LoginComponent,
   parameters: {
-    layout: 'fullscreen', // Use fullscreen layout to match the component's design
+    layout: 'fullscreen', // コンポーネントのデザインに合わせてフルスクリーンレイアウトを使用
   },
   tags: ['autodocs'],
   argTypes: {
@@ -31,7 +31,7 @@ const meta: Meta<typeof LoginComponent> = {
 export default meta;
 type Story = StoryObj<typeof LoginComponent>;
 
-// Common props for all stories
+// すべてのストーリーの共通props
 const commonProps = {
   email: '',
   setEmail: action('setEmail'),
@@ -49,7 +49,7 @@ const commonProps = {
   toggleSignUp: action('toggleSignUp'),
 };
 
-// Login view
+// ログインビュー
 export const Login: Story = {
   args: {
     ...commonProps,
@@ -67,7 +67,7 @@ export const Login: Story = {
   },
 };
 
-// Sign up view
+// サインアップビュー
 export const SignUp: Story = {
   args: {
     ...commonProps,
@@ -85,7 +85,7 @@ export const SignUp: Story = {
   },
 };
 
-// Loading state
+// ローディング状態
 export const Loading: Story = {
   args: {
     ...commonProps,
@@ -103,7 +103,7 @@ export const Loading: Story = {
   },
 };
 
-// Error state
+// エラー状態
 export const ErrorState: Story = {
   args: {
     ...commonProps,
@@ -121,7 +121,7 @@ export const ErrorState: Story = {
   },
 };
 
-// Success message
+// 成功メッセージ
 export const Success: Story = {
   args: {
     ...commonProps,

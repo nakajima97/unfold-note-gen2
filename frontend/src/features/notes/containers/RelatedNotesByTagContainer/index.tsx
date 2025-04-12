@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 export interface RelatedNotesByTagContainerProps {
   currentNoteId: string;
   projectId: string;
-  projectUrlId?: string; // Add projectUrlId prop
+  projectUrlId?: string; // projectUrlIdプロパティを追加
   content: string;
 }
 
@@ -30,7 +30,7 @@ const RelatedNotesByTagContainer: React.FC<RelatedNotesByTagContainerProps> = ({
       return;
     }
 
-    // Use projectUrlId if available, otherwise fall back to projectId
+    // 利用可能な場合はprojectUrlIdを使用し、そうでない場合はprojectIdにフォールバック
     const projectIdentifier = projectUrlId || projectId;
     const url = `/projects/${projectIdentifier}/notes/${noteUrlId}`;
     router.push(url);

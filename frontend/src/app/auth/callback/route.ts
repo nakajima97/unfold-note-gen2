@@ -8,21 +8,21 @@ export const GET = async (request: NextRequest) => {
 
   if (code) {
     try {
-      console.log('Authentication callback with code:', code);
+      console.log('認証コールバックコード:', code);
       const { data } = await supabase.auth.exchangeCodeForSession(code);
 
-      // If we have a user, redirect to their notes page
+      // ユーザーがいる場合、ノートページにリダイレクト
       if (data.user) {
-        console.log('User authenticated:', data.user.id);
+        console.log('ユーザー認証完了:', data.user.id);
 
         try {
-          // Get user's projects
+          // ユーザーのプロジェクトを取得
           const projects = await getUserProjects(data.user.id);
-          console.log('User projects:', projects.length);
+          console.log('ユーザープロジェクト数:', projects.length);
 
-          // If user has no projects, create a default project
+          // ユーザーにプロジェクトがない場合、デフォルトプロジェクトを作成
           if (projects.length === 0) {
-            console.log('Creating default project for user');
+            console.log('ユーザー用のデフォルトプロジェクトを作成');
 
             const displayName =
               data.user.user_metadata?.full_name ||
@@ -36,9 +36,9 @@ export const GET = async (request: NextRequest) => {
                 'Default project',
               );
 
-              console.log('Default project created:', defaultProject);
+              console.log('デフォルトプロジェクト作成完了:', defaultProject);
 
-              // Redirect to the newly created project
+              // 新しく作成したプロジェクトにリダイレクト
               return NextResponse.redirect(
                 new URL(
                   `/projects/${defaultProject.urlId}/notes`,
@@ -46,12 +46,12 @@ export const GET = async (request: NextRequest) => {
                 ),
               );
             } catch (projectError) {
-              console.error('Error creating default project:', projectError);
-              // Fall through to home page redirect
+              console.error('デフォルトプロジェクト作成エラー:', projectError);
+              // ホームページリダイレクトにフォールバック
             }
           } else {
-            // If user has projects, redirect to the first project's notes page
-            console.log('Redirecting to existing project:', projects[0].urlId);
+            // ユーザーがプロジェクトを持っている場合、最初のプロジェクトのノートページにリダイレクト
+            console.log('既存プロジェクトへリダイレクト:', projects[0].urlId);
 
             return NextResponse.redirect(
               new URL(
@@ -61,21 +61,21 @@ export const GET = async (request: NextRequest) => {
             );
           }
         } catch (error) {
-          console.error('Error handling user projects:', error);
-          // Fall through to default redirect if there's an error
+          console.error('ユーザープロジェクト処理エラー:', error);
+          // エラーが発生した場合はデフォルトリダイレクトにフォールバック
         }
       } else {
-        console.log('No user data in authentication response');
+        console.log('認証レスポンスにユーザーデータがありません');
       }
     } catch (authError) {
-      console.error('Error during authentication:', authError);
-      // Fall through to default redirect
+      console.error('認証中のエラー:', authError);
+      // デフォルトリダイレクトにフォールバック
     }
   } else {
-    console.log('No code parameter in callback URL');
+    console.log('コールバックURLにcodeパラメータがありません');
   }
 
-  // Fallback to home page if there's no code, no user, or an error occurred
-  console.log('Redirecting to home page');
+  // コードがない、ユーザーがいない、またはエラーが発生した場合はホームページにフォールバック
+  console.log('ホームページにリダイレクト');
   return NextResponse.redirect(new URL('/', requestUrl.origin));
 };

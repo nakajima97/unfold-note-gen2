@@ -19,20 +19,20 @@ export const useLoginContainer = () => {
 
   const redirectToNotes = async (userId: string) => {
     try {
-      // Get user's projects
+      // ユーザーのプロジェクトを取得
       const projects = await getUserProjects(userId);
 
-      // If user has projects, redirect to the first project's notes page
+      // ユーザーがプロジェクトを持っている場合、最初のプロジェクトのノート一覧ページにリダイレクト
       if (projects.length > 0) {
         router.push(`/projects/${projects[0].urlId}/notes`);
       } else {
-        // This should not happen as per requirements, but just in case
+        // 要件上はあり得ないはずですが、念のため
         router.push('/');
       }
       router.refresh();
     } catch (error) {
-      console.error('Error redirecting to notes:', error);
-      // Fallback to home page if there's an error
+      console.error('ノートページへのリダイレクトエラー:', error);
+      // エラーが発生した場合はホームページにフォールバック
       router.push('/');
       router.refresh();
     }
@@ -72,7 +72,7 @@ export const useLoginContainer = () => {
     setMessage(null);
 
     try {
-      // Check if email is in allowed_emails table
+      // メールアドレスがallowed_emailsテーブルに存在するか確認
       const { data: allowedEmails, error: allowedEmailError } = await supabase
         .from('allowed_emails')
         .select('email')
@@ -80,7 +80,7 @@ export const useLoginContainer = () => {
         .single();
 
       if (allowedEmailError && allowedEmailError.code !== 'PGRST116') {
-        // PGRST116 is the error code for "no rows returned"
+        // PGRST116は「行が返されなかった」エラーコード
         throw new Error('メールアドレスの検証中にエラーが発生しました。');
       }
 
@@ -90,7 +90,7 @@ export const useLoginContainer = () => {
         );
       }
 
-      // If email is allowed, proceed with signup
+      // メールアドレスが許可されている場合、サインアップを続行
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -106,7 +106,7 @@ export const useLoginContainer = () => {
       setMessage(
         '登録確認メールを送信しました。メールを確認してアカウントを有効化してください。',
       );
-      setIsSignUp(false); // Switch back to login view
+      setIsSignUp(false); // ログインビューに戻す
     } catch (error: unknown) {
       const errorWithMessage = error as ErrorWithMessage;
       setError(errorWithMessage.message);

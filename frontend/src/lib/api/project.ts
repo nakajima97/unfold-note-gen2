@@ -13,7 +13,7 @@ export interface Project {
 }
 
 /**
- * Get all projects for a user
+ * ユーザーの全プロジェクトを取得
  */
 export const getUserProjects = async (userId: string): Promise<Project[]> => {
   const { data, error } = await supabase
@@ -23,7 +23,7 @@ export const getUserProjects = async (userId: string): Promise<Project[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching user projects:', error);
+    console.error('ユーザーのプロジェクト取得エラー:', error);
     throw error;
   }
 
@@ -33,7 +33,7 @@ export const getUserProjects = async (userId: string): Promise<Project[]> => {
 };
 
 /**
- * Get a project by its ID
+ * IDによるプロジェクト取得
  */
 export const getProjectById = async (
   projectId: string,
@@ -46,10 +46,10 @@ export const getProjectById = async (
 
   if (error) {
     if (error.code === 'PGRST116') {
-      // PGRST116 is the error code for "no rows returned"
+      // PGRST116は「行が返されなかった」エラーコード
       return null;
     }
-    console.error('Error fetching project:', error);
+    console.error('プロジェクト取得エラー:', error);
     throw error;
   }
 
@@ -57,7 +57,7 @@ export const getProjectById = async (
 };
 
 /**
- * Get a project by its URL ID
+ * URL IDによるプロジェクト取得
  */
 export const getProjectByUrlId = async (
   urlId: string,
@@ -69,7 +69,7 @@ export const getProjectByUrlId = async (
     });
 
     if (error) {
-      console.error('Error fetching project by URL ID using RPC:', error);
+      console.error('URL IDによるプロジェクト取得エラー(RPC):', error);
 
       // RPCが失敗した場合、直接クエリを試みる
       const { data: queryData, error: queryError } = await supabase
@@ -80,7 +80,7 @@ export const getProjectByUrlId = async (
 
       if (queryError) {
         console.error(
-          'Error fetching project by URL ID using direct query:',
+          'URL IDによるプロジェクト取得エラー(直接クエリ):',
           queryError,
         );
         return null;
@@ -93,13 +93,13 @@ export const getProjectByUrlId = async (
     const project = Array.isArray(data) ? data[0] : data;
     return project;
   } catch (error) {
-    console.error('Error in getProjectByUrlId:', error);
+    console.error('URL IDによるプロジェクト取得エラー:', error);
     return null;
   }
 };
 
 /**
- * Create a new project
+ * 新しいプロジェクトの作成
  */
 export const createProject = async (
   name: string,
@@ -117,13 +117,13 @@ export const createProject = async (
           .eq('url_id', id);
 
         if (error) {
-          console.error('Error checking urlId existence:', error);
+          console.error('URL識別子存在チェックエラー:', error);
           return false;
         }
 
         return (data?.length ?? 0) > 0;
       } catch (error) {
-        console.error('Error checking urlId existence:', error);
+        console.error('URL識別子存在チェックエラー:', error);
         return false;
       }
     });
@@ -143,10 +143,10 @@ export const createProject = async (
         .single();
 
       if (error) {
-        console.error('Error creating project with direct insert:', error);
+        console.error('プロジェクト作成エラー(直接挿入):', error);
 
         // 直接挿入が失敗した場合、RPCを試みる
-        console.log('Falling back to RPC for project creation');
+        console.log('プロジェクト作成にRPCを使用');
         const { data: rpcData, error: rpcError } = await supabase.rpc(
           'create_project_with_url_id',
           {
@@ -158,7 +158,7 @@ export const createProject = async (
         );
 
         if (rpcError) {
-          console.error('Error creating project with RPC:', rpcError);
+          console.error('プロジェクト作成エラー(RPC):', rpcError);
           throw rpcError;
         }
 
@@ -167,38 +167,38 @@ export const createProject = async (
 
       return data;
     } catch (insertError) {
-      console.error('Error in project creation process:', insertError);
+      console.error('プロジェクト作成エラー:', insertError);
       throw insertError;
     }
   } catch (error) {
-    console.error('Error creating project:', error);
+    console.error('プロジェクト作成エラー:', error);
     throw error;
   }
 };
 
 /**
- * Check if a user has any projects and create a default one if not
- * Note: This function is now redundant as we have a database trigger that automatically
- * creates a default project for new users, but we keep it for safety and testing purposes.
+ * ユーザーがプロジェクトを持っているか確認し、なければデフォルトプロジェクトを作成
+ * 注: この関数は現在冗長です。新規ユーザーに対して自動的にデフォルトプロジェクトを作成する
+ * データベーストリガーがあるためですが、安全性とテスト目的のために残しています。
  */
 export const ensureUserHasProject = async (
   userId: string,
   userName = '',
 ): Promise<Project> => {
   try {
-    // Get user's projects
+    // ユーザーのプロジェクトを取得
     const projects = await getUserProjects(userId);
 
-    // If user has projects, return the first one
+    // ユーザーがプロジェクトを持っている場合、最初のプロジェクトを返す
     if (projects.length > 0) {
       return projects[0];
     }
 
-    // If no projects, create one with the user's name or email
+    // プロジェクトがない場合、ユーザー名またはメールアドレスでプロジェクトを作成
     const defaultName = userName || 'My Project';
     return await createProject(defaultName, userId);
   } catch (error) {
-    console.error('Error ensuring user has project:', error);
+    console.error('ユーザーがプロジェクトを持っているか確認エラー:', error);
     throw error;
   }
 };

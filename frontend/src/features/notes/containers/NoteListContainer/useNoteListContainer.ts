@@ -26,7 +26,7 @@ export const useNoteListContainer = ({
   );
   const router = useRouter();
 
-  // Fetch project to get internal ID (only if not provided)
+  // プロジェクトの内部IDを取得（提供されていない場合のみ）
   useEffect(() => {
     // 既にプロジェクトIDが提供されている場合はスキップ
     if (projectId) {
@@ -54,7 +54,7 @@ export const useNoteListContainer = ({
     fetchProject();
   }, [projectUrlId, projectId]);
 
-  // Fetch notes when projectId is available (only if initialNotes is empty)
+  // プロジェクトIDが利用可能な場合にノートを取得（initialNotesが空の場合のみ）
   useEffect(() => {
     // 初期ノートデータが提供されている場合はスキップ
     if (initialNotes.length > 0) {
@@ -85,13 +85,13 @@ export const useNoteListContainer = ({
     fetchNotes();
   }, [projectId, initialNotes.length]);
 
-  // Handle search term changes with debounce
+  // 検索語の変更を遅延処理（デバウンス）
   useEffect(() => {
     if (!projectId) return;
 
     const debounceTimeout = setTimeout(async () => {
       if (searchTerm.trim() === '') {
-        // If search term is empty, fetch all notes
+        // 検索語が空の場合、すべてのノートを取得
         try {
           const fetchedNotes = await getProjectNotes(projectId);
           setNotes(fetchedNotes);
@@ -102,7 +102,7 @@ export const useNoteListContainer = ({
           );
         }
       } else {
-        // Otherwise, search for notes
+        // それ以外の場合、ノートを検索
         try {
           const searchResults = await searchNotes(projectId, searchTerm);
           setNotes(searchResults);
@@ -113,12 +113,12 @@ export const useNoteListContainer = ({
           );
         }
       }
-    }, 300); // 300ms debounce
+    }, 300); // 300ms デバウンス
 
     return () => clearTimeout(debounceTimeout);
   }, [searchTerm, projectId]);
 
-  // Handle note click
+  // ノートクリックの処理
   const handleNoteClick = (noteUrlId: string) => {
     // noteUrlIdを直接使用してページ遷移
     router.push(`/projects/${projectUrlId}/notes/${noteUrlId}`);
@@ -128,7 +128,7 @@ export const useNoteListContainer = ({
     router.push(`/projects/${projectUrlId}/notes/new`);
   };
 
-  // Handle search change
+  // 検索変更の処理
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
   };
