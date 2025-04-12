@@ -1,11 +1,11 @@
 'use client';
 
+import { refreshImageUrls } from '@/lib/api/file';
 import { getProjectNotes, searchNotes } from '@/lib/api/note';
 import type { Note } from '@/lib/api/note';
 import { getProjectByUrlId } from '@/lib/api/project';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { refreshImageUrls } from '@/lib/api/file';
 
 export type UseNoteListContainerProps = {
   projectUrlId: string;
@@ -71,7 +71,7 @@ export const useNoteListContainer = ({
       try {
         setIsLoading(true);
         const fetchedNotes = await getProjectNotes(projectId);
-        
+
         // ノートコンテンツ内の画像URLを更新
         const updatedNotes = await Promise.all(
           fetchedNotes.map(async (note) => {
@@ -86,9 +86,9 @@ export const useNoteListContainer = ({
               }
             }
             return note;
-          })
+          }),
         );
-        
+
         setNotes(updatedNotes);
         setError(null);
         setIsLoading(false);
@@ -113,7 +113,7 @@ export const useNoteListContainer = ({
         // 検索語が空の場合、すべてのノートを取得
         try {
           const fetchedNotes = await getProjectNotes(projectId);
-          
+
           // ノートコンテンツ内の画像URLを更新
           const updatedNotes = await Promise.all(
             fetchedNotes.map(async (note) => {
@@ -128,9 +128,9 @@ export const useNoteListContainer = ({
                 }
               }
               return note;
-            })
+            }),
           );
-          
+
           setNotes(updatedNotes);
         } catch (err) {
           console.error('Error fetching notes during search:', err);
@@ -142,7 +142,7 @@ export const useNoteListContainer = ({
         // それ以外の場合、ノートを検索
         try {
           const searchResults = await searchNotes(projectId, searchTerm);
-          
+
           // ノートコンテンツ内の画像URLを更新
           const updatedResults = await Promise.all(
             searchResults.map(async (note) => {
@@ -157,9 +157,9 @@ export const useNoteListContainer = ({
                 }
               }
               return note;
-            })
+            }),
           );
-          
+
           setNotes(updatedResults);
         } catch (err) {
           console.error('Error searching notes:', err);

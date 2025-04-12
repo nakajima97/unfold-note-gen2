@@ -12,7 +12,7 @@ import { Label } from '@/components/shadcn/ui/label';
 import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import Tag from '@/features/notes/extensions/tag';
 import type { Note } from '@/features/notes/types';
-import { uploadImage, refreshImageUrls } from '@/lib/api/file';
+import { refreshImageUrls, uploadImage } from '@/lib/api/file';
 import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';

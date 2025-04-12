@@ -216,15 +216,16 @@ export const refreshImageUrls = async (
     // img要素のsrc属性からURLを抽出する正規表現
     const imgRegex = /<img[^>]+src="([^"]+)"[^>]*>/g;
     const urls = new Set<string>();
-    let match;
+    let match: RegExpExecArray | null = imgRegex.exec(content);
 
     // すべての画像URLを抽出
-    while ((match = imgRegex.exec(content)) !== null) {
+    while (match !== null) {
       const url = match[1];
       // Supabase Storageのパスを含むURLのみを処理
       if (url.includes('/storage/v1/object/')) {
         urls.add(url);
       }
+      match = imgRegex.exec(content);
     }
 
     // URLがない場合は元のコンテンツを返す
