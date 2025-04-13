@@ -9,6 +9,7 @@ import {
 } from '@/components/shadcn/ui/card';
 import { Input } from '@/components/shadcn/ui/input';
 import { Label } from '@/components/shadcn/ui/label';
+import NoteActionMenu from '@/features/notes/components/NoteActionMenu';
 import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import Tag from '@/features/notes/extensions/tag';
 import type { Note } from '@/features/notes/types';
@@ -25,6 +26,7 @@ export type NoteCreateProps = {
   isSubmitting: boolean;
   onSubmit: (note: Partial<Note>) => void;
   onCancel: () => void;
+  onDelete?: () => void; // 削除機能（編集時のみ）
   initialTitle?: string;
   initialContent?: string;
   projectId: string;
@@ -36,6 +38,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   isSubmitting,
   onSubmit,
   onCancel,
+  onDelete,
   initialTitle = '',
   initialContent = '',
   projectId,
@@ -144,7 +147,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
               // エディタに画像を挿入
               currentEditor
                 .chain()
-                .insertContentAt(currentEditor.state.selection.anchor, {
+                .insertContent({
                   type: 'image',
                   attrs: {
                     src: imageUrl,
@@ -165,62 +168,36 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
     ],
     content: content,
     onUpdate: ({ editor }) => {
-      const newContent = editor.getHTML();
-      setContent(newContent);
+      const html = editor.getHTML();
+      setContent(html);
 
-      // 既存のタイマーをクリア
+      // コンテンツの変更を遅延させて関連ノートの検索を最適化
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
 
-      // 500ms後にdebouncedContentを更新
       debounceTimerRef.current = setTimeout(() => {
-        setDebouncedContent(newContent);
-      }, 500);
+        setDebouncedContent(html);
+      }, 500); // 500ms後に更新
     },
     editorProps: {
       attributes: {
-        class: 'tiptap prose prose-sm sm:prose lg:prose-lg xl:prose-xl',
+        class: 'prose focus:outline-none max-w-none',
       },
     },
+    // SSR対応のため、即時レンダリングをオフに
     immediatelyRender: false,
   });
 
-  // エディタの初期化を検出
+  // エディタが初期化されたときに初期コンテンツを設定
   useEffect(() => {
-    if (editor) {
+    if (editor && content && !editorInitialized) {
+      editor.commands.setContent(content);
       setEditorInitialized(true);
     }
-  }, [editor]);
+  }, [editor, content, editorInitialized]);
 
-  // エディタが初期化されたら、初期コンテンツを適切に設定
-  useEffect(() => {
-    if (editor && editorInitialized && content) {
-      // 少し遅延させて確実にエディタが準備できた状態で実行
-      const timer = setTimeout(() => {
-        // 既存のコンテンツをクリア
-        editor.commands.clearContent();
-
-        // HTMLコンテンツを設定
-        editor.commands.setContent(content);
-
-        // 初期コンテンツの設定後、カーソルを先頭に移動
-        editor.commands.focus('start');
-      }, 50);
-
-      return () => clearTimeout(timer);
-    }
-  }, [editor, editorInitialized, content]);
-
-  useEffect(() => {
-    setTitle(initialTitle);
-  }, [initialTitle]);
-
-  useEffect(() => {
-    setDebouncedContent(content);
-  }, [content]);
-
-  // コンポーネントのアンマウント時にタイマーをクリア
+  // コンポーネントがアンマウントされるときにタイマーをクリア
   useEffect(() => {
     return () => {
       if (debounceTimerRef.current) {
@@ -229,6 +206,16 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
     };
   }, []);
 
+  // エディタが初期化されていない場合はローディング表示
+  if (!editor && !isRefreshingImages) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
+      </div>
+    );
+  }
+
+  // フォーム送信処理
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
@@ -254,7 +241,12 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
             <h2 className="text-2xl font-bold">
               {initialContent ? 'ノートを編集' : 'ノートを作成'}
             </h2>
-            <div className="w-24" />
+            {/* 編集時のみメニューボタンを表示 */}
+            {noteId && onDelete ? (
+              <NoteActionMenu onDelete={onDelete} isSubmitting={isSubmitting} />
+            ) : (
+              <div className="w-24" />
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
