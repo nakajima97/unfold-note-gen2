@@ -7,23 +7,26 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
     {
       cookies: {
-        get(name) {
-          // 直接cookies()を呼び出す
-          return cookies().get(name)?.value;
+        async get(name) {
+          // cookies()がPromiseを返すので、awaitを使用
+          const cookieStore = await cookies();
+          return cookieStore.get(name)?.value;
         },
-        set(name, value, options) {
+        async set(name, value, options) {
           try {
-            // 直接cookies()を呼び出す
-            cookies().set({ name, value, ...options });
+            // cookies()がPromiseを返すので、awaitを使用
+            const cookieStore = await cookies();
+            cookieStore.set({ name, value, ...options });
           } catch (error) {
             // Server Componentからの呼び出しの場合、エラーが発生する可能性がある
             // ミドルウェアがセッションを更新するので無視できる
           }
         },
-        remove(name, options) {
+        async remove(name, options) {
           try {
-            // 直接cookies()を呼び出す
-            cookies().set({ name, value: '', ...options });
+            // cookies()がPromiseを返すので、awaitを使用
+            const cookieStore = await cookies();
+            cookieStore.set({ name, value: '', ...options });
           } catch (error) {
             // 同上
           }
