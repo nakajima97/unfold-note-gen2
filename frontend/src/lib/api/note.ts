@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/utils/supabase/client';
 import { generateUniqueUrlId } from '@/lib/utils/urlId';
 
 export type Note = {

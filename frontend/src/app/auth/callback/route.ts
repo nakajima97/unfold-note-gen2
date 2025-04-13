@@ -1,10 +1,13 @@
 import { createProject, getUserProjects } from '@/lib/api/project';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/utils/supabase/server';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (request: NextRequest) => {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
+
+  // サーバーコンポーネント用のSupabaseクライアントを作成
+  const supabase = await createClient();
 
   if (code) {
     try {

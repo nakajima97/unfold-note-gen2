@@ -1,7 +1,7 @@
 'use client';
 
 import NavbarContainer from '@/features/layout/containers/NavbarContainer';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
