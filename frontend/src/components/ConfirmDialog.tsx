@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/shadcn/ui/dialog';
-import React from 'react';
+import type React from 'react';
 
 export type ConfirmDialogProps = {
   isOpen: boolean;
