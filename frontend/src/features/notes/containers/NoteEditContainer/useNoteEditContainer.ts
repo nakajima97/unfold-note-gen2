@@ -2,7 +2,7 @@
 
 import type { Note } from '@/features/notes/types';
 import { refreshImageUrls } from '@/lib/api/file';
-import { getNoteById, updateNote } from '@/lib/api/note';
+import { deleteNote, getNoteById, updateNote } from '@/lib/api/note';
 import { updateNoteTags } from '@/lib/api/tag';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -101,6 +101,29 @@ export const useNoteEditContainer = ({
     }
   };
 
+  // ノート削除処理
+  const handleDelete = async () => {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await deleteNote(noteId);
+
+      // 削除後、ノート一覧ページに戻る
+      if (projectUrlId) {
+        router.push(`/projects/${projectUrlId}/notes`);
+      } else {
+        // フォールバック: 内部IDを使用
+        router.push(`/projects/${projectId}/notes`);
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err : new Error('ノートの削除に失敗しました'),
+      );
+      setIsSubmitting(false);
+    }
+  };
+
   // キャンセル処理
   const handleCancel = () => {
     // ノート一覧に戻る
@@ -118,6 +141,7 @@ export const useNoteEditContainer = ({
     isSubmitting,
     error,
     handleSubmit,
+    handleDelete,
     handleCancel,
   };
 };

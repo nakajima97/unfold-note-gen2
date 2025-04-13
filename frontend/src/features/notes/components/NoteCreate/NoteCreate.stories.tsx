@@ -19,6 +19,7 @@ export const Default: Story = {
     onCancel: () => console.log('キャンセルがクリックされました'),
     initialTitle: '',
     initialContent: '',
+    projectId: 'project-123',
   },
 };
 
@@ -30,6 +31,7 @@ export const WithInitialValues: Story = {
     initialTitle: '新しいノートのタイトル',
     initialContent:
       'これは新しいノートの内容です。\n\n#タグ #メモ #Unfold_Note',
+    projectId: 'project-123',
   },
 };
 
@@ -40,6 +42,7 @@ export const Submitting: Story = {
     onCancel: () => console.log('キャンセルがクリックされました'),
     initialTitle: 'ノートを保存中...',
     initialContent: 'この内容は現在保存中です。#保存中',
+    projectId: 'project-123',
   },
 };
 
@@ -83,6 +86,7 @@ function hello() {
 \`\`\`
 
 最後の段落です。これでサンプルノートは終わりです。`,
+    projectId: 'project-123',
   },
 };
 
@@ -113,5 +117,20 @@ Unfold Noteは、シンプルなノート管理アプリです。#Unfold_Note
 3. 検索して見つける
 
 以上です！`,
+    projectId: 'project-123',
+  },
+};
+
+export const WithDeleteOption: Story = {
+  args: {
+    isSubmitting: false,
+    onSubmit: (note) => console.log('ノート保存:', note),
+    onCancel: () => console.log('キャンセルがクリックされました'),
+    onDelete: () => console.log('ノート削除がクリックされました'),
+    initialTitle: '削除可能なノート',
+    initialContent: 'このノートは削除ボタンを表示するサンプルです。#削除',
+    projectId: 'project-123',
+    noteId: 'note-123',
+    projectUrlId: 'project-url-123',
   },
 };
