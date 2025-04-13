@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabase';
 import { generateUniqueUrlId } from '@/lib/utils/urlId';
+import { supabase } from '@/utils/supabase/client';
 
 export type Project = {
   id: string;

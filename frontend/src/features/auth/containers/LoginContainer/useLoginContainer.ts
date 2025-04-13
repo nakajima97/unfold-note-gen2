@@ -1,5 +1,5 @@
 import { getUserProjects } from '@/lib/api/project';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

@@ -2,7 +2,7 @@
 
 import { SignOutButton } from '@/components/SignOutButton';
 import { createProject, getUserProjects } from '@/lib/api/project';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
