@@ -55,7 +55,7 @@ const Home = () => {
         console.log('Default project created:', defaultProject);
 
         // 作成したプロジェクトのノート一覧ページにリダイレクト
-        router.push(`/projects/${defaultProject.urlId}/notes`);
+        router.push(`/projects/${defaultProject.url_id}/notes`);
       } else {
         // ユーザーがプロジェクトを持っている場合、最初のプロジェクトにリダイレクト
         if (projects.length > 0) {
