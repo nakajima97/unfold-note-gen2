@@ -162,10 +162,10 @@ export const createProject = async (
           throw rpcError;
         }
 
-        return rpcData;
+        return { ...rpcData, urlId: rpcData.url_id };
       }
 
-      return data;
+      return { ...data, urlId: data.url_id };
     } catch (insertError) {
       console.error('プロジェクト作成エラー:', insertError);
       throw insertError;
