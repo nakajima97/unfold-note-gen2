@@ -15,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
+import EditorHelpTooltip from '@/features/notes/components/EditorHelpTooltip';
 import NoteActionMenu from '@/features/notes/components/NoteActionMenu';
 import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import Tag from '@/features/notes/extensions/tag';
@@ -274,21 +275,7 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
               <Label htmlFor="content" className="text-lg font-medium">
                 内容
               </Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="max-w-xs bg-secondary text-secondary-foreground p-2 space-y-1">
-                    <p>画像はドラッグ＆ドロップまたは貼り付けで追加できます（最大10MB）</p>
-                    <p><span className="tag-highlight">#タグ</span> のように入力するとタグとして認識されます</p>
-                    <p className="text-xs">
-                      タグの色: <span style={{ color: '#ff69b4', fontWeight: 600 }}>ピンク</span> = 同名のノートが存在しない、
-                      <span style={{ color: '#1e90ff', fontWeight: 600 }}>青</span> = 同名のノートが存在する
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <EditorHelpTooltip />
             </div>
             <div className="min-h-[300px] border rounded-md p-4 editor-container relative">
               {isUploading && (
