@@ -16,7 +16,7 @@ const EditorHelpTooltip = () => {
         <TooltipTrigger asChild>
           <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
         </TooltipTrigger>
-        <TooltipContent side="right" className="max-w-xs bg-secondary text-secondary-foreground p-2 space-y-1">
+        <TooltipContent side="right" className="max-w-xs bg-secondary text-secondary-foreground p-3 pl-5 space-y-1">
           <p>画像はドラッグ＆ドロップまたは貼り付けで追加できます（最大10MB）</p>
           <p><span className="tag-highlight">#タグ</span> のように入力するとタグとして認識されます</p>
           <p className="text-xs">
