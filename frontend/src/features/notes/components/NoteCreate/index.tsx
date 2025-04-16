@@ -9,6 +9,13 @@ import {
 } from '@/components/shadcn/ui/card';
 import { Input } from '@/components/shadcn/ui/input';
 import { Label } from '@/components/shadcn/ui/label';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/shadcn/ui/tooltip';
+import EditorHelpTooltip from '@/features/notes/components/EditorHelpTooltip';
 import NoteActionMenu from '@/features/notes/components/NoteActionMenu';
 import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import Tag from '@/features/notes/extensions/tag';
@@ -18,7 +25,7 @@ import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, HelpCircle, Save } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import './editor.css';
 
@@ -264,31 +271,18 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="content" className="text-lg font-medium mb-2">
-              内容
-            </Label>
+            <div className="flex items-center gap-2 mb-2">
+              <Label htmlFor="content" className="text-lg font-medium">
+                内容
+              </Label>
+              <EditorHelpTooltip />
+            </div>
             <div className="min-h-[300px] border rounded-md p-4 editor-container relative">
               {isUploading && (
                 <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
                 </div>
               )}
-              <div className="mb-2 text-sm text-muted-foreground">
-                画像はドラッグ＆ドロップまたは貼り付けで追加できます（最大10MB）
-                <br />
-                <span className="tag-highlight">#タグ</span>{' '}
-                のように入力するとタグとして認識されます
-                <br />
-                <span style={{ fontSize: '0.8em' }}>
-                  タグの色:{' '}
-                  <span style={{ color: '#ff69b4', fontWeight: 600 }}>
-                    ピンク
-                  </span>{' '}
-                  = 同名のノートが存在しない、
-                  <span style={{ color: '#1e90ff', fontWeight: 600 }}>青</span>{' '}
-                  = 同名のノートが存在する
-                </span>
-              </div>
               <EditorContent
                 editor={editor}
                 className="prose max-w-none min-h-[300px]"
