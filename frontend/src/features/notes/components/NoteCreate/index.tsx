@@ -53,7 +53,9 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   noteId,
 }) => {
   const [title, setTitle] = React.useState(initialTitle);
+  // tiptap表示用content
   const [content, setContent] = React.useState('');
+  // 即座にcontentの内容に対して処理を行うと負荷がかかるため、500ms後にcontentと同期させてdebouncedContentの値でタグ抽出等の処理を行っている
   const [debouncedContent, setDebouncedContent] = useState('');
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isUploading, setIsUploading] = useState(false);
