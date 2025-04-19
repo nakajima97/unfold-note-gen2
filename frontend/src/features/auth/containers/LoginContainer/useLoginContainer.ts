@@ -1,4 +1,4 @@
-import { getUserProjects } from '@/lib/api/project';
+import { createProject, getUserProjects } from '@/lib/api/project';
 import { supabase } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -17,7 +17,7 @@ export const useLoginContainer = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const router = useRouter();
 
-  const redirectToNotes = async (userId: string) => {
+  const redirectToNotes = async (userId: string, displayName: string) => {
     try {
       // ユーザーのプロジェクトを取得
       const projects = await getUserProjects(userId);
@@ -26,8 +26,17 @@ export const useLoginContainer = () => {
       if (projects.length > 0) {
         router.push(`/projects/${projects[0].urlId}/notes`);
       } else {
-        // 要件上はあり得ないはずですが、念のため
-        router.push('/');
+        // プロジェクトがない場合は、デフォルトプロジェクトを作成してリダイレクト
+        const defaultProject = await createProject(
+          `${displayName}'s Project`,
+          userId,
+          'Default project',
+        );
+
+        console.log('デフォルトプロジェクト作成完了:', defaultProject);
+
+        // 新しく作成したプロジェクトにリダイレクト
+        router.push(`/projects/${defaultProject.urlId}/notes`);
       }
       router.refresh();
     } catch (error) {
@@ -55,7 +64,7 @@ export const useLoginContainer = () => {
       }
 
       if (data.user) {
-        await redirectToNotes(data.user.id);
+        await redirectToNotes(data.user.id, data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'My');
       }
     } catch (error: unknown) {
       const errorWithMessage = error as ErrorWithMessage;
