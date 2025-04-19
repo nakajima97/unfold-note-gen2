@@ -27,7 +27,7 @@ export const useNoteEditor = ({
     projectId,
     onSubmit,
 }: Props) => {
-    const [title, setTitle] = useState(initialTitle);
+    const [title, setTitle] = useState('');
     // tiptap表示用content
     const [content, setContent] = useState('');
     // 即座にcontentの内容に対して処理を行うと負荷がかかるため、500ms後にcontentと同期させてdebouncedContentの値でタグ抽出等の処理を行っている
@@ -61,6 +61,11 @@ export const useNoteEditor = ({
   
       updateInitialContent();
     }, [initialContent]);
+
+    // 初期タイトル
+    useEffect(() => {
+      setTitle(initialTitle);
+    }, [initialTitle]);
   
     const editor = useEditor({
       extensions: [
