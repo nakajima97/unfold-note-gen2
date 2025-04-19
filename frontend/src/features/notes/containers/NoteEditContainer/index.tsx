@@ -3,6 +3,7 @@
 import NoteCreate from '@/features/notes/components/NoteCreate';
 import type React from 'react';
 import { useNoteEditContainer } from './useNoteEditContainer';
+import { useNoteEditor } from '../../hooks/useNoteEditor';
 
 export type NoteEditContainerProps = {
   projectId: string;
@@ -10,7 +11,7 @@ export type NoteEditContainerProps = {
   projectUrlId?: string;
 };
 
-const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
+export const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
   projectId,
   noteId,
   projectUrlId,
@@ -27,6 +28,17 @@ const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
     projectId,
     noteId,
     projectUrlId,
+  });
+
+  const { editor, title, setTitle, content, setContent, debouncedContent, isUploading, handleSubmit: noteEditSubmit, isRefreshingImages } = useNoteEditor({
+    initialTitle: note?.title || '',
+    initialContent: note?.content || '',
+    projectId,
+    projectUrlId,
+    noteId,
+    onSubmit: handleSubmit,
+    onCancel: handleCancel,
+    onDelete: handleDelete,
   });
 
   // ロード中の表示
@@ -73,8 +85,16 @@ const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
       projectId={projectId}
       projectUrlId={projectUrlId}
       noteId={noteId}
-    />
+      handleCancel={handleCancel}
+      title={note.title}
+      setTitle={setTitle}
+      content={content}
+      setContent={setContent}
+      debouncedContent={debouncedContent}
+      isUploading={isUploading}
+      editor={editor}
+      handleSubmit={noteEditSubmit}
+      isRefreshingImages={isRefreshingImages}
+      />
   );
 };
-
-export default NoteEditContainer;
