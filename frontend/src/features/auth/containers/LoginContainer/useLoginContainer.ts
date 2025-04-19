@@ -64,7 +64,12 @@ export const useLoginContainer = () => {
       }
 
       if (data.user) {
-        await redirectToNotes(data.user.id, data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'My');
+        await redirectToNotes(
+          data.user.id,
+          data.user.user_metadata?.full_name ||
+            data.user.email?.split('@')[0] ||
+            'My',
+        );
       }
     } catch (error: unknown) {
       const errorWithMessage = error as ErrorWithMessage;
