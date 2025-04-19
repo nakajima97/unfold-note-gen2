@@ -25,7 +25,7 @@ import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { ArrowLeft, HelpCircle, Save } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import './editor.css';
 
