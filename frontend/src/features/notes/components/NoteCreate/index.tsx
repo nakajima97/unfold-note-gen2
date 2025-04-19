@@ -69,9 +69,11 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
           // 初期コンテンツ内の画像URLを更新
           const updatedContent = await refreshImageUrls(initialContent);
           setContent(updatedContent);
+          setDebouncedContent(updatedContent);
         } catch (error) {
           console.error('画像URL更新エラー:', error);
           setContent(initialContent);
+          setDebouncedContent(initialContent);
         } finally {
           setIsRefreshingImages(false);
         }
