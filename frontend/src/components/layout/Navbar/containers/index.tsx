@@ -1,7 +1,7 @@
 'use client';
 
-import { useNavbarContainer } from './useNavbarContainer';
 import Navbar from '@/components/layout/Navbar';
+import { useNavbarContainer } from './useNavbarContainer';
 
 const NavbarContainer = () => {
   const { isLoggingOut, handleLogout } = useNavbarContainer();
