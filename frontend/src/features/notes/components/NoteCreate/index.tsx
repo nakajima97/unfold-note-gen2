@@ -25,7 +25,7 @@ import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { ArrowLeft, HelpCircle, Save } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import './editor.css';
 
@@ -53,7 +53,9 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   noteId,
 }) => {
   const [title, setTitle] = React.useState(initialTitle);
+  // tiptap表示用content
   const [content, setContent] = React.useState('');
+  // 即座にcontentの内容に対して処理を行うと負荷がかかるため、500ms後にcontentと同期させてdebouncedContentの値でタグ抽出等の処理を行っている
   const [debouncedContent, setDebouncedContent] = useState('');
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -69,9 +71,11 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
           // 初期コンテンツ内の画像URLを更新
           const updatedContent = await refreshImageUrls(initialContent);
           setContent(updatedContent);
+          setDebouncedContent(updatedContent);
         } catch (error) {
           console.error('画像URL更新エラー:', error);
           setContent(initialContent);
+          setDebouncedContent(initialContent);
         } finally {
           setIsRefreshingImages(false);
         }
