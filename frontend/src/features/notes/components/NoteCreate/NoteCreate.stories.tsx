@@ -1,3 +1,4 @@
+import type { Note } from '@/features/notes/types';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -16,10 +17,9 @@ const meta: Meta<typeof NoteCreate> = {
 export default meta;
 type Story = StoryObj<typeof NoteCreate>;
 
-// Storybook用のラッパー
 type NoteCreateStoryProps = {
   isSubmitting: boolean;
-  onSubmit: (note: { title: string; content: string }) => void;
+  onSubmit: (note: Partial<Note>) => void;
   onCancel: () => void;
   onDelete?: () => void;
   initialTitle?: string;
@@ -36,7 +36,6 @@ const NoteCreateStory = (args: NoteCreateStoryProps) => {
   const [isRefreshingImages, setIsRefreshingImages] = useState(false);
   const [debouncedContent, setDebouncedContent] = useState(content);
 
-  // editorインスタンスの生成
   const editor = useEditor({
     extensions: [StarterKit],
     content,
@@ -53,7 +52,6 @@ const NoteCreateStory = (args: NoteCreateStoryProps) => {
     editable: !args.isSubmitting,
   });
 
-  // handleSubmit, handleCancelのモック
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (args.onSubmit) args.onSubmit({ title, content });
