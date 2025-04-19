@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useState } from 'react';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import type React from 'react';
+import { useState } from 'react';
 import NoteCreate from './index';
 
 const meta: Meta<typeof NoteCreate> = {
@@ -16,7 +17,19 @@ export default meta;
 type Story = StoryObj<typeof NoteCreate>;
 
 // Storybook用のラッパー
-const NoteCreateStory = (args: any) => {
+type NoteCreateStoryProps = {
+  isSubmitting: boolean;
+  onSubmit: (note: { title: string; content: string }) => void;
+  onCancel: () => void;
+  onDelete?: () => void;
+  initialTitle?: string;
+  initialContent?: string;
+  projectId: string;
+  projectUrlId?: string;
+  noteId?: string;
+};
+
+const NoteCreateStory = (args: NoteCreateStoryProps) => {
   const [title, setTitle] = useState(args.initialTitle || '');
   const [content, setContent] = useState(args.initialContent || '');
   const [isUploading, setIsUploading] = useState(false);
@@ -179,4 +192,3 @@ Unfold Noteは、シンプルなノート管理アプリです。#Unfold_Note
     projectId: 'project-123',
   },
 };
-

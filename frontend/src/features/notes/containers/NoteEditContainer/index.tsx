@@ -2,8 +2,8 @@
 
 import NoteCreate from '@/features/notes/components/NoteCreate';
 import type React from 'react';
-import { useNoteEditContainer } from './useNoteEditContainer';
 import { useNoteEditor } from '../../hooks/useNoteEditor';
+import { useNoteEditContainer } from './useNoteEditContainer';
 
 export type NoteEditContainerProps = {
   projectId: string;
@@ -30,7 +30,17 @@ export const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
     projectUrlId,
   });
 
-  const { editor, title, setTitle, content, setContent, debouncedContent, isUploading, handleSubmit: noteEditSubmit, isRefreshingImages } = useNoteEditor({
+  const {
+    editor,
+    title,
+    setTitle,
+    content,
+    setContent,
+    debouncedContent,
+    isUploading,
+    handleSubmit: noteEditSubmit,
+    isRefreshingImages,
+  } = useNoteEditor({
     initialTitle: note?.title || '',
     initialContent: note?.content || '',
     projectId,
@@ -95,6 +105,6 @@ export const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
       editor={editor}
       handleSubmit={noteEditSubmit}
       isRefreshingImages={isRefreshingImages}
-      />
+    />
   );
 };

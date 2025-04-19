@@ -1,4 +1,4 @@
-import {NoteEditContainer}  from '@/features/notes/containers/NoteEditContainer';
+import { NoteEditContainer } from '@/features/notes/containers/NoteEditContainer';
 import { getNoteByUrlId } from '@/lib/api/note';
 import { getProjectByUrlId } from '@/lib/api/project';
 import { notFound } from 'next/navigation';

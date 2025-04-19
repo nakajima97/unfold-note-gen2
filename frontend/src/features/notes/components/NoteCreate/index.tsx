@@ -23,10 +23,11 @@ import type { Note } from '@/features/notes/types';
 import { refreshImageUrls, uploadImage } from '@/lib/api/file';
 import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
-import { Editor, EditorContent, useEditor } from '@tiptap/react';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { ArrowLeft, Save } from 'lucide-react';
-import React, { useEffect, useState, useRef } from 'react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './editor.css';
 
 export type NoteCreateProps = {
@@ -70,16 +71,16 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   debouncedContent,
   isUploading,
   editor,
-  isRefreshingImages
+  isRefreshingImages,
 }) => {
-      // エディタが初期化されていない場合はローディング表示
-      if (!editor && !isRefreshingImages) {
-        return (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
-          </div>
-        );
-      }
+  // エディタが初期化されていない場合はローディング表示
+  if (!editor && !isRefreshingImages) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   return (
     <Card className="w-full max-w-4xl mx-auto">

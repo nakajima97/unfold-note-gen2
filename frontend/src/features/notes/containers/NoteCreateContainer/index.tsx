@@ -2,8 +2,8 @@
 
 import NoteCreate from '@/features/notes/components/NoteCreate';
 import type React from 'react';
-import { useNoteCreateContainer } from './useNoteCreateContainer';
 import { useNoteEditor } from '../../hooks/useNoteEditor';
+import { useNoteCreateContainer } from './useNoteCreateContainer';
 
 export type NoteCreateContainerProps = {
   projectId: string;
@@ -20,16 +20,26 @@ const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
       projectUrlId,
     });
 
-    const { editor, title, setTitle, content, setContent, debouncedContent, isUploading, handleSubmit: noteEditSubmit, isRefreshingImages } = useNoteEditor({
-        initialTitle: '',
-        initialContent: '',
-        projectId,
-        projectUrlId,
-        noteId: undefined,
-        onSubmit: handleSubmit,
-        onCancel: handleCancel,
-        onDelete: undefined,
-      });
+  const {
+    editor,
+    title,
+    setTitle,
+    content,
+    setContent,
+    debouncedContent,
+    isUploading,
+    handleSubmit: noteEditSubmit,
+    isRefreshingImages,
+  } = useNoteEditor({
+    initialTitle: '',
+    initialContent: '',
+    projectId,
+    projectUrlId,
+    noteId: undefined,
+    onSubmit: handleSubmit,
+    onCancel: handleCancel,
+    onDelete: undefined,
+  });
 
   // エラーがある場合は表示
   if (error) {
@@ -52,7 +62,8 @@ const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
       editor={editor}
       handleSubmit={noteEditSubmit}
       isRefreshingImages={isRefreshingImages}
-      handleCancel={handleCancel}    />
+      handleCancel={handleCancel}
+    />
   );
 };
 
