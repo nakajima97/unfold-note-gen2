@@ -17,12 +17,6 @@ const Home = () => {
       try {
         const { data } = await supabase.auth.getUser();
         setUser(data.user);
-
-        // ユーザーがログインしている場合、プロジェクトを確認
-        if (data.user) {
-          console.log('User logged in:', data.user.id);
-          await checkAndCreateProject(data.user);
-        }
       } catch (error) {
         console.error('Error getting user:', error);
       } finally {
