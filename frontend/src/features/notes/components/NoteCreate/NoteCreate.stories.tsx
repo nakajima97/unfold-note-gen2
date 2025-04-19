@@ -1,4 +1,9 @@
+import type { Note } from '@/features/notes/types';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import type React from 'react';
+import { useState } from 'react';
 import NoteCreate from './index';
 
 const meta: Meta<typeof NoteCreate> = {
@@ -12,7 +17,68 @@ const meta: Meta<typeof NoteCreate> = {
 export default meta;
 type Story = StoryObj<typeof NoteCreate>;
 
+type NoteCreateStoryProps = {
+  isSubmitting: boolean;
+  onSubmit: (note: Partial<Note>) => void;
+  onCancel: () => void;
+  onDelete?: () => void;
+  initialTitle?: string;
+  initialContent?: string;
+  projectId: string;
+  projectUrlId?: string;
+  noteId?: string;
+};
+
+const NoteCreateStory = (args: NoteCreateStoryProps) => {
+  const [title, setTitle] = useState(args.initialTitle || '');
+  const [content, setContent] = useState(args.initialContent || '');
+  const [isUploading, setIsUploading] = useState(false);
+  const [isRefreshingImages, setIsRefreshingImages] = useState(false);
+  const [debouncedContent, setDebouncedContent] = useState(content);
+
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content,
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
+      setDebouncedContent(editor.getHTML());
+    },
+    editorProps: {
+      attributes: {
+        class: 'prose max-w-none min-h-[300px]',
+      },
+    },
+    autofocus: false,
+    editable: !args.isSubmitting,
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (args.onSubmit) args.onSubmit({ title, content });
+  };
+  const handleCancel = () => {
+    if (args.onCancel) args.onCancel();
+  };
+
+  return (
+    <NoteCreate
+      {...args}
+      title={title}
+      setTitle={setTitle}
+      content={content}
+      setContent={setContent}
+      debouncedContent={debouncedContent}
+      isUploading={isUploading}
+      isRefreshingImages={isRefreshingImages}
+      editor={editor}
+      handleSubmit={handleSubmit}
+      handleCancel={handleCancel}
+    />
+  );
+};
+
 export const Default: Story = {
+  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: false,
     onSubmit: (note) => console.log('ノート保存:', note),
@@ -24,6 +90,7 @@ export const Default: Story = {
 };
 
 export const WithInitialValues: Story = {
+  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: false,
     onSubmit: (note) => console.log('ノート保存:', note),
@@ -36,6 +103,7 @@ export const WithInitialValues: Story = {
 };
 
 export const Submitting: Story = {
+  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: true,
     onSubmit: (note) => console.log('ノート保存:', note),
@@ -47,6 +115,7 @@ export const Submitting: Story = {
 };
 
 export const LongContent: Story = {
+  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: false,
     onSubmit: (note) => console.log('ノート保存:', note),
@@ -91,6 +160,7 @@ function hello() {
 };
 
 export const WithJapaneseContent: Story = {
+  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: false,
     onSubmit: (note) => console.log('ノート保存:', note),
@@ -118,19 +188,5 @@ Unfold Noteは、シンプルなノート管理アプリです。#Unfold_Note
 
 以上です！`,
     projectId: 'project-123',
-  },
-};
-
-export const WithDeleteOption: Story = {
-  args: {
-    isSubmitting: false,
-    onSubmit: (note) => console.log('ノート保存:', note),
-    onCancel: () => console.log('キャンセルがクリックされました'),
-    onDelete: () => console.log('ノート削除がクリックされました'),
-    initialTitle: '削除可能なノート',
-    initialContent: 'このノートは削除ボタンを表示するサンプルです。#削除',
-    projectId: 'project-123',
-    noteId: 'note-123',
-    projectUrlId: 'project-url-123',
   },
 };
