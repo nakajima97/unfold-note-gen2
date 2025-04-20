@@ -3,14 +3,14 @@
 import Tag from '@/features/notes/extensions/tag';
 import type { Note } from '@/features/notes/types';
 import { refreshImageUrls, uploadImage } from '@/lib/api/file';
+import { extractTagsFromText } from '@/lib/api/tag';
+import { supabase } from '@/utils/supabase/client';
 import FileHandler from '@tiptap-pro/extension-file-handler';
 import Image from '@tiptap/extension-image';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { extractTagsFromText } from '@/lib/api/tag';
-import { supabase } from '@/utils/supabase/client';
 
 type Props = {
   initialTitle: string;
@@ -177,7 +177,7 @@ export const useNoteEditor = ({
         .in('title', tags);
       if (error) {
         setMatchingNoteTitles([]);
-      // @ts-ignore
+        // @ts-ignore
         editor.commands.setMatchingNoteTitles([]);
         return;
       }

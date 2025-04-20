@@ -1,5 +1,11 @@
-import { Extension, RawCommands } from '@tiptap/core';
-import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { Extension, type RawCommands } from '@tiptap/core';
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
+import {
+  type EditorState,
+  Plugin,
+  PluginKey,
+  type Transaction,
+} from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 
 // --- Tiptapコマンド型拡張 ---
@@ -23,10 +29,11 @@ export const Tag = Extension.create({
   addCommands() {
     return {
       setMatchingNoteTitles:
-        (titles: string[]) => ({ commands }: { commands: RawCommands }) => {
+        (titles: string[]) =>
+        ({ commands }: { commands: RawCommands }) => {
           this.options.matchingNoteTitles = titles;
           // 強制的に再描画（装飾を更新）
-          commands.command(({ tr }: { tr: any }) => {
+          commands.command(({ tr }: { tr: Transaction }) => {
             tr.setMeta('tag', { updated: true });
             return true;
           });
@@ -40,11 +47,12 @@ export const Tag = Extension.create({
       new Plugin({
         key: new PluginKey('tag'),
         props: {
-          decorations: (state: any) => {
+          decorations: (state: EditorState) => {
             const { doc } = state;
             const decorations: Decoration[] = [];
-            const matchingNoteTitles: string[] = this.options.matchingNoteTitles || [];
-            doc.descendants((node: any, pos: number) => {
+            const matchingNoteTitles: string[] =
+              this.options.matchingNoteTitles || [];
+            doc.descendants((node: ProseMirrorNode, pos: number) => {
               if (!node.isText) return;
               const text: string = node.text || '';
               const matches = Array.from(text.matchAll(tagRegExp));
@@ -60,7 +68,7 @@ export const Tag = Extension.create({
                       ? 'tag-highlight has-matching-note'
                       : 'tag-highlight',
                     'data-type': 'tag',
-                  })
+                  }),
                 );
               }
             });
