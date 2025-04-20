@@ -16,7 +16,7 @@ type Props = {
   initialTitle: string;
   initialContent: string;
   projectId: string;
-  projectUrlId?: string;
+  projectUrlId: string;
   noteId?: string;
   onSubmit: (note: Partial<Note>) => void;
   onCancel: () => void;
@@ -27,6 +27,7 @@ export const useNoteEditor = ({
   initialTitle,
   initialContent,
   projectId,
+  projectUrlId,
   onSubmit,
 }: Props) => {
   const [title, setTitle] = useState('');
@@ -39,12 +40,17 @@ export const useNoteEditor = ({
   const [editorInitialized, setEditorInitialized] = useState(false);
   const [isRefreshingImages, setIsRefreshingImages] = useState(false);
 
-  // --- 追加: タグと同名ノートタイトル判定用ロジック ---
-  // タグと一致するノートタイトル一覧
-  const [matchingNoteTitles, setMatchingNoteTitles] = useState<string[]>([]);
+  // --- 追加: タグと一致するノート情報（title, urlId）配列 ---
+  const [matchingNoteInfos, setMatchingNoteInfos] = useState<{ title: string, urlId: string }[]>([]);
 
-  // --- Tiptap拡張のTagに一致リストを渡す ---
-  const tagExtension = Tag.configure({ matchingNoteTitles });
+  // --- Tiptap拡張のTagに一致リストとonTagClickを渡す ---
+  const tagExtension = Tag.configure({
+    matchingNoteInfos,
+    onTagClick: (urlId: string) => {
+      // Next.jsのrouter.pushなどで遷移。必要に応じてprojectIdを参照
+      window.location.href = `/projects/${projectUrlId}/notes/${urlId}`;
+    },
+  });
 
   const editor = useEditor({
     extensions: [
@@ -164,27 +170,27 @@ export const useNoteEditor = ({
     if (!debouncedContent || !projectId || !editor) return;
     const tags = extractTagsFromText(debouncedContent);
     if (tags.length === 0) {
-      setMatchingNoteTitles([]);
+      setMatchingNoteInfos([]);
       // @ts-ignore
-      editor.commands.setMatchingNoteTitles([]);
+      editor.commands.setMatchingNoteInfos([]);
       return;
     }
     (async () => {
       const { data, error } = await supabase
         .from('notes')
-        .select('title')
+        .select('title, url_id')
         .eq('project_id', projectId)
         .in('title', tags);
       if (error) {
-        setMatchingNoteTitles([]);
+        setMatchingNoteInfos([]);
         // @ts-ignore
-        editor.commands.setMatchingNoteTitles([]);
+        editor.commands.setMatchingNoteInfos([]);
         return;
       }
-      const titles = data.map((n: { title: string }) => n.title);
-      setMatchingNoteTitles(titles);
+      const infos = data.map((n: { title: string, url_id: string }) => ({ title: n.title, urlId: n.url_id }));
+      setMatchingNoteInfos(infos);
       // @ts-ignore
-      editor.commands.setMatchingNoteTitles(titles);
+      editor.commands.setMatchingNoteInfos(infos);
     })();
   }, [debouncedContent, projectId, editor]);
 
