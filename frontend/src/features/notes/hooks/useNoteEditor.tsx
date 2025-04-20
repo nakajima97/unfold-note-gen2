@@ -41,7 +41,9 @@ export const useNoteEditor = ({
   const [isRefreshingImages, setIsRefreshingImages] = useState(false);
 
   // --- 追加: タグと一致するノート情報（title, urlId）配列 ---
-  const [matchingNoteInfos, setMatchingNoteInfos] = useState<{ title: string, urlId: string }[]>([]);
+  const [matchingNoteInfos, setMatchingNoteInfos] = useState<
+    { title: string; urlId: string }[]
+  >([]);
 
   // --- Tiptap拡張のTagに一致リストとonTagClickを渡す ---
   const tagExtension = Tag.configure({
@@ -187,7 +189,10 @@ export const useNoteEditor = ({
         editor.commands.setMatchingNoteInfos([]);
         return;
       }
-      const infos = data.map((n: { title: string, url_id: string }) => ({ title: n.title, urlId: n.url_id }));
+      const infos = data.map((n: { title: string; url_id: string }) => ({
+        title: n.title,
+        urlId: n.url_id,
+      }));
       setMatchingNoteInfos(infos);
       // @ts-ignore
       editor.commands.setMatchingNoteInfos(infos);

@@ -11,7 +11,9 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view';
 // --- Tiptapコマンド型拡張 ---
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
-    setMatchingNoteInfos: (infos: { title: string, urlId: string }[]) => ReturnType;
+    setMatchingNoteInfos: (
+      infos: { title: string; urlId: string }[],
+    ) => ReturnType;
   }
 }
 
@@ -30,7 +32,7 @@ export const Tag = Extension.create({
   addCommands() {
     return {
       setMatchingNoteInfos:
-        (infos: { title: string, urlId: string }[]) =>
+        (infos: { title: string; urlId: string }[]) =>
         ({ commands }: { commands: RawCommands }) => {
           this.options.matchingNoteInfos = infos;
           // 強制的に再描画（装飾を更新）
@@ -51,7 +53,7 @@ export const Tag = Extension.create({
           decorations: (state: EditorState) => {
             const { doc } = state;
             const decorations: Decoration[] = [];
-            const matchingNoteInfos: { title: string, urlId: string }[] =
+            const matchingNoteInfos: { title: string; urlId: string }[] =
               this.options.matchingNoteInfos || [];
             doc.descendants((node: ProseMirrorNode, pos: number) => {
               if (!node.isText) return;
@@ -62,7 +64,9 @@ export const Tag = Extension.create({
                 const start = pos + match.index;
                 const end = start + match[0].length;
                 const tagName = match[0].slice(1);
-                const matchInfo = matchingNoteInfos.find(info => info.title === tagName);
+                const matchInfo = matchingNoteInfos.find(
+                  (info) => info.title === tagName,
+                );
                 decorations.push(
                   Decoration.inline(start, end, {
                     class: matchInfo
@@ -78,12 +82,14 @@ export const Tag = Extension.create({
           },
           handleDOMEvents: {
             click: (view, event) => {
-              const target = event.target;
+              const target = event.target as HTMLElement;
               if (!target) return false;
-              const tagElement = target.closest('.tag-highlight, [data-type="tag"]');
+              const tagElement = target.closest(
+                '.tag-highlight, [data-type="tag"]',
+              ) as HTMLElement | null;
               if (tagElement) {
                 const urlId = tagElement.dataset.urlId;
-                const onTagClick = this.options && this.options.onTagClick;
+                const onTagClick = this.options?.onTagClick;
                 if (urlId && typeof onTagClick === 'function') {
                   onTagClick(urlId);
                   event.preventDefault();
