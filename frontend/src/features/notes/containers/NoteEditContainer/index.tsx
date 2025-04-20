@@ -8,14 +8,14 @@ import { useNoteEditContainer } from './useNoteEditContainer';
 export type NoteEditContainerProps = {
   projectId: string;
   noteId: string;
-  projectUrlId?: string;
+  projectUrlId: string;
 };
 
-export const NoteEditContainer: React.FC<NoteEditContainerProps> = ({
+export const NoteEditContainer = ({
   projectId,
   noteId,
   projectUrlId,
-}) => {
+}: NoteEditContainerProps) => {
   const {
     note,
     isLoading,
