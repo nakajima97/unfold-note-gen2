@@ -79,6 +79,7 @@ export const Tag = Extension.create({
           handleDOMEvents: {
             click: (view, event) => {
               const target = event.target;
+              if (!target) return false;
               const tagElement = target.closest('.tag-highlight, [data-type="tag"]');
               if (tagElement) {
                 const urlId = tagElement.dataset.urlId;
