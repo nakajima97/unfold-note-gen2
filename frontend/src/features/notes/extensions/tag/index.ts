@@ -1,6 +1,13 @@
-import { Extension } from '@tiptap/core';
+import { Extension, RawCommands } from '@tiptap/core';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
+
+// --- Tiptapコマンド型拡張 ---
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    setMatchingNoteTitles: (titles: string[]) => ReturnType;
+  }
+}
 
 /**
  * タグ拡張機能
@@ -16,16 +23,16 @@ export const Tag = Extension.create({
   addCommands() {
     return {
       setMatchingNoteTitles:
-        (titles: string[]) => ({ commands }) => {
+        (titles: string[]) => ({ commands }: { commands: RawCommands }) => {
           this.options.matchingNoteTitles = titles;
           // 強制的に再描画（装飾を更新）
-          commands.command(({ tr }) => {
+          commands.command(({ tr }: { tr: any }) => {
             tr.setMeta('tag', { updated: true });
             return true;
           });
           return true;
         },
-    };
+    } as Partial<RawCommands>; // 型キャストで型エラー回避
   },
   addProseMirrorPlugins() {
     const tagRegExp = /#[\p{L}\p{N}_-]+/gu;
@@ -33,13 +40,13 @@ export const Tag = Extension.create({
       new Plugin({
         key: new PluginKey('tag'),
         props: {
-          decorations: (state) => {
+          decorations: (state: any) => {
             const { doc } = state;
-            const decorations = [];
-            const matchingNoteTitles = this.options.matchingNoteTitles || [];
-            doc.descendants((node, pos) => {
+            const decorations: Decoration[] = [];
+            const matchingNoteTitles: string[] = this.options.matchingNoteTitles || [];
+            doc.descendants((node: any, pos: number) => {
               if (!node.isText) return;
-              const text = node.text || '';
+              const text: string = node.text || '';
               const matches = Array.from(text.matchAll(tagRegExp));
               for (const match of matches) {
                 if (match.index === undefined) continue;

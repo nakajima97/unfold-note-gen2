@@ -165,6 +165,7 @@ export const useNoteEditor = ({
     const tags = extractTagsFromText(debouncedContent);
     if (tags.length === 0) {
       setMatchingNoteTitles([]);
+      // @ts-ignore
       editor.commands.setMatchingNoteTitles([]);
       return;
     }
@@ -176,11 +177,13 @@ export const useNoteEditor = ({
         .in('title', tags);
       if (error) {
         setMatchingNoteTitles([]);
+      // @ts-ignore
         editor.commands.setMatchingNoteTitles([]);
         return;
       }
       const titles = data.map((n: { title: string }) => n.title);
       setMatchingNoteTitles(titles);
+      // @ts-ignore
       editor.commands.setMatchingNoteTitles(titles);
     })();
   }, [debouncedContent, projectId, editor]);
