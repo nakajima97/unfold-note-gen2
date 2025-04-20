@@ -9,6 +9,8 @@ import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { extractTagsFromText } from '@/lib/api/tag';
+import { supabase } from '@/utils/supabase/client';
 
 type Props = {
   initialTitle: string;
@@ -30,42 +32,19 @@ export const useNoteEditor = ({
   const [title, setTitle] = useState('');
   // tiptap表示用content
   const [content, setContent] = useState('');
-  // 即座にcontentの内容に対して処理を行うと負荷がかかるため、500ms後にcontentと同期させてdebouncedContentの値でタグ抽出等の処理を行っている
+  // 即座にcontentの内容に対して処理を行うと負荷がかかるため、500ms後にcontentと同期させてdebouncedContentの値でタグ抽出等の処理を行っていく
   const [debouncedContent, setDebouncedContent] = useState('');
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [editorInitialized, setEditorInitialized] = useState(false);
   const [isRefreshingImages, setIsRefreshingImages] = useState(false);
 
-  // 初期コンテンツの画像URLを更新
-  useEffect(() => {
-    const updateInitialContent = async () => {
-      if (initialContent) {
-        setIsRefreshingImages(true);
-        try {
-          // 初期コンテンツ内の画像URLを更新
-          const updatedContent = await refreshImageUrls(initialContent);
-          setContent(updatedContent);
-          setDebouncedContent(updatedContent);
-        } catch (error) {
-          console.error('画像URL更新エラー:', error);
-          setContent(initialContent);
-          setDebouncedContent(initialContent);
-        } finally {
-          setIsRefreshingImages(false);
-        }
-      } else {
-        setContent('');
-      }
-    };
+  // --- 追加: タグと同名ノートタイトル判定用ロジック ---
+  // タグと一致するノートタイトル一覧
+  const [matchingNoteTitles, setMatchingNoteTitles] = useState<string[]>([]);
 
-    updateInitialContent();
-  }, [initialContent]);
-
-  // 初期タイトル
-  useEffect(() => {
-    setTitle(initialTitle);
-  }, [initialTitle]);
+  // --- Tiptap拡張のTagに一致リストを渡す ---
+  const tagExtension = Tag.configure({ matchingNoteTitles });
 
   const editor = useEditor({
     extensions: [
@@ -74,7 +53,7 @@ export const useNoteEditor = ({
         allowBase64: true, // 一時的な画像表示のために残す
         inline: false,
       }),
-      Tag, // タグ拡張を追加
+      tagExtension, // ここでTag拡張を差し替え
       FileHandler.configure({
         allowedMimeTypes: [
           'image/png',
@@ -179,6 +158,62 @@ export const useNoteEditor = ({
     // SSR対応のため、即時レンダリングをオフに
     immediatelyRender: false,
   });
+
+  // debouncedContentまたはprojectIdが変わるたびにタグ名を抽出し、APIで一致判定
+  useEffect(() => {
+    if (!debouncedContent || !projectId || !editor) return;
+    const tags = extractTagsFromText(debouncedContent);
+    if (tags.length === 0) {
+      setMatchingNoteTitles([]);
+      editor.commands.setMatchingNoteTitles([]);
+      return;
+    }
+    (async () => {
+      const { data, error } = await supabase
+        .from('notes')
+        .select('title')
+        .eq('project_id', projectId)
+        .in('title', tags);
+      if (error) {
+        setMatchingNoteTitles([]);
+        editor.commands.setMatchingNoteTitles([]);
+        return;
+      }
+      const titles = data.map((n: { title: string }) => n.title);
+      setMatchingNoteTitles(titles);
+      editor.commands.setMatchingNoteTitles(titles);
+    })();
+  }, [debouncedContent, projectId, editor]);
+
+  // 初期コンテンツの画像URLを更新
+  useEffect(() => {
+    const updateInitialContent = async () => {
+      if (initialContent) {
+        setIsRefreshingImages(true);
+        try {
+          // 初期コンテンツ内の画像URLを更新
+          const updatedContent = await refreshImageUrls(initialContent);
+          setContent(updatedContent);
+          setDebouncedContent(updatedContent);
+        } catch (error) {
+          console.error('画像URL更新エラー:', error);
+          setContent(initialContent);
+          setDebouncedContent(initialContent);
+        } finally {
+          setIsRefreshingImages(false);
+        }
+      } else {
+        setContent('');
+      }
+    };
+
+    updateInitialContent();
+  }, [initialContent]);
+
+  // 初期タイトル
+  useEffect(() => {
+    setTitle(initialTitle);
+  }, [initialTitle]);
 
   // エディタが初期化されたときに初期コンテンツを設定
   useEffect(() => {
