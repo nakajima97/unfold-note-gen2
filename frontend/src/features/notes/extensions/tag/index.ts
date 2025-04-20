@@ -1,6 +1,19 @@
-import { Extension } from '@tiptap/core';
-import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { Extension, type RawCommands } from '@tiptap/core';
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
+import {
+  type EditorState,
+  Plugin,
+  PluginKey,
+  type Transaction,
+} from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
+
+// --- Tiptapコマンド型拡張 ---
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    setMatchingNoteTitles: (titles: string[]) => ReturnType;
+  }
+}
 
 /**
  * タグ拡張機能
@@ -8,43 +21,57 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view';
  */
 export const Tag = Extension.create({
   name: 'tag',
-
+  addOptions() {
+    return {
+      matchingNoteTitles: [], // デフォルトは空配列
+    };
+  },
+  addCommands() {
+    return {
+      setMatchingNoteTitles:
+        (titles: string[]) =>
+        ({ commands }: { commands: RawCommands }) => {
+          this.options.matchingNoteTitles = titles;
+          // 強制的に再描画（装飾を更新）
+          commands.command(({ tr }: { tr: Transaction }) => {
+            tr.setMeta('tag', { updated: true });
+            return true;
+          });
+          return true;
+        },
+    } as Partial<RawCommands>; // 型キャストで型エラー回避
+  },
   addProseMirrorPlugins() {
     const tagRegExp = /#[\p{L}\p{N}_-]+/gu;
-
     return [
       new Plugin({
         key: new PluginKey('tag'),
         props: {
-          decorations(state) {
+          decorations: (state: EditorState) => {
             const { doc } = state;
             const decorations: Decoration[] = [];
-
-            // ドキュメント内のすべてのテキストノードを処理
-            doc.descendants((node, pos) => {
+            const matchingNoteTitles: string[] =
+              this.options.matchingNoteTitles || [];
+            doc.descendants((node: ProseMirrorNode, pos: number) => {
               if (!node.isText) return;
-
-              const text = node.text || '';
-
-              // テキスト内のすべてのタグを検索
+              const text: string = node.text || '';
               const matches = Array.from(text.matchAll(tagRegExp));
-
               for (const match of matches) {
                 if (match.index === undefined) continue;
-
                 const start = pos + match.index;
                 const end = start + match[0].length;
-
-                // タグ装飾を追加
+                const tagName = match[0].slice(1);
+                const hasMatching = matchingNoteTitles.includes(tagName);
                 decorations.push(
                   Decoration.inline(start, end, {
-                    class: 'tag-highlight',
+                    class: hasMatching
+                      ? 'tag-highlight has-matching-note'
+                      : 'tag-highlight',
                     'data-type': 'tag',
                   }),
                 );
               }
             });
-
             return DecorationSet.create(doc, decorations);
           },
         },
