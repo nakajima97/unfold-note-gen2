@@ -171,7 +171,8 @@ export const useNoteEditor = ({
   useEffect(() => {
     if (!debouncedContent || !projectId || !editor) return;
     const tags = extractTagsFromText(debouncedContent);
-    if (tags.length === 0) {
+    const limitedTags = tags.slice(0, 5); // タグを最大5件までに制限
+    if (limitedTags.length === 0) {
       setMatchingNoteInfos([]);
       // @ts-ignore
       editor.commands.setMatchingNoteInfos([]);
@@ -182,7 +183,8 @@ export const useNoteEditor = ({
         .from('notes')
         .select('title, url_id')
         .eq('project_id', projectId)
-        .in('title', tags);
+        .in('title', limitedTags)
+        .limit(15); // ノートを最大15件までに制限
       if (error) {
         setMatchingNoteInfos([]);
         // @ts-ignore
