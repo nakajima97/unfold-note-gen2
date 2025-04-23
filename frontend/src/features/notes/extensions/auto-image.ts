@@ -1,5 +1,5 @@
 import { Extension, InputRule } from '@tiptap/core';
-import { Plugin } from 'prosemirror-state';
+import { Plugin, Selection } from 'prosemirror-state';
 
 function imageUrlInputRule(regexp: RegExp) {
   return new InputRule({
@@ -31,11 +31,14 @@ const AutoImage = Extension.create({
           handlePaste(view, event, slice) {
             const text = event.clipboardData?.getData('text/plain');
             if (text && imageUrlRegExp.test(text)) {
-              view.dispatch(
-                view.state.tr.replaceSelectionWith(
-                  view.state.schema.nodes.image.create({ src: text })
-                )
+              const { tr, schema } = view.state;
+              const imageNode = schema.nodes.image.create({ src: text });
+              tr.replaceSelectionWith(imageNode, false);
+              // キャレットを画像ノードの後ろに移動
+              tr.setSelection(
+                Selection.near(tr.doc.resolve(tr.selection.from + 1))
               );
+              view.dispatch(tr);
               return true;
             }
             return false;
