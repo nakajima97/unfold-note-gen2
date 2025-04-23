@@ -53,14 +53,12 @@ const AutoImage = Extension.create({
                 // 段落全体がURLの場合、その段落全体を画像ノードに置換
                 tr.replaceWith(paraPos, paraPos + paraNode.nodeSize, imageNode);
                 // カーソルを画像ノードの後ろに
-                tr.setSelection(
-                  Selection.near(tr.doc.resolve(paraPos + 1))
-                );
+                tr.setSelection(Selection.near(tr.doc.resolve(paraPos + 1)));
               } else {
                 // 通常通り選択範囲を画像ノードで置換
                 tr.replaceSelectionWith(imageNode, false);
                 tr.setSelection(
-                  Selection.near(tr.doc.resolve(tr.selection.from + 1))
+                  Selection.near(tr.doc.resolve(tr.selection.from + 1)),
                 );
               }
               view.dispatch(tr);
