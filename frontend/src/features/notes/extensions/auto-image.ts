@@ -14,14 +14,15 @@ const imageUrlInputRule = (regexp: RegExp) => {
       commands.deleteRange(range);
       commands.insertContent({
         type: 'image',
-        attrs: { src: url }
+        attrs: { src: url },
       });
-    }
+    },
   });
-}
+};
 
 // URL形式の画像を検出する正規表現
-const imageUrlRegExp = /https?:\/\/[\w\-._~:/?#[\]@!$&'()*+,;=%]+\.(jpg|jpeg|png|gif|webp)(?:\?[^\\s]*)?/gi;
+const imageUrlRegExp =
+  /https?:\/\/[\w\-._~:/?#[\]@!$&'()*+,;=%]+\.(jpg|jpeg|png|gif|webp)(?:\?[^\\s]*)?/gi;
 
 /**
  * URL形式の画像を検出して自動的に画像ノードを挿入する拡張
@@ -29,9 +30,7 @@ const imageUrlRegExp = /https?:\/\/[\w\-._~:/?#[\]@!$&'()*+,;=%]+\.(jpg|jpeg|png
 const AutoImage = Extension.create({
   name: 'autoImage',
   addInputRules() {
-    return [
-      imageUrlInputRule(imageUrlRegExp)
-    ];
+    return [imageUrlInputRule(imageUrlRegExp)];
   },
   addProseMirrorPlugins() {
     return [
@@ -45,17 +44,17 @@ const AutoImage = Extension.create({
               tr.replaceSelectionWith(imageNode, false);
               // キャレットを画像ノードの後ろに移動
               tr.setSelection(
-                Selection.near(tr.doc.resolve(tr.selection.from + 1))
+                Selection.near(tr.doc.resolve(tr.selection.from + 1)),
               );
               view.dispatch(tr);
               return true;
             }
             return false;
-          }
-        }
-      })
+          },
+        },
+      }),
     ];
-  }
+  },
 });
 
 export default AutoImage;

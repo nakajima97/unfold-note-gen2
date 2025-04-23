@@ -1,7 +1,7 @@
 'use client';
 
-import Tag from '@/features/notes/extensions/tag';
 import AutoImage from '@/features/notes/extensions/auto-image';
+import Tag from '@/features/notes/extensions/tag';
 import type { Note } from '@/features/notes/types';
 import { refreshImageUrls, uploadImage } from '@/lib/api/file';
 import { extractTagsFromText } from '@/lib/api/tag';
