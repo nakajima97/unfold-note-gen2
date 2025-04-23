@@ -1,6 +1,7 @@
 'use client';
 
 import Tag from '@/features/notes/extensions/tag';
+import AutoImage from '@/features/notes/extensions/auto-image';
 import type { Note } from '@/features/notes/types';
 import { refreshImageUrls, uploadImage } from '@/lib/api/file';
 import { extractTagsFromText } from '@/lib/api/tag';
@@ -62,6 +63,7 @@ export const useNoteEditor = ({
         inline: false,
       }),
       tagExtension, // ここでTag拡張を差し替え
+      AutoImage, // 画像URL自動検出拡張を追加
       FileHandler.configure({
         allowedMimeTypes: [
           'image/png',
