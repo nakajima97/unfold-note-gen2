@@ -19,6 +19,14 @@ export const useNoteCreateContainer = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  // ノート一覧のURL
+  const notesUrl = `/projects/${projectUrlId}/notes`;
+
+  /**
+   * ノートの作成処理
+   * @param note - 作成するノートの情報
+   * @returns
+   */
   const handleSubmit = async (note: Partial<Note>) => {
     if (!note.title || !note.content) {
       setError(new Error('タイトルと内容は必須です'));
@@ -61,8 +69,8 @@ export const useNoteCreateContainer = ({
         // タグ更新エラーはノート作成自体を失敗とはしない
       }
 
-      // 新しく作成されたノートに遷移（urlIdを使用）
-      router.push(`/projects/${projectUrlId}/notes/${newNote.urlId}`);
+      // ノート一覧に遷移
+      router.push(notesUrl);
     } catch (err) {
       console.error('Note creation error:', err);
       setError(
@@ -73,9 +81,12 @@ export const useNoteCreateContainer = ({
     }
   };
 
+  /**
+   * ノート一覧に戻る
+   */
   const handleCancel = () => {
     // ノート一覧に戻る
-    router.push(`/projects/${projectUrlId}/notes`);
+    router.push(notesUrl);
   };
 
   return {
