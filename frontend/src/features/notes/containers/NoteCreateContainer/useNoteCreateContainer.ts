@@ -25,7 +25,7 @@ export const useNoteCreateContainer = ({
   /**
    * ノートの作成処理
    * @param note - 作成するノートの情報
-   * @returns 
+   * @returns
    */
   const handleSubmit = async (note: Partial<Note>) => {
     if (!note.title || !note.content) {
