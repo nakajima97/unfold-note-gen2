@@ -61,8 +61,8 @@ export const useNoteCreateContainer = ({
         // タグ更新エラーはノート作成自体を失敗とはしない
       }
 
-      // 新しく作成されたノートに遷移（urlIdを使用）
-      router.push(`/projects/${projectUrlId}/notes/${newNote.urlId}`);
+      // ノート一覧に遷移
+      router.push(`/projects/${projectUrlId}/notes`);
     } catch (err) {
       console.error('Note creation error:', err);
       setError(
