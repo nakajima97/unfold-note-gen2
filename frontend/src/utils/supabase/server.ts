@@ -17,7 +17,7 @@ export async function createClient() {
             // cookies()がPromiseを返すので、awaitを使用
             const cookieStore = await cookies();
             cookieStore.set({ name, value, ...options });
-          } catch (error) {
+          } catch (_error) {
             // Server Componentからの呼び出しの場合、エラーが発生する可能性がある
             // ミドルウェアがセッションを更新するので無視できる
           }
@@ -27,7 +27,7 @@ export async function createClient() {
             // cookies()がPromiseを返すので、awaitを使用
             const cookieStore = await cookies();
             cookieStore.set({ name, value: '', ...options });
-          } catch (error) {
+          } catch (_error) {
             // 同上
           }
         },

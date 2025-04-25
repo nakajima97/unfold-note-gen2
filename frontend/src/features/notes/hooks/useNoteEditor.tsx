@@ -108,7 +108,7 @@ export const useNoteEditor = ({
             setIsUploading(false);
           }
         },
-        onPaste: async (currentEditor, files, htmlContent) => {
+        onPaste: async (currentEditor, files, _htmlContent) => {
           if (!files.length) return;
 
           setIsUploading(true);

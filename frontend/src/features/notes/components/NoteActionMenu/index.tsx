@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
-import { HelpCircle, Info, MoreVertical, Trash2 } from 'lucide-react';
+import { MoreVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 export type NoteActionMenuProps = {

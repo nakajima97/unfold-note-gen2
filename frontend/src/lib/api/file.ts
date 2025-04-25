@@ -52,7 +52,7 @@ export const uploadImage = async (projectId: string, file: File) => {
     const filePath = `${projectId}/${fileName}`;
 
     // Supabase Storageにアップロード
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from(bucketName)
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -63,7 +63,7 @@ export const uploadImage = async (projectId: string, file: File) => {
       // バケットが見つからない場合は、publicバケットを試す
       if (error.message.includes('Bucket not found')) {
         // publicバケットにアップロード
-        const { data: publicData, error: publicError } = await supabase.storage
+        const { error: publicError } = await supabase.storage
           .from('public')
           .upload(filePath, file, {
             cacheControl: '3600',

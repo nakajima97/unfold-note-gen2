@@ -1,7 +1,6 @@
 'use client';
 
 import NoteCreate from '@/features/notes/components/NoteCreate';
-import type React from 'react';
 import { useNoteEditor } from '../../hooks/useNoteEditor';
 import { useNoteEditContainer } from './useNoteEditContainer';
 

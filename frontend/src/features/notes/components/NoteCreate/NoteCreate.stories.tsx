@@ -2,16 +2,16 @@ import type { Note } from '@/features/notes/types';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import type React from 'react';
 import { useState } from 'react';
-import NoteCreate from './index';
+import NoteCreate from '.';
 
 const meta: Meta<typeof NoteCreate> = {
-  title: 'Features/Notes/NoteCreate',
+  title: 'Features/Notes/Components/NoteCreate',
   component: NoteCreate,
   parameters: {
-    layout: 'fullscreen',
+    layout: 'centered',
   },
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -19,42 +19,32 @@ type Story = StoryObj<typeof NoteCreate>;
 
 type NoteCreateStoryProps = {
   isSubmitting: boolean;
-  onSubmit: (note: Partial<Note>) => void;
-  onCancel: () => void;
-  onDelete?: () => void;
+  projectId: string;
+  noteId?: string;
   initialTitle?: string;
   initialContent?: string;
-  projectId: string;
-  projectUrlId?: string;
-  noteId?: string;
+  onSubmit?: (note: Partial<Note>) => void;
+  onCancel?: () => void;
+  onDelete?: () => void;
 };
 
 const NoteCreateStory = (args: NoteCreateStoryProps) => {
   const [title, setTitle] = useState(args.initialTitle || '');
   const [content, setContent] = useState(args.initialContent || '');
-  const [isUploading, setIsUploading] = useState(false);
-  const [isRefreshingImages, setIsRefreshingImages] = useState(false);
-  const [debouncedContent, setDebouncedContent] = useState(content);
+  const [isUploading, _setIsUploading] = useState(false);
+  const [isRefreshingImages, _setIsRefreshingImages] = useState(false);
 
   const editor = useEditor({
     extensions: [StarterKit],
-    content,
+    content: content,
     onUpdate: ({ editor }) => {
       setContent(editor.getHTML());
-      setDebouncedContent(editor.getHTML());
     },
-    editorProps: {
-      attributes: {
-        class: 'prose max-w-none min-h-[300px]',
-      },
-    },
-    autofocus: false,
-    editable: !args.isSubmitting,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (args.onSubmit) args.onSubmit({ title, content });
+    if (args.onSubmit) args.onSubmit({ title, content } as Partial<Note>);
   };
   const handleCancel = () => {
     if (args.onCancel) args.onCancel();
@@ -62,131 +52,121 @@ const NoteCreateStory = (args: NoteCreateStoryProps) => {
 
   return (
     <NoteCreate
-      {...args}
+      isSubmitting={args.isSubmitting}
+      projectId={args.projectId}
+      noteId={args.noteId}
+      handleSubmit={handleSubmit}
+      handleCancel={handleCancel}
       title={title}
       setTitle={setTitle}
       content={content}
-      setContent={setContent}
-      debouncedContent={debouncedContent}
       isUploading={isUploading}
-      isRefreshingImages={isRefreshingImages}
       editor={editor}
-      handleSubmit={handleSubmit}
-      handleCancel={handleCancel}
+      isRefreshingImages={isRefreshingImages}
+      onDelete={args.onDelete}
     />
   );
 };
 
 export const Default: Story = {
-  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: false,
-    onSubmit: (note) => console.log('ノート保存:', note),
-    onCancel: () => console.log('キャンセルがクリックされました'),
-    initialTitle: '',
-    initialContent: '',
     projectId: 'project-123',
+  },
+  render: (args) => {
+    const initialTitle = '';
+    const initialContent = '';
+    return (
+      <NoteCreateStory
+        {...args}
+        initialTitle={initialTitle}
+        initialContent={initialContent}
+        onSubmit={(note: Partial<Note>) => console.log('ノート保存:', note)}
+        onCancel={() => console.log('キャンセルがクリックされました')}
+      />
+    );
   },
 };
 
 export const WithInitialValues: Story = {
-  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: false,
-    onSubmit: (note) => console.log('ノート保存:', note),
-    onCancel: () => console.log('キャンセルがクリックされました'),
-    initialTitle: '新しいノートのタイトル',
-    initialContent:
-      'これは新しいノートの内容です。\n\n#タグ #メモ #Unfold_Note',
     projectId: 'project-123',
+  },
+  render: (args) => {
+    const initialTitle = '新しいノートのタイトル';
+    const initialContent =
+      'これは新しいノートの内容です。\n\n#タグ #メモ #Unfold_Note';
+    return (
+      <NoteCreateStory
+        {...args}
+        initialTitle={initialTitle}
+        initialContent={initialContent}
+        onSubmit={(note: Partial<Note>) => console.log('ノート保存:', note)}
+        onCancel={() => console.log('キャンセルがクリックされました')}
+      />
+    );
   },
 };
 
 export const Submitting: Story = {
-  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: true,
-    onSubmit: (note) => console.log('ノート保存:', note),
-    onCancel: () => console.log('キャンセルがクリックされました'),
-    initialTitle: 'ノートを保存中...',
-    initialContent: 'この内容は現在保存中です。#保存中',
     projectId: 'project-123',
+  },
+  render: (args) => {
+    const initialTitle = 'ノートを保存中...';
+    const initialContent = 'この内容は現在保存中です。#保存中';
+    return (
+      <NoteCreateStory
+        {...args}
+        initialTitle={initialTitle}
+        initialContent={initialContent}
+        onSubmit={(note: Partial<Note>) => console.log('ノート保存:', note)}
+        onCancel={() => console.log('キャンセルがクリックされました')}
+      />
+    );
   },
 };
 
 export const LongContent: Story = {
-  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: false,
-    onSubmit: (note) => console.log('ノート保存:', note),
-    onCancel: () => console.log('キャンセルがクリックされました'),
-    initialTitle: '長い内容のノート',
-    initialContent: `# 長い内容のノート
-
-これは長い内容のノートのサンプルです。エディタがどのように表示されるかを確認するためのものです。
-
-## セクション1
-これは最初のセクションです。#長文 #テスト
-
-- 項目1
-- 項目2
-- 項目3
-
-## セクション2
-これは2番目のセクションです。#サンプル
-
-1. 番号付きリスト1
-2. 番号付きリスト2
-3. 番号付きリスト3
-
-## セクション3
-これは3番目のセクションです。#Unfold_Note
-
-> これは引用文です。引用文がどのように表示されるかを確認します。
-
-### サブセクション
-これはサブセクションです。
-
-\`\`\`
-// コードブロックのサンプル
-function hello() {
-  console.log('Hello, Unfold Note!');
-}
-\`\`\`
-
-最後の段落です。これでサンプルノートは終わりです。`,
     projectId: 'project-123',
+  },
+  render: (args) => {
+    const initialTitle = '長い内容のノート';
+    const initialContent =
+      "# 長い内容のノート\n\nこれは長い内容のノートのサンプルです。エディタがどのように表示されるかを確認するためのものです。\n\n## セクション1\nこれは最初のセクションです。#長文 #テスト\n\n- 項目1\n- 項目2\n- 項目3\n\n## セクション2\nこれは2番目のセクションです。#サンプル\n\n1. 番号付きリスト1\n2. 番号付きリスト2\n3. 番号付きリスト3\n\n## セクション3\nこれは3番目のセクションです。#Unfold_Note\n\n> これは引用文です。引用文がどのように表示されるかを確認します。\n\n### サブセクション\nこれはサブセクションです。\n\n```\n// コードブロックのサンプル\nfunction hello() {\n  console.log('Hello, Unfold Note!');\n}\n```\n\n最後の段落です。これでサンプルノートは終わりです。";
+    return (
+      <NoteCreateStory
+        {...args}
+        initialTitle={initialTitle}
+        initialContent={initialContent}
+        onSubmit={(note: Partial<Note>) => console.log('ノート保存:', note)}
+        onCancel={() => console.log('キャンセルがクリックされました')}
+      />
+    );
   },
 };
 
 export const WithJapaneseContent: Story = {
-  render: (args) => <NoteCreateStory {...args} />,
   args: {
     isSubmitting: false,
-    onSubmit: (note) => console.log('ノート保存:', note),
-    onCancel: () => console.log('キャンセルがクリックされました'),
-    initialTitle: '日本語のノート',
-    initialContent: `# 日本語のノート
-
-これは日本語で書かれたノートのサンプルです。#日本語 #テスト
-
-## 特徴
-- マークダウン記法が使えます
-- タグ機能（#タグ）があります
-- 階層構造を作らずにノートを管理できます
-
-## Unfold Noteとは
-Unfold Noteは、シンプルなノート管理アプリです。#Unfold_Note
-
-> 書くのが簡単なマークダウン記法を使ってメモを作成できます。
-> タグを使ってメモ同士のつながりを表現します。
-
-### 使い方
-1. ノートを作成する
-2. タグを付ける（#タグ形式）
-3. 検索して見つける
-
-以上です！`,
     projectId: 'project-123',
+  },
+  render: (args) => {
+    const initialTitle = '日本語のノート';
+    const initialContent =
+      '# 日本語のノート\n\nこれは日本語で書かれたノートのサンプルです。#日本語 #テスト\n\n## 特徴\n- マークダウン記法が使えます\n- タグ機能（#タグ）があります\n- 階層構造を作らずにノートを管理できます\n\n## Unfold Noteとは\nUnfold Noteは、シンプルなノート管理アプリです。#Unfold_Note\n\n> 書くのが簡単なマークダウン記法を使ってメモを作成できます。\n> タグを使ってメモ同士のつながりを表現します。\n\n### 使い方\n1. ノートを作成する\n2. タグを付ける（#タグ形式）\n3. 検索して見つける\n\n以上です！';
+    return (
+      <NoteCreateStory
+        {...args}
+        initialTitle={initialTitle}
+        initialContent={initialContent}
+        onSubmit={(note: Partial<Note>) => console.log('ノート保存:', note)}
+        onCancel={() => console.log('キャンセルがクリックされました')}
+      />
+    );
   },
 };
