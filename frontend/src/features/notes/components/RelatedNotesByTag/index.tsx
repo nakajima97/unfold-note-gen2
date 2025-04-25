@@ -23,7 +23,6 @@ const RelatedNotesByTag: React.FC<RelatedNotesByTagProps> = ({
   isLoading,
   error,
   tags,
-  projectId,
   onNoteClick,
 }) => {
   // タグがない場合は何も表示しない

@@ -1,6 +1,5 @@
 import type { Note } from '@/lib/api/note';
 import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
 import RelatedNotesByTag from './index';
 
 // サンプルノートデータ

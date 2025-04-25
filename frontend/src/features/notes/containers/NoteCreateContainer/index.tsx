@@ -25,8 +25,6 @@ const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
     title,
     setTitle,
     content,
-    setContent,
-    debouncedContent,
     isUploading,
     handleSubmit: noteEditSubmit,
     isRefreshingImages,
@@ -50,19 +48,15 @@ const NoteCreateContainer: React.FC<NoteCreateContainerProps> = ({
   return (
     <NoteCreate
       isSubmitting={isSubmitting}
-      onSubmit={handleSubmit}
-      onCancel={handleCancel}
       projectId={projectId}
+      handleSubmit={noteEditSubmit}
+      handleCancel={handleCancel}
       title={title}
       setTitle={setTitle}
       content={content}
-      setContent={setContent}
-      debouncedContent={debouncedContent}
       isUploading={isUploading}
       editor={editor}
-      handleSubmit={noteEditSubmit}
       isRefreshingImages={isRefreshingImages}
-      handleCancel={handleCancel}
     />
   );
 };

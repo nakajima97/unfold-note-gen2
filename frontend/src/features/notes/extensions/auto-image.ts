@@ -7,7 +7,7 @@ import { Plugin, Selection } from 'prosemirror-state';
 const imageUrlInputRule = (regexp: RegExp) => {
   return new InputRule({
     find: regexp,
-    handler: ({ state, range, match, commands }) => {
+    handler: ({ range, match, commands }) => {
       const url = match[0];
       commands.deleteRange(range);
       commands.insertContent({
@@ -34,10 +34,10 @@ const AutoImage = Extension.create({
     return [
       new Plugin({
         props: {
-          handlePaste(view, event, slice) {
+          handlePaste(view, event, _slice) {
             const text = event.clipboardData?.getData('text/plain');
             if (text && imageUrlRegExp.test(text)) {
-              const { tr, schema, selection } = view.state;
+              const { tr, schema } = view.state;
               const imageNode = schema.nodes.image.create({ src: text });
 
               // 現在の段落ノード全体を取得

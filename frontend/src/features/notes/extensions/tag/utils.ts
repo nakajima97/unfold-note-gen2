@@ -30,12 +30,12 @@ export const checkIfMatchingNoteExists = async (
 
 /**
  * タグ名からCSSクラス名を生成する
- * @param tagName タグ名（#を除いた部分）
+ * @param _tagName タグ名（#を除いた部分）
  * @param hasMatchingNote 同名のノートが存在するかどうか
  * @returns CSSクラス名
  */
 export const getTagClassName = (
-  tagName: string,
+  _tagName: string,
   hasMatchingNote: boolean,
 ): string => {
   return hasMatchingNote ? 'tag-highlight has-matching-note' : 'tag-highlight';

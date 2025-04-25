@@ -1,7 +1,7 @@
 'use client';
 
 import { type Note, getNoteById } from '@/lib/api/note';
-import { Tag, extractTagsFromText, getNotesByTagName } from '@/lib/api/tag';
+import { extractTagsFromText, getNotesByTagName } from '@/lib/api/tag';
 import { useEffect, useRef, useState } from 'react';
 
 export type UseRelatedNotesByTagProps = {
@@ -86,7 +86,7 @@ export const useRelatedNotesByTag = ({
 
                   return noteWithUrlId;
                 }
-              } catch (error) {
+              } catch (_error) {
                 // エラーが発生した場合は静かに処理
               }
 

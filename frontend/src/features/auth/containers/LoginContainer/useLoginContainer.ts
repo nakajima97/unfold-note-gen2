@@ -105,7 +105,7 @@ export const useLoginContainer = () => {
       }
 
       // メールアドレスが許可されている場合、サインアップを続行
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {

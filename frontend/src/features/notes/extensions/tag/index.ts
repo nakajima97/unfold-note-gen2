@@ -91,8 +91,13 @@ export const Tag = Extension.create({
           // --- タグクリック時のイベントハンドリング（コールバック呼び出し） ---
           // ※クリックされたタグに紐づくノート詳細ページ（/projects/[projectUrlId]/notes/[urlId]）へ遷移する
           handleDOMEvents: {
-            click: (view, event) => {
-              const target = event.target as HTMLElement;
+            click: (_view, event) => {
+              // view.domからeventを取得し、event.targetを参照する
+              const mouseEvent =
+                event instanceof MouseEvent
+                  ? event
+                  : (event as unknown as MouseEvent);
+              const target = mouseEvent.target as HTMLElement;
               if (!target) return false;
               const tagElement = target.closest(
                 '.tag-highlight, [data-type="tag"]',
@@ -105,7 +110,7 @@ export const Tag = Extension.create({
                 // エラー処理はユーザに伝えてもユーザの行動で改善するものではないので行わない
                 if (urlId && typeof onTagClick === 'function') {
                   onTagClick(urlId);
-                  event.preventDefault();
+                  mouseEvent.preventDefault();
                   return true;
                 }
               }

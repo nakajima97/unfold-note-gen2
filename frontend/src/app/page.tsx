@@ -28,7 +28,7 @@ const Home = () => {
   }, []);
 
   // ユーザーのプロジェクトを確認し、必要に応じて作成してリダイレクト
-  const checkAndCreateProject = async (user: User) => {
+  const _checkAndCreateProject = async (user: User) => {
     try {
       console.log('Checking user projects');
       const projects = await getUserProjects(user.id);

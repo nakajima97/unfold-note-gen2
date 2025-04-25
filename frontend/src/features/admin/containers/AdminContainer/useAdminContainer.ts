@@ -92,10 +92,9 @@ export const useAdminContainer = () => {
         throw new Error('有効なメールアドレスを入力してください');
       }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('allowed_emails')
-        .insert([{ email: newEmail.trim() }])
-        .select();
+        .insert([{ email: newEmail.trim() }]);
 
       if (error) throw error;
 
