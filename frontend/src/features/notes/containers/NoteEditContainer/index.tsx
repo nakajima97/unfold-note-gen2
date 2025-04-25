@@ -34,8 +34,6 @@ export const NoteEditContainer = ({
     title,
     setTitle,
     content,
-    setContent,
-    debouncedContent,
     isUploading,
     handleSubmit: noteEditSubmit,
     isRefreshingImages,
@@ -86,23 +84,16 @@ export const NoteEditContainer = ({
   return (
     <NoteCreate
       isSubmitting={isSubmitting}
-      onSubmit={handleSubmit}
-      onCancel={handleCancel}
-      onDelete={handleDelete}
-      initialTitle={note.title}
-      initialContent={note.content}
       projectId={projectId}
-      projectUrlId={projectUrlId}
       noteId={noteId}
+      onDelete={handleDelete}
+      handleSubmit={noteEditSubmit}
       handleCancel={handleCancel}
       title={title}
       setTitle={setTitle}
       content={content}
-      setContent={setContent}
-      debouncedContent={debouncedContent}
       isUploading={isUploading}
       editor={editor}
-      handleSubmit={noteEditSubmit}
       isRefreshingImages={isRefreshingImages}
     />
   );
