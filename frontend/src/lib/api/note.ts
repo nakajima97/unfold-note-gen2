@@ -12,21 +12,35 @@ export type Note = {
 };
 
 /**
- * プロジェクトの全ノートを取得する
+ * プロジェクトのノートをページネーションで取得する
+ * @param projectId プロジェクトID
+ * @param limit 取得件数（例: 50）
+ * @param cursor 追加取得時のカーソル（updated_at文字列）
  */
-export const getProjectNotes = async (projectId: string): Promise<Note[]> => {
-  const { data, error } = await supabase
+export const getProjectNotes = async (
+  projectId: string,
+  limit = 50,
+  cursor?: string,
+): Promise<Note[]> => {
+  let query = supabase
     .from('notes')
     .select('*')
     .eq('project_id', projectId)
-    .order('updated_at', { ascending: false });
+    .order('updated_at', { ascending: false })
+    .limit(limit);
+
+  if (cursor) {
+    query = query.lt('updated_at', cursor);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('プロジェクトノートの取得エラー:', error);
     throw error;
   }
 
-  return data.map((note) => ({ ...note, urlId: note.url_id })) || [];
+  return data?.map((note) => ({ ...note, urlId: note.url_id })) || [];
 };
 
 /**

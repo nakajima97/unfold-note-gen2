@@ -15,8 +15,10 @@ const NoteList: React.FC<NoteListProps> = ({
   onSearchChange,
   searchTerm,
   onNewNoteClick,
+  hasMore,
+  bottomRef,
 }) => {
-  if (isLoading) {
+  if (isLoading && notes.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
@@ -67,6 +69,16 @@ const NoteList: React.FC<NoteListProps> = ({
           {notes.map((note) => (
             <NoteCard key={note.id} note={note} onClick={onNoteClick} />
           ))}
+        </div>
+      )}
+
+      {/* 無限スクロールのトリガー要素 - Containerから渡された参照を使用 */}
+      {hasMore && <div ref={bottomRef} className="h-8 mt-4" />}
+
+      {/* 追加データ読み込み中のローディングインジケーター */}
+      {isLoading && notes.length > 0 && (
+        <div className="flex justify-center items-center py-4 mt-2">
+          <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary" />
         </div>
       )}
     </div>
