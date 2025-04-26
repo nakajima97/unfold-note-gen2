@@ -1,8 +1,8 @@
 import NoteListContainer from '@/features/notes/containers/NoteListContainer';
 import { getProjectNotes } from '@/lib/api/note';
 import { getProjectByUrlId } from '@/lib/api/project';
-import { notFound } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+import { notFound } from 'next/navigation';
 
 type NoteListPageProps = {
   params: {
@@ -29,8 +29,10 @@ const NotesPage = async ({ params }: NoteListPageProps) => {
   const project = Array.isArray(projectData) ? projectData[0] : projectData;
 
   // 認証ユーザーID取得
-  const { data: { session } } = await supabase.auth.getSession();
-  
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   if (!session?.user) {
     notFound();
   }
