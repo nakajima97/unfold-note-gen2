@@ -2,7 +2,7 @@
 
 import NoteList from '@/features/notes/components/NoteList';
 import type { Note } from '@/lib/api/note';
-import { useEffect, useRef } from 'react';
+import type React from 'react';
 import { useNoteListContainer } from './useNoteListContainer';
 
 type NoteListContainerProps = {
@@ -25,40 +25,12 @@ const NoteListContainer: React.FC<NoteListContainerProps> = ({
     handleSearchChange,
     handleNewNoteClick,
     hasMore,
-    fetchMoreNotes,
+    bottomRef,
   } = useNoteListContainer({
     projectUrlId,
     projectId,
     initialNotes,
   });
-
-  // 無限スクロールのための参照オブジェクト
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  // 無限スクロールのロジック
-  useEffect(() => {
-    if (!fetchMoreNotes || !hasMore) return;
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isLoading) {
-          fetchMoreNotes();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    
-    if (bottomRef.current) {
-      observer.observe(bottomRef.current);
-    }
-    
-    return () => {
-      if (bottomRef.current) {
-        observer.unobserve(bottomRef.current);
-      }
-      observer.disconnect();
-    };
-  }, [fetchMoreNotes, hasMore, isLoading]);
 
   return (
     <NoteList

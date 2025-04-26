@@ -5,7 +5,7 @@ import { getProjectNotes, searchNotes } from '@/lib/api/note';
 import type { Note } from '@/lib/api/note';
 import { getProjectByUrlId } from '@/lib/api/project';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export type UseNoteListContainerProps = {
   projectUrlId: string;
@@ -28,6 +28,9 @@ export const useNoteListContainer = ({
     initialProjectId || null,
   );
   const router = useRouter();
+  
+  // 無限スクロールのための参照オブジェクト
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // プロジェクトの内部IDを取得（提供されていない場合のみ）
   useEffect(() => {
@@ -131,6 +134,31 @@ export const useNoteListContainer = ({
       setIsLoading(false);
     }
   };
+  
+  // 無限スクロールのロジック
+  useEffect(() => {
+    if (!hasMore || isLoading || !cursor) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoading) {
+          fetchMoreNotes();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (bottomRef.current) {
+      observer.observe(bottomRef.current);
+    }
+    
+    return () => {
+      if (bottomRef.current) {
+        observer.unobserve(bottomRef.current);
+      }
+      observer.disconnect();
+    };
+  }, [hasMore, isLoading, cursor]);
 
   // 検索語の変更を遅延処理（デバウンス）
   useEffect(() => {
@@ -167,36 +195,6 @@ export const useNoteListContainer = ({
             err instanceof Error ? err : new Error('Failed to fetch notes'),
           );
         }
-      } else {
-        // それ以外の場合、ノートを検索
-        try {
-          const searchResults = await searchNotes(projectId, searchTerm, NOTES_PAGE_SIZE);
-          // ノートコンテンツ内の画像URLを更新
-          const updatedResults = await Promise.all(
-            searchResults.map(async (note) => {
-              if (note.content) {
-                try {
-                  const updatedContent = await refreshImageUrls(note.content);
-                  return { ...note, content: updatedContent };
-                } catch (refreshError) {
-                  console.error('画像URL更新エラー:', refreshError);
-                  // エラーがあっても元のノートを返す
-                  return note;
-                }
-              }
-              return note;
-            }),
-          );
-
-          setNotes(updatedResults);
-          setHasMore(updatedResults.length === NOTES_PAGE_SIZE);
-          setCursor(updatedResults.length > 0 ? updatedResults[updatedResults.length - 1].updated_at : null);
-        } catch (err) {
-          console.error('Error searching notes:', err);
-          setError(
-            err instanceof Error ? err : new Error('Failed to search notes'),
-          );
-        }
       }
     }, 300); // 300ms デバウンス
 
@@ -229,5 +227,6 @@ export const useNoteListContainer = ({
     handleSearchChange,
     handleNewNoteClick,
     fetchMoreNotes,
+    bottomRef,
   };
 };
