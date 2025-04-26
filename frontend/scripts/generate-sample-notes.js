@@ -48,25 +48,74 @@ const adminSupabase = supabaseServiceKey
 const alphabet = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 const generateUrlId = customAlphabet(alphabet, 15);
 
-// サンプルデータの生成に使用するタグ
-const tags = [
-  'アイデア', '仕事', '個人', 'プロジェクト', '会議', 'メモ', 'タスク', 
-  '学習', '読書', '旅行', '料理', '健康', '技術', 'プログラミング', 
-  'JavaScript', 'TypeScript', 'React', 'Next.js', 'Supabase', 'UI/UX'
-];
+// 生成済みのノートIDを追跡するセット
+const generatedNoteUrlIds = new Set();
+
+/**
+ * 一意のURL識別子を生成する関数
+ */
+function generateUniqueUrlId() {
+  // 最大100回試行する
+  let attempts = 0;
+  const maxAttempts = 100;
+  
+  return new Promise((resolve, reject) => {
+    const tryGenerate = async () => {
+      if (attempts >= maxAttempts) {
+        return reject(new Error(`一意のURL識別子の生成に失敗しました（${maxAttempts}回試行）`));
+      }
+      
+      attempts++;
+      const urlId = generateUrlId();
+      
+      // 既に生成済みのurlIdでないことを確認
+      if (generatedNoteUrlIds.has(urlId)) {
+        return tryGenerate();
+      }
+      
+      try {
+        // データベースに既に存在するか確認
+        const { data, error } = await supabase
+          .from('notes')
+          .select('id')
+          .eq('url_id', urlId)
+          .maybeSingle();
+        
+        if (error) {
+          console.error('URL識別子の重複チェック中にエラーが発生しました:', error);
+          return tryGenerate();
+        }
+        
+        if (data) {
+          // 既に存在する場合は再試行
+          return tryGenerate();
+        }
+        
+        // 重複がなければこのurlIdを使用
+        generatedNoteUrlIds.add(urlId);
+        return resolve(urlId);
+      } catch (error) {
+        console.error('URL識別子の生成中にエラーが発生しました:', error);
+        return tryGenerate();
+      }
+    };
+    
+    tryGenerate();
+  });
+}
 
 // サンプルデータの生成に使用するタイトルテンプレート
 const titleTemplates = [
-  '【メモ】{{タグ}}に関する考察',
-  '{{タグ}}プロジェクトの進捗状況',
-  '{{タグ}}の学習ノート',
-  '{{タグ}}についてのアイデア',
-  '{{タグ}}に関する会議メモ',
-  '{{タグ}}の実装方法',
-  '{{タグ}}の使い方メモ',
-  '{{タグ}}のベストプラクティス',
-  '{{タグ}}に関する問題と解決策',
-  '{{タグ}}の今後の展望'
+  '【メモ】に関する考察',
+  'プロジェクトの進捗状況',
+  'の学習ノート',
+  'についてのアイデア',
+  'に関する会議メモ',
+  'の実装方法',
+  'の使い方メモ',
+  'のベストプラクティス',
+  'に関する問題と解決策',
+  'の今後の展望'
 ];
 
 // サンプルデータの生成に使用する本文テンプレート
@@ -74,37 +123,34 @@ const contentTemplates = [
   `# {{タイトル}}
 
 ## 概要
-{{タグ}}に関する重要なポイントをまとめました。
-#{{タグ}} #メモ
+重要なポイントをまとめました。
 
 ## 詳細
-- ポイント1: {{タグ}}の基本的な考え方
+- ポイント1: 基本的な考え方
 - ポイント2: 実践における注意点
 - ポイント3: 応用方法
 
 ## 次のステップ
-- さらに{{タグ}}について調査する
+- さらに調査する
 - 実際に試してみる
 - フィードバックを集める`,
 
   `# {{タイトル}}
 
-今日は{{タグ}}について考えてみました。
-#{{タグ}} #アイデア
+今日は考えてみました。
 
 ## 主なポイント
-1. {{タグ}}の現状分析
+1. 現状分析
 2. 問題点の洗い出し
 3. 改善案の検討
 
 ## メモ
-- {{タグ}}に関する参考資料をもっと集める
+- 参考資料をもっと集める
 - 専門家の意見を聞いてみる`,
 
   `# {{タイトル}}
 
-{{タグ}}に関する学習記録です。
-#{{タグ}} #学習
+に関する学習記録です。
 
 ## 学んだこと
 - 基本概念
@@ -112,18 +158,17 @@ const contentTemplates = [
 - 応用テクニック
 
 ## 疑問点
-- {{タグ}}の最適な活用方法は？
+- 最適な活用方法は？
 - 他の技術との組み合わせ方は？
 
 ## 参考リソース
-- 書籍：「{{タグ}}入門」
+- 書籍：「入門」
 - オンラインコース
 - 公式ドキュメント`,
 
   `# {{タイトル}}
 
-{{タグ}}に関するプロジェクト進捗状況です。
-#{{タグ}} #プロジェクト
+に関するプロジェクト進捗状況です。
 
 ## 現在の状況
 - フェーズ1：完了
@@ -142,16 +187,15 @@ const contentTemplates = [
 
   `# {{タイトル}}
 
-{{タグ}}に関する技術メモです。
-#{{タグ}} #技術 #メモ
+に関する技術メモです。
 
 ## 技術概要
-{{タグ}}は、効率的な開発を可能にする技術です。
+は、効率的な開発を可能にする技術です。
 
 ## 実装例
 \`\`\`
 function example() {
-  console.log("This is an example of {{タグ}}");
+  console.log("This is an example of ");
 }
 \`\`\`
 
@@ -162,57 +206,24 @@ function example() {
 ];
 
 /**
- * 一意のURL識別子を生成する関数
- */
-async function generateUniqueUrlId() {
-  // 最大試行回数
-  const maxAttempts = 10;
-  let attempts = 0;
-
-  while (attempts < maxAttempts) {
-    const urlId = generateUrlId();
-    
-    // IDが既に存在するかチェック
-    const { data, error } = await supabase
-      .from('notes')
-      .select('id', { count: 'exact', head: true })
-      .eq('url_id', urlId);
-
-    if (error) {
-      console.error('URL識別子存在チェックエラー:', error);
-      throw error;
-    }
-
-    if ((data?.length ?? 0) === 0) {
-      return urlId;
-    }
-
-    attempts++;
-  }
-
-  throw new Error('一意のURL識別子を生成できませんでした。後でもう一度お試しください。');
-}
-
-/**
  * ランダムなタイトルを生成する関数
  */
 function generateRandomTitle() {
   const template = titleTemplates[Math.floor(Math.random() * titleTemplates.length)];
-  const tag = tags[Math.floor(Math.random() * tags.length)];
-  return template.replace('{{タグ}}', tag);
+  return template;
 }
 
 /**
  * ランダムな本文を生成する関数
  */
 function generateRandomContent(title) {
+  // ランダムにテンプレートを選択
   const template = contentTemplates[Math.floor(Math.random() * contentTemplates.length)];
-  const tag1 = tags[Math.floor(Math.random() * tags.length)];
-  const tag2 = tags[Math.floor(Math.random() * tags.length)];
   
-  return template
-    .replace('{{タイトル}}', title)
-    .replace(/{{タグ}}/g, tag1);
+  // タイトルを置換
+  let content = template.replace(/{{タイトル}}/g, title);
+  
+  return content;
 }
 
 /**
@@ -308,10 +319,11 @@ async function generateSampleNotes(projectId, count = 120) {
       const title = generateRandomTitle();
       const content = generateRandomContent(title);
       
+      // ここでurlIdを先に生成する
+      const urlId = await generateUniqueUrlId();
+      
       const promise = (async () => {
         try {
-          const urlId = await generateUniqueUrlId();
-          
           // 管理者権限のクライアントがあれば使用し、なければ通常のクライアントを使用
           const client = adminSupabase || supabase;
           
