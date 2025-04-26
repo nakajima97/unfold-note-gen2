@@ -19,7 +19,9 @@ export const useNoteListContainer = ({
   initialNotes = [],
 }: UseNoteListContainerProps) => {
   const [notes, setNotes] = useState<Note[]>(initialNotes);
-  const [isLoading, setIsLoading] = useState(initialNotes.length === 0);
+  const [cursor, setCursor] = useState<string | null>(null); // updated_at
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [projectId, setProjectId] = useState<string | null>(
@@ -55,54 +57,80 @@ export const useNoteListContainer = ({
     fetchProject();
   }, [projectUrlId, projectId]);
 
-  // プロジェクトIDが利用可能な場合にノートを取得（initialNotesが空の場合のみ）
+  const NOTES_PAGE_SIZE = 50;
+
+  // --- 初回取得（プロジェクトIDが決まったら） ---
   useEffect(() => {
-    // 初期ノートデータが提供されている場合はスキップ
+    if (!projectId) return;
     if (initialNotes.length > 0) {
       setIsLoading(false);
+      setHasMore(initialNotes.length === NOTES_PAGE_SIZE);
+      if (initialNotes.length > 0) {
+        setCursor(initialNotes[initialNotes.length - 1].updated_at);
+      }
       return;
     }
 
-    if (!projectId) {
-      return;
-    }
-
-    const fetchNotes = async () => {
+    const fetchInitialNotes = async () => {
       try {
         setIsLoading(true);
-        const fetchedNotes = await getProjectNotes(projectId);
-
-        // ノートコンテンツ内の画像URLを更新
+        const fetchedNotes = await getProjectNotes(projectId, NOTES_PAGE_SIZE);
+        // 画像URL更新
         const updatedNotes = await Promise.all(
           fetchedNotes.map(async (note) => {
             if (note.content) {
               try {
                 const updatedContent = await refreshImageUrls(note.content);
                 return { ...note, content: updatedContent };
-              } catch (refreshError) {
-                console.error('画像URL更新エラー:', refreshError);
-                // エラーがあっても元のノートを返す
+              } catch {
                 return note;
               }
             }
             return note;
-          }),
+          })
         );
-
         setNotes(updatedNotes);
+        setHasMore(updatedNotes.length === NOTES_PAGE_SIZE);
+        setCursor(updatedNotes.length > 0 ? updatedNotes[updatedNotes.length - 1].updated_at : null);
         setError(null);
-        setIsLoading(false);
       } catch (err) {
-        console.error('Error fetching notes:', err);
-        setError(
-          err instanceof Error ? err : new Error('Failed to fetch notes'),
-        );
+        setError(err instanceof Error ? err : new Error('Failed to fetch notes'));
+      } finally {
         setIsLoading(false);
       }
     };
 
-    fetchNotes();
+    fetchInitialNotes();
   }, [projectId, initialNotes.length]);
+
+  // --- 追加取得（無限スクロール用） ---
+  const fetchMoreNotes = async () => {
+    if (!projectId || !hasMore || isLoading || !cursor) return;
+    setIsLoading(true);
+    try {
+      const fetchedNotes = await getProjectNotes(projectId, NOTES_PAGE_SIZE, cursor);
+      const updatedNotes = await Promise.all(
+        fetchedNotes.map(async (note) => {
+          if (note.content) {
+            try {
+              const updatedContent = await refreshImageUrls(note.content);
+              return { ...note, content: updatedContent };
+            } catch {
+              return note;
+            }
+          }
+          return note;
+        })
+      );
+      setNotes((prev) => [...prev, ...updatedNotes]);
+      setHasMore(updatedNotes.length === NOTES_PAGE_SIZE);
+      setCursor(updatedNotes.length > 0 ? updatedNotes[updatedNotes.length - 1].updated_at : cursor);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to fetch notes'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // 検索語の変更を遅延処理（デバウンス）
   useEffect(() => {
@@ -112,8 +140,7 @@ export const useNoteListContainer = ({
       if (searchTerm.trim() === '') {
         // 検索語が空の場合、すべてのノートを取得
         try {
-          const fetchedNotes = await getProjectNotes(projectId);
-
+          const fetchedNotes = await getProjectNotes(projectId, NOTES_PAGE_SIZE);
           // ノートコンテンツ内の画像URLを更新
           const updatedNotes = await Promise.all(
             fetchedNotes.map(async (note) => {
@@ -132,6 +159,8 @@ export const useNoteListContainer = ({
           );
 
           setNotes(updatedNotes);
+          setHasMore(updatedNotes.length === NOTES_PAGE_SIZE);
+          setCursor(updatedNotes.length > 0 ? updatedNotes[updatedNotes.length - 1].updated_at : null);
         } catch (err) {
           console.error('Error fetching notes during search:', err);
           setError(
@@ -141,8 +170,7 @@ export const useNoteListContainer = ({
       } else {
         // それ以外の場合、ノートを検索
         try {
-          const searchResults = await searchNotes(projectId, searchTerm);
-
+          const searchResults = await searchNotes(projectId, searchTerm, NOTES_PAGE_SIZE);
           // ノートコンテンツ内の画像URLを更新
           const updatedResults = await Promise.all(
             searchResults.map(async (note) => {
@@ -161,6 +189,8 @@ export const useNoteListContainer = ({
           );
 
           setNotes(updatedResults);
+          setHasMore(updatedResults.length === NOTES_PAGE_SIZE);
+          setCursor(updatedResults.length > 0 ? updatedResults[updatedResults.length - 1].updated_at : null);
         } catch (err) {
           console.error('Error searching notes:', err);
           setError(
@@ -190,11 +220,14 @@ export const useNoteListContainer = ({
 
   return {
     notes,
+    cursor,
+    hasMore,
     isLoading,
     error,
     searchTerm,
     handleNoteClick,
     handleSearchChange,
     handleNewNoteClick,
+    fetchMoreNotes,
   };
 };
