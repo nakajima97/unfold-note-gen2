@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const uploadImage = async (
   projectId: string,
   file: File,
-  noteId?: string // 画像をノートに紐付ける場合
+  noteId?: string, // 画像をノートに紐付ける場合
 ) => {
   try {
     // バケット名を定義
@@ -19,9 +19,9 @@ export const uploadImage = async (
     let filePath = '';
     let fileName = '';
     let fileExt = '';
-    let mimeType = file.type;
-    let fileSize = file.size;
-    let originalName = file.name;
+    const mimeType = file.type;
+    const fileSize = file.size;
+    const originalName = file.name;
     try {
       // バケットの存在確認
       const { data: buckets, error } = await supabase.storage.listBuckets();
@@ -276,9 +276,10 @@ export function extractImagePathsFromContent(content: string): string[] {
   // 例: https://xxxx.supabase.co/storage/v1/object/sign/notes/projectId/uuid.jpg?...
   const regex = /\/storage\/v1\/object\/sign\/notes\/([^"?]+)/g;
   const paths: string[] = [];
-  let match;
-  while ((match = regex.exec(content)) !== null) {
+  let match: RegExpExecArray | null = regex.exec(content);
+  while (match !== null) {
     paths.push(match[1]); // "projectId/uuid.jpg" など
+    match = regex.exec(content);
   }
   return paths;
 }
@@ -292,7 +293,8 @@ export function extractImagePathsFromContent(content: string): string[] {
 export async function attachImagesToNote(noteId: string, content: string) {
   const imagePaths = extractImagePathsFromContent(content || '');
   if (imagePaths.length === 0) return;
-  const { error } = await supabase.from('files')
+  const { error } = await supabase
+    .from('files')
     .update({ note_id: noteId })
     .in('storage_path', imagePaths);
   if (error) {
@@ -306,11 +308,15 @@ export async function attachImagesToNote(noteId: string, content: string) {
  * @param content ノート本文（HTML、最新状態）
  * @returns エラーがあればconsole.errorに出力
  */
-export async function detachRemovedImagesFromNote(noteId: string, content: string) {
+export async function detachRemovedImagesFromNote(
+  noteId: string,
+  content: string,
+) {
   // 現在本文に含まれている画像storage_path一覧
   const currentImagePaths = extractImagePathsFromContent(content || '');
   // note_idがこのノートで、かつ現在本文に含まれていないstorage_pathを特定
-  const { data, error: selectError } = await supabase.from('files')
+  const { data, error: selectError } = await supabase
+    .from('files')
     .select('storage_path')
     .eq('note_id', noteId);
   if (selectError) {
@@ -321,7 +327,8 @@ export async function detachRemovedImagesFromNote(noteId: string, content: strin
     .map((row: { storage_path: string }) => row.storage_path)
     .filter((path: string) => !currentImagePaths.includes(path));
   if (toDetach.length === 0) return;
-  const { error: updateError } = await supabase.from('files')
+  const { error: updateError } = await supabase
+    .from('files')
     .update({ note_id: null })
     .in('storage_path', toDetach)
     .eq('note_id', noteId);

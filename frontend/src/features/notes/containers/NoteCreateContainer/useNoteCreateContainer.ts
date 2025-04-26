@@ -1,9 +1,9 @@
 'use client';
 
 import type { Note } from '@/features/notes/types';
+import { syncNoteImages } from '@/lib/api/file';
 import { createNote } from '@/lib/api/note';
 import { updateNoteTags } from '@/lib/api/tag';
-import { syncNoteImages } from '@/lib/api/file';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
