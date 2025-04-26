@@ -1,4 +1,5 @@
 import type { Note } from '@/lib/api/note';
+import type { RefObject } from 'react';
 
 export type { Note };
 
@@ -10,6 +11,6 @@ export type NoteListProps = {
   onSearchChange: (searchTerm: string) => void;
   searchTerm: string;
   onNewNoteClick?: () => void;
-  onLoadMore?: () => void;
   hasMore?: boolean;
+  bottomRef?: RefObject<HTMLDivElement | null>;
 };

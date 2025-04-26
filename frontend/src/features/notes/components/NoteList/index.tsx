@@ -5,7 +5,7 @@ import { Input } from '@/components/shadcn/ui/input';
 import NoteCard from '@/features/notes/components/NoteCard';
 import type { NoteListProps } from '@/features/notes/types';
 import { Plus, Search } from 'lucide-react';
-import React, { useEffect, useRef } from 'react';
+import type React from 'react';
 
 const NoteList: React.FC<NoteListProps> = ({
   notes,
@@ -15,35 +15,9 @@ const NoteList: React.FC<NoteListProps> = ({
   onSearchChange,
   searchTerm,
   onNewNoteClick,
-  onLoadMore,
   hasMore,
+  bottomRef,
 }) => {
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!onLoadMore || !hasMore) return;
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isLoading) {
-          onLoadMore();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    
-    if (bottomRef.current) {
-      observer.observe(bottomRef.current);
-    }
-    
-    return () => {
-      if (bottomRef.current) {
-        observer.unobserve(bottomRef.current);
-      }
-      observer.disconnect();
-    };
-  }, [onLoadMore, hasMore, isLoading]);
-
   if (isLoading && notes.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -98,8 +72,10 @@ const NoteList: React.FC<NoteListProps> = ({
         </div>
       )}
       
+      {/* 無限スクロールのトリガー要素 - Containerから渡された参照を使用 */}
       {hasMore && <div ref={bottomRef} className="h-8 mt-4" />}
       
+      {/* 追加データ読み込み中のローディングインジケーター */}
       {isLoading && notes.length > 0 && (
         <div className="flex justify-center items-center py-4 mt-2">
           <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary" />
