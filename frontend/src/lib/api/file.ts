@@ -266,3 +266,36 @@ export const refreshImageUrls = async (
     return content; // エラーの場合は元のコンテンツを返す
   }
 };
+
+/**
+ * ノート本文からSupabase Storageのstorage_path一覧を抽出
+ * @param content HTML形式のノート本文
+ * @returns storage_pathの配列（例: ["projectId/uuid1.jpg", ...]）
+ */
+export function extractImagePathsFromContent(content: string): string[] {
+  // 例: https://xxxx.supabase.co/storage/v1/object/sign/notes/projectId/uuid.jpg?...
+  const regex = /\/storage\/v1\/object\/sign\/notes\/([^"?]+)/g;
+  const paths: string[] = [];
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    paths.push(match[1]); // "projectId/uuid.jpg" など
+  }
+  return paths;
+}
+
+/**
+ * filesテーブルの画像レコードをノートIDで一括紐付けする
+ * @param noteId ノートID
+ * @param content ノート本文（HTML）
+ * @returns エラーがあればconsole.errorに出力
+ */
+export async function attachImagesToNote(noteId: string, content: string) {
+  const imagePaths = extractImagePathsFromContent(content || '');
+  if (imagePaths.length === 0) return;
+  const { error } = await supabase.from('files')
+    .update({ note_id: noteId })
+    .in('storage_path', imagePaths);
+  if (error) {
+    console.error('画像ファイル紐付けエラー:', error);
+  }
+}
