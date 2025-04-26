@@ -2,6 +2,7 @@
 
 import type { Note } from '@/features/notes/types';
 import { refreshImageUrls } from '@/lib/api/file';
+import { syncNoteImages } from '@/lib/api/file';
 import { deleteNote, getNoteById, updateNote } from '@/lib/api/note';
 import { updateNoteTags } from '@/lib/api/tag';
 import { useRouter } from 'next/navigation';
@@ -84,6 +85,9 @@ export const useNoteEditContainer = ({
 
       // ノートからタグを抽出して保存
       await updateNoteTags(noteId, updatedNote.content, projectId);
+
+      // 画像紐付け（追加・解除）を共通APIで同期
+      await syncNoteImages(noteId, updatedNote.content || '');
 
       // 更新後、ノート一覧ページに戻る
       if (projectUrlId) {

@@ -1,6 +1,7 @@
 'use client';
 
 import type { Note } from '@/features/notes/types';
+import { syncNoteImages } from '@/lib/api/file';
 import { createNote } from '@/lib/api/note';
 import { updateNoteTags } from '@/lib/api/tag';
 import { useRouter } from 'next/navigation';
@@ -68,6 +69,9 @@ export const useNoteCreateContainer = ({
         console.error('Tag update error:', tagError);
         // タグ更新エラーはノート作成自体を失敗とはしない
       }
+
+      // 画像紐付け（追加・解除）を共通APIで同期
+      await syncNoteImages(newNote.id, note.content || '');
 
       // ノート一覧に遷移
       router.push(notesUrl);
