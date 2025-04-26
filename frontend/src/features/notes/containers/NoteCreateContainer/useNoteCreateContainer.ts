@@ -3,6 +3,7 @@
 import type { Note } from '@/features/notes/types';
 import { createNote } from '@/lib/api/note';
 import { updateNoteTags } from '@/lib/api/tag';
+import { supabase } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -69,6 +70,24 @@ export const useNoteCreateContainer = ({
         // タグ更新エラーはノート作成自体を失敗とはしない
       }
 
+      // --- ここから画像のfilesテーブル紐付け処理 ---
+      try {
+        // ノート本文から画像のstorage_path一覧を抽出
+        const imagePaths = extractImagePathsFromContent(note.content || '');
+        if (imagePaths.length > 0) {
+          // filesテーブルの該当レコードをnote_idで一括更新
+          const { error: updateError } = await supabase.from('files')
+            .update({ note_id: newNote.id })
+            .in('storage_path', imagePaths);
+          if (updateError) {
+            console.error('画像ファイル紐付けエラー:', updateError);
+          }
+        }
+      } catch (fileLinkError) {
+        console.error('画像ファイル紐付け処理エラー:', fileLinkError);
+      }
+      // --- ここまで追加 ---
+
       // ノート一覧に遷移
       router.push(notesUrl);
     } catch (err) {
@@ -96,3 +115,19 @@ export const useNoteCreateContainer = ({
     handleCancel,
   };
 };
+
+/**
+ * ノート本文からSupabase Storageのstorage_path一覧を抽出
+ * @param content HTML形式のノート本文
+ * @returns storage_pathの配列（例: ["projectId/uuid1.jpg", ...]）
+ */
+function extractImagePathsFromContent(content: string): string[] {
+  // 例: https://xxxx.supabase.co/storage/v1/object/sign/notes/projectId/uuid.jpg?...
+  const regex = /\/storage\/v1\/object\/sign\/notes\/([^"?]+)/g;
+  const paths: string[] = [];
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    paths.push(match[1]); // "projectId/uuid.jpg" など
+  }
+  return paths;
+}
