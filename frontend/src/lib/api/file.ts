@@ -5,17 +5,26 @@ import { v4 as uuidv4 } from 'uuid';
  * 画像ファイルをアップロードする
  * @param projectId プロジェクトID
  * @param file アップロードするファイル
+ * @param noteId 紐付けるノートID（任意）
  * @returns アップロードされたファイルの署名付きURL
  */
-export const uploadImage = async (projectId: string, file: File) => {
+export const uploadImage = async (
+  projectId: string,
+  file: File,
+  noteId?: string // 画像をノートに紐付ける場合
+) => {
   try {
     // バケット名を定義
     const bucketName = 'notes';
-
+    let filePath = '';
+    let fileName = '';
+    let fileExt = '';
+    let mimeType = file.type;
+    let fileSize = file.size;
+    let originalName = file.name;
     try {
       // バケットの存在確認
       const { data: buckets, error } = await supabase.storage.listBuckets();
-
       if (error) {
         console.error('バケット一覧取得エラー:', error);
         // エラーがあっても処理を続行
@@ -24,7 +33,6 @@ export const uploadImage = async (projectId: string, file: File) => {
         const bucketExists = buckets.some(
           (bucket) => bucket.name === bucketName,
         );
-
         // バケットが存在しない場合は作成
         if (!bucketExists) {
           const { error: createError } = await supabase.storage.createBucket(
@@ -33,11 +41,9 @@ export const uploadImage = async (projectId: string, file: File) => {
               public: false, // プライベートバケットとして作成
             },
           );
-
           if (createError) {
             console.error('バケット作成エラー:', createError);
             // エラーがあっても処理を続行
-          } else {
           }
         }
       }
@@ -45,12 +51,10 @@ export const uploadImage = async (projectId: string, file: File) => {
       console.error('バケット確認/作成エラー:', bucketError);
       // エラーがあっても処理を続行
     }
-
     // ファイル名をUUIDに変更して衝突を避ける
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${uuidv4()}.${fileExt}`;
-    const filePath = `${projectId}/${fileName}`;
-
+    fileExt = file.name.split('.').pop() || 'bin';
+    fileName = `${uuidv4()}.${fileExt}`;
+    filePath = `${projectId}/${fileName}`;
     // Supabase Storageにアップロード
     const { error } = await supabase.storage
       .from(bucketName)
@@ -58,51 +62,63 @@ export const uploadImage = async (projectId: string, file: File) => {
         cacheControl: '3600',
         upsert: false,
       });
-
+    let signedUrl = '';
     if (error) {
       // バケットが見つからない場合は、publicバケットを試す
       if (error.message.includes('Bucket not found')) {
-        // publicバケットにアップロード
         const { error: publicError } = await supabase.storage
           .from('public')
           .upload(filePath, file, {
             cacheControl: '3600',
             upsert: false,
           });
-
         if (publicError) {
           throw new Error(
             `画像のアップロードに失敗しました: ${publicError.message}`,
           );
         }
-
         // publicバケットから署名付きURLを取得（60分間有効）
         const { data: signedUrlData, error: signedUrlError } =
           await supabase.storage
             .from('public')
             .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
-
         if (signedUrlError) {
           throw new Error(`署名付きURL生成エラー: ${signedUrlError.message}`);
         }
-
-        return signedUrlData.signedUrl;
+        signedUrl = signedUrlData.signedUrl;
+      } else {
+        throw new Error(`画像のアップロードに失敗しました: ${error.message}`);
       }
-
-      throw new Error(`画像のアップロードに失敗しました: ${error.message}`);
+    } else {
+      // 画像の署名付きURLを取得（60分間有効）
+      const { data: signedUrlData, error: signedUrlError } =
+        await supabase.storage
+          .from(bucketName)
+          .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
+      if (signedUrlError) {
+        throw new Error(`署名付きURL生成エラー: ${signedUrlError.message}`);
+      }
+      signedUrl = signedUrlData.signedUrl;
     }
-
-    // 画像の署名付きURLを取得（60分間有効）
-    const { data: signedUrlData, error: signedUrlError } =
-      await supabase.storage
-        .from(bucketName)
-        .createSignedUrl(filePath, 60 * 60); // 60分（3600秒）
-
-    if (signedUrlError) {
-      throw new Error(`署名付きURL生成エラー: ${signedUrlError.message}`);
+    // --- ここからfilesテーブルへinsert ---
+    // プロジェクトIDからUUIDを取得（projectIdはurlIdの可能性があるため、UUIDでなければDB検索が必要）
+    // ただし、ここではprojectIdがUUIDで渡ってくる前提とする
+    // noteIdも同様
+    const { error: insertError } = await supabase.from('files').insert([
+      {
+        original_name: originalName,
+        storage_path: filePath,
+        mime_type: mimeType,
+        size: fileSize,
+        note_id: noteId || null,
+        project_id: projectId,
+      },
+    ]);
+    if (insertError) {
+      console.error('filesテーブルへのinsertエラー:', insertError);
+      // 画像アップロード自体は成功してているので、URLは返す
     }
-
-    return signedUrlData.signedUrl;
+    return signedUrl;
   } catch (error) {
     console.error('画像アップロードエラー:', error);
     throw error;
