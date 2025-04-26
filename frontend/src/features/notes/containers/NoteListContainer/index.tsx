@@ -24,6 +24,8 @@ const NoteListContainer: React.FC<NoteListContainerProps> = ({
     handleNoteClick,
     handleSearchChange,
     handleNewNoteClick,
+    hasMore,
+    fetchMoreNotes,
   } = useNoteListContainer({
     projectUrlId,
     projectId,
@@ -39,6 +41,8 @@ const NoteListContainer: React.FC<NoteListContainerProps> = ({
       onSearchChange={handleSearchChange}
       searchTerm={searchTerm}
       onNewNoteClick={handleNewNoteClick}
+      onLoadMore={fetchMoreNotes}
+      hasMore={hasMore}
     />
   );
 };
