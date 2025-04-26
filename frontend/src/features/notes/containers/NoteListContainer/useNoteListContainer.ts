@@ -1,11 +1,11 @@
 'use client';
 
 import { refreshImageUrls } from '@/lib/api/file';
-import { getProjectNotes, searchNotes } from '@/lib/api/note';
+import { getProjectNotes } from '@/lib/api/note';
 import type { Note } from '@/lib/api/note';
 import { getProjectByUrlId } from '@/lib/api/project';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type UseNoteListContainerProps = {
   projectUrlId: string;
@@ -28,7 +28,7 @@ export const useNoteListContainer = ({
     initialProjectId || null,
   );
   const router = useRouter();
-  
+
   // 無限スクロールのための参照オブジェクト
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -90,75 +90,97 @@ export const useNoteListContainer = ({
               }
             }
             return note;
-          })
+          }),
         );
         setNotes(updatedNotes);
         setHasMore(updatedNotes.length === NOTES_PAGE_SIZE);
-        setCursor(updatedNotes.length > 0 ? updatedNotes[updatedNotes.length - 1].updated_at : null);
+        setCursor(
+          updatedNotes.length > 0
+            ? updatedNotes[updatedNotes.length - 1].updated_at
+            : null,
+        );
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to fetch notes'));
+        setError(
+          err instanceof Error ? err : new Error('Failed to fetch notes'),
+        );
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchInitialNotes();
-  }, [projectId, initialNotes.length]);
+  }, [
+    projectId,
+    initialNotes.length,
+    initialNotes[initialNotes.length - 1]?.updated_at,
+  ]);
 
   // --- 追加取得（無限スクロール用） ---
-  const fetchMoreNotes = async () => {
+  const fetchMoreNotes = useCallback(async () => {
     if (!projectId || !hasMore || isLoading || !cursor) return;
     setIsLoading(true);
     try {
-      const fetchedNotes = await getProjectNotes(projectId, NOTES_PAGE_SIZE, cursor);
+      const fetchedNotes = await getProjectNotes(
+        projectId,
+        NOTES_PAGE_SIZE,
+        cursor,
+      );
+      // ノートコンテンツ内の画像URLを更新
       const updatedNotes = await Promise.all(
         fetchedNotes.map(async (note) => {
           if (note.content) {
             try {
               const updatedContent = await refreshImageUrls(note.content);
               return { ...note, content: updatedContent };
-            } catch {
+            } catch (refreshError) {
+              console.error('画像URL更新エラー:', refreshError);
+              // エラーがあっても元のノートを返す
               return note;
             }
           }
           return note;
-        })
+        }),
       );
-      setNotes((prev) => [...prev, ...updatedNotes]);
+      setNotes((prevNotes) => [...prevNotes, ...updatedNotes]);
       setHasMore(updatedNotes.length === NOTES_PAGE_SIZE);
-      setCursor(updatedNotes.length > 0 ? updatedNotes[updatedNotes.length - 1].updated_at : cursor);
+      setCursor(
+        updatedNotes.length > 0
+          ? updatedNotes[updatedNotes.length - 1].updated_at
+          : null,
+      );
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch notes'));
     } finally {
       setIsLoading(false);
     }
-  };
-  
+  }, [projectId, hasMore, isLoading, cursor]);
+
   // 無限スクロールのロジック
   useEffect(() => {
     if (!hasMore || isLoading || !cursor) return;
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !isLoading) {
           fetchMoreNotes();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
-    
+
     if (bottomRef.current) {
       observer.observe(bottomRef.current);
     }
-    
+
     return () => {
       if (bottomRef.current) {
         observer.unobserve(bottomRef.current);
       }
       observer.disconnect();
     };
-  }, [hasMore, isLoading, cursor]);
+  }, [hasMore, isLoading, cursor, fetchMoreNotes]);
 
   // 検索語の変更を遅延処理（デバウンス）
   useEffect(() => {
@@ -168,7 +190,10 @@ export const useNoteListContainer = ({
       if (searchTerm.trim() === '') {
         // 検索語が空の場合、すべてのノートを取得
         try {
-          const fetchedNotes = await getProjectNotes(projectId, NOTES_PAGE_SIZE);
+          const fetchedNotes = await getProjectNotes(
+            projectId,
+            NOTES_PAGE_SIZE,
+          );
           // ノートコンテンツ内の画像URLを更新
           const updatedNotes = await Promise.all(
             fetchedNotes.map(async (note) => {
@@ -188,7 +213,11 @@ export const useNoteListContainer = ({
 
           setNotes(updatedNotes);
           setHasMore(updatedNotes.length === NOTES_PAGE_SIZE);
-          setCursor(updatedNotes.length > 0 ? updatedNotes[updatedNotes.length - 1].updated_at : null);
+          setCursor(
+            updatedNotes.length > 0
+              ? updatedNotes[updatedNotes.length - 1].updated_at
+              : null,
+          );
         } catch (err) {
           console.error('Error fetching notes during search:', err);
           setError(

@@ -71,10 +71,10 @@ const NoteList: React.FC<NoteListProps> = ({
           ))}
         </div>
       )}
-      
+
       {/* 無限スクロールのトリガー要素 - Containerから渡された参照を使用 */}
       {hasMore && <div ref={bottomRef} className="h-8 mt-4" />}
-      
+
       {/* 追加データ読み込み中のローディングインジケーター */}
       {isLoading && notes.length > 0 && (
         <div className="flex justify-center items-center py-4 mt-2">

@@ -19,8 +19,8 @@ export type Note = {
  */
 export const getProjectNotes = async (
   projectId: string,
-  limit: number = 50,
-  cursor?: string
+  limit = 50,
+  cursor?: string,
 ): Promise<Note[]> => {
   let query = supabase
     .from('notes')
