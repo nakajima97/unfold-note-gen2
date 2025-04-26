@@ -299,3 +299,46 @@ export async function attachImagesToNote(noteId: string, content: string) {
     console.error('画像ファイル紐付けエラー:', error);
   }
 }
+
+/**
+ * 指定したノートから削除された画像のfiles.note_idをnullにする
+ * @param noteId ノートID
+ * @param content ノート本文（HTML、最新状態）
+ * @returns エラーがあればconsole.errorに出力
+ */
+export async function detachRemovedImagesFromNote(noteId: string, content: string) {
+  // 現在本文に含まれている画像storage_path一覧
+  const currentImagePaths = extractImagePathsFromContent(content || '');
+  // note_idがこのノートで、かつ現在本文に含まれていないstorage_pathを特定
+  const { data, error: selectError } = await supabase.from('files')
+    .select('storage_path')
+    .eq('note_id', noteId);
+  if (selectError) {
+    console.error('画像紐付け解除selectエラー:', selectError);
+    return;
+  }
+  const toDetach = (data || [])
+    .map((row: { storage_path: string }) => row.storage_path)
+    .filter((path: string) => !currentImagePaths.includes(path));
+  if (toDetach.length === 0) return;
+  const { error: updateError } = await supabase.from('files')
+    .update({ note_id: null })
+    .in('storage_path', toDetach)
+    .eq('note_id', noteId);
+  if (updateError) {
+    console.error('画像紐付け解除updateエラー:', updateError);
+  }
+}
+
+/**
+ * ノート本文とfilesテーブルの画像紐付け状態を同期する（追加・削除両対応）
+ * @param noteId ノートID
+ * @param content ノート本文（HTML、最新状態）
+ * @returns エラーがあればconsole.errorに出力
+ */
+export async function syncNoteImages(noteId: string, content: string) {
+  // 紐付け追加
+  await attachImagesToNote(noteId, content);
+  // 紐付け解除
+  await detachRemovedImagesFromNote(noteId, content);
+}

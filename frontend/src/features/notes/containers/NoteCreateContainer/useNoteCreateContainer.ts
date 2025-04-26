@@ -3,7 +3,7 @@
 import type { Note } from '@/features/notes/types';
 import { createNote } from '@/lib/api/note';
 import { updateNoteTags } from '@/lib/api/tag';
-import { attachImagesToNote } from '@/lib/api/file';
+import { syncNoteImages } from '@/lib/api/file';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -70,8 +70,8 @@ export const useNoteCreateContainer = ({
         // タグ更新エラーはノート作成自体を失敗とはしない
       }
 
-      // 画像紐付け処理を共通APIで実行
-      await attachImagesToNote(newNote.id, note.content || '');
+      // 画像紐付け（追加・解除）を共通APIで同期
+      await syncNoteImages(newNote.id, note.content || '');
 
       // ノート一覧に遷移
       router.push(notesUrl);
