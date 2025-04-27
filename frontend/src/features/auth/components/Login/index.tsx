@@ -18,11 +18,8 @@ type LoginComponentProps = {
   loading: boolean;
   error: string | null;
   message: string | null;
-  isSignUp: boolean;
   handleLogin: (e: React.FormEvent) => Promise<void>;
-  handleSignUp: (e: React.FormEvent) => Promise<void>;
   handleGoogleLogin: () => Promise<void>;
-  toggleSignUp: () => void;
   googleLoading?: boolean;
   googleError?: string | null;
   mailPasswordLoginEnabled?: boolean;
@@ -36,11 +33,8 @@ const LoginComponent = ({
   loading,
   error,
   message,
-  isSignUp,
   handleLogin,
-  handleSignUp,
   handleGoogleLogin,
-  toggleSignUp,
   googleLoading,
   googleError,
   mailPasswordLoginEnabled,
@@ -62,9 +56,7 @@ const LoginComponent = ({
             Unfold Note
           </CardTitle>
           <CardDescription className="text-center">
-            {isSignUp
-              ? 'アカウントを作成する'
-              : 'ログインしてノートを管理しましょう'}
+            {'ログインしてノートを管理しましょう'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -77,7 +69,7 @@ const LoginComponent = ({
           {/* メールアドレス＋パスワードログインが有効な場合のみ表示 */}
           {mailPasswordLoginEnabled && (
             <form
-              onSubmit={isSignUp ? handleSignUp : handleLogin}
+              onSubmit={handleLogin}
               className="space-y-4"
             >
               <div className="space-y-2">
@@ -120,23 +112,8 @@ const LoginComponent = ({
                 className="w-full"
                 disabled={loading}
               >
-                {loading
-                  ? isSignUp
-                    ? 'アカウント作成中...'
-                    : 'ログイン中...'
-                  : isSignUp
-                  ? 'アカウント作成'
-                  : 'ログイン'}
+                {loading ? 'ログイン中...' : 'ログイン'}
               </Button>
-              <div className="flex justify-between mt-2">
-                <button
-                  type="button"
-                  className="text-sm text-blue-500 hover:underline"
-                  onClick={toggleSignUp}
-                >
-                  {isSignUp ? 'ログイン画面へ' : 'アカウントを作成'}
-                </button>
-              </div>
             </form>
           )}
 

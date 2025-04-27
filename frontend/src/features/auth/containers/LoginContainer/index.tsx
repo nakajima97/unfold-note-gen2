@@ -10,7 +10,14 @@ const LoginContainer = () => {
 
   return (
     <LoginComponent
-      {...loginProps}
+      email={loginProps.email}
+      setEmail={loginProps.setEmail}
+      password={loginProps.password}
+      setPassword={loginProps.setPassword}
+      loading={loginProps.loading}
+      error={loginProps.error}
+      message={loginProps.message}
+      handleLogin={loginProps.handleLogin}
       handleGoogleLogin={handleGoogleLogin}
       googleLoading={googleLoading}
       googleError={googleError}
