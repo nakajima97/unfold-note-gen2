@@ -22,7 +22,7 @@ type LoginComponentProps = {
   handleGoogleLogin: () => Promise<void>;
   googleLoading?: boolean;
   googleError?: string | null;
-  mailPasswordLoginEnabled?: boolean;
+  mailPasswordLoginEnabled: boolean;
 };
 
 const LoginComponent = ({

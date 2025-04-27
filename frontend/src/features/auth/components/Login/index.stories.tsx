@@ -23,6 +23,7 @@ const meta: Meta<typeof LoginComponent> = {
     loading: { control: 'boolean' },
     error: { control: 'text' },
     message: { control: 'text' },
+    mailPasswordLoginEnabled: { control: 'boolean' },
   },
   decorators: [withContainer],
 };
@@ -49,6 +50,7 @@ const commonProps = {
   loading: false,
   error: null,
   message: null,
+  mailPasswordLoginEnabled: true,
 };
 
 // ログインビュー
@@ -92,23 +94,6 @@ export const ErrorState: Story = {
     docs: {
       description: {
         story: 'エラーメッセージ表示',
-      },
-    },
-  },
-};
-
-// 成功メッセージ
-export const Success: Story = {
-  args: {
-    ...commonProps,
-    loading: false,
-    error: null,
-    message: 'アカウントが作成されました。ログインしてください。',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: '成功メッセージ表示',
       },
     },
   },
