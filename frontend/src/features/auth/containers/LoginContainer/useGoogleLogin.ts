@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { supabase } from '@/utils/supabase/client';
+import { useState } from 'react';
 
 /**
  * Googleログイン用のカスタムフック（Supabase版）
@@ -20,7 +20,7 @@ export const useGoogleLogin = () => {
         },
       });
       // 通常、ここで画面遷移するため以降の処理は実行されない
-    } catch (err: any) {
+    } catch (_err) {
       setError('Googleログインに失敗しました');
     } finally {
       setLoading(false);
