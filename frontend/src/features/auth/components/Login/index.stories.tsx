@@ -23,7 +23,6 @@ const meta: Meta<typeof LoginComponent> = {
     loading: { control: 'boolean' },
     error: { control: 'text' },
     message: { control: 'text' },
-    isSignUp: { control: 'boolean' },
   },
   decorators: [withContainer],
 };
@@ -40,23 +39,22 @@ const commonProps = {
   handleLogin: action('handleLogin') as unknown as (
     e: React.FormEvent,
   ) => Promise<void>,
-  handleSignUp: action('handleSignUp') as unknown as (
-    e: React.FormEvent,
-  ) => Promise<void>,
   handleGoogleLogin: action(
     'handleGoogleLogin',
   ) as unknown as () => Promise<void>,
+  handleSignUp: action('handleSignUp') as unknown as (
+    e: React.FormEvent,
+  ) => Promise<void>,
   toggleSignUp: action('toggleSignUp'),
+  loading: false,
+  error: null,
+  message: null,
 };
 
 // ログインビュー
 export const Login: Story = {
   args: {
     ...commonProps,
-    loading: false,
-    error: null,
-    message: null,
-    isSignUp: false,
   },
   parameters: {
     docs: {
@@ -67,32 +65,11 @@ export const Login: Story = {
   },
 };
 
-// サインアップビュー
-export const SignUp: Story = {
-  args: {
-    ...commonProps,
-    loading: false,
-    error: null,
-    message: null,
-    isSignUp: true,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'サインアップ画面表示',
-      },
-    },
-  },
-};
-
 // ローディング状態
 export const Loading: Story = {
   args: {
     ...commonProps,
     loading: true,
-    error: null,
-    message: null,
-    isSignUp: false,
   },
   parameters: {
     docs: {
@@ -110,7 +87,6 @@ export const ErrorState: Story = {
     loading: false,
     error: 'メールアドレスまたはパスワードが間違っています。',
     message: null,
-    isSignUp: false,
   },
   parameters: {
     docs: {
@@ -128,7 +104,6 @@ export const Success: Story = {
     loading: false,
     error: null,
     message: 'アカウントが作成されました。ログインしてください。',
-    isSignUp: false,
   },
   parameters: {
     docs: {

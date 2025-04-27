@@ -68,10 +68,7 @@ const LoginComponent = ({
 
           {/* メールアドレス＋パスワードログインが有効な場合のみ表示 */}
           {mailPasswordLoginEnabled && (
-            <form
-              onSubmit={handleLogin}
-              className="space-y-4"
-            >
+            <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -107,11 +104,7 @@ const LoginComponent = ({
               {error && (
                 <div className="text-sm text-red-500 mt-2">{error}</div>
               )}
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
+              <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'ログイン中...' : 'ログイン'}
               </Button>
             </form>
