@@ -14,7 +14,6 @@ export const useLoginContainer = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [isSignUp, setIsSignUp] = useState(false);
   const router = useRouter();
 
   const redirectToNotes = async (userId: string, displayName: string) => {
@@ -79,56 +78,6 @@ export const useLoginContainer = () => {
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setMessage(null);
-
-    try {
-      // メールアドレスがallowed_emailsテーブルに存在するか確認
-      const { data: allowedEmails, error: allowedEmailError } = await supabase
-        .from('allowed_emails')
-        .select('email')
-        .eq('email', email)
-        .single();
-
-      if (allowedEmailError && allowedEmailError.code !== 'PGRST116') {
-        // PGRST116は「行が返されなかった」エラーコード
-        throw new Error('メールアドレスの検証中にエラーが発生しました。');
-      }
-
-      if (!allowedEmails) {
-        throw new Error(
-          'このメールアドレスは登録が許可されていません。管理者に連絡してください。',
-        );
-      }
-
-      // メールアドレスが許可されている場合、サインアップを続行
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      setMessage(
-        '登録確認メールを送信しました。メールを確認してアカウントを有効化してください。',
-      );
-      setIsSignUp(false); // ログインビューに戻す
-    } catch (error: unknown) {
-      const errorWithMessage = error as ErrorWithMessage;
-      setError(errorWithMessage.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleGoogleLogin = async () => {
     try {
       await supabase.auth.signInWithOAuth({
@@ -143,12 +92,6 @@ export const useLoginContainer = () => {
     }
   };
 
-  const toggleSignUp = () => {
-    setIsSignUp(!isSignUp);
-    setError(null);
-    setMessage(null);
-  };
-
   return {
     email,
     setEmail,
@@ -157,10 +100,7 @@ export const useLoginContainer = () => {
     loading,
     error,
     message,
-    isSignUp,
     handleLogin,
-    handleSignUp,
     handleGoogleLogin,
-    toggleSignUp,
   };
 };
