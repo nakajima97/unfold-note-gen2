@@ -5,15 +5,13 @@ import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 
 type NoteListPageProps = {
-  params: {
+  params: Promise<{
     projectUrlId: string;
-  };
+  }>;
 };
 
 const NotesPage = async ({ params }: NoteListPageProps) => {
-  // paramsオブジェクト自体をawaitする
-  const resolvedParams = await params;
-  const projectUrlId = resolvedParams.projectUrlId;
+  const { projectUrlId } = await params;
 
   // サーバーコンポーネント用のSupabaseクライアントを作成
   const supabase = await createClient();
