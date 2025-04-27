@@ -98,3 +98,18 @@ export const ErrorState: Story = {
     },
   },
 };
+
+// メールアドレス＋パスワードログイン無効ストーリー
+export const GoogleOnly: Story = {
+  args: {
+    ...commonProps,
+    mailPasswordLoginEnabled: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Googleログインのみ（メールアドレスとパスワードの入力フォーム非表示）',
+      },
+    },
+  },
+};
