@@ -108,7 +108,8 @@ export const GoogleOnly: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Googleログインのみ（メールアドレスとパスワードの入力フォーム非表示）',
+        story:
+          'Googleログインのみ（メールアドレスとパスワードの入力フォーム非表示）',
       },
     },
   },

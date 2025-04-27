@@ -4,16 +4,14 @@ import { getProjectByUrlId } from '@/lib/api/project';
 import { notFound } from 'next/navigation';
 
 type NotePageProps = {
-  params: {
+  params: Promise<{
     projectUrlId: string;
     noteUrlId: string;
-  };
+  }>;
 };
 
 const NotePage = async ({ params }: NotePageProps) => {
-  // paramsオブジェクト自体をawaitする
-  const resolvedParams = await params;
-  const { projectUrlId, noteUrlId } = resolvedParams;
+  const { projectUrlId, noteUrlId } = await params;
 
   // urlIdからプロジェクトを取得
   const projectData = await getProjectByUrlId(projectUrlId);
