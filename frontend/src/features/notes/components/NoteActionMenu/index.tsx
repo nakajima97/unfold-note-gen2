@@ -8,39 +8,44 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
-import { MoreVertical, Trash2, Copy } from 'lucide-react';
+import type { Editor } from '@tiptap/react';
+import { Copy, MoreVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 export type NoteActionMenuProps = {
   onDelete: () => void;
   isSubmitting: boolean;
-  editor: any; // Tiptapエディタのインスタンス
+  editor: Editor | null; // Tiptapエディタのインスタンス
 };
 
-const NoteActionMenu = ({ onDelete, isSubmitting, editor }: NoteActionMenuProps) => {
+const NoteActionMenu = ({
+  onDelete,
+  isSubmitting,
+  editor,
+}: NoteActionMenuProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // 全文をマークダウンでコピーする関数
   const handleCopyAllAsMarkdown = () => {
-    if (!editor) return;
-    
+    if (!editor) return; // editorがnullの場合は何もしない
+
     // エディタの全文をクリップボードにコピー
     // tiptap-markdownの拡張機能がコピー時にマークダウン形式に変換
     const selection = editor.state.selection;
     const { from, to } = selection;
-    
+
     // 現在の選択範囲を保存
     const currentSelection = { from, to };
-    
+
     // 全文を選択
     editor.commands.selectAll();
-    
+
     // コピー実行（tiptap-markdownの拡張機能によりマークダウン形式でコピーされる）
     document.execCommand('copy');
-    
+
     // 選択範囲を元に戻す
     editor.commands.setTextSelection(currentSelection);
-    
+
     // ユーザーにフィードバック
     alert('ノート全体をマークダウン形式でコピーしました');
   };
@@ -55,13 +60,11 @@ const NoteActionMenu = ({ onDelete, isSubmitting, editor }: NoteActionMenuProps)
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {/* 全文マークダウンコピーボタン */}
-          <DropdownMenuItem
-            onClick={handleCopyAllAsMarkdown}
-          >
+          <DropdownMenuItem onClick={handleCopyAllAsMarkdown}>
             <Copy className="mr-2 h-4 w-4" />
             マークダウンで全文コピー
           </DropdownMenuItem>
-          
+
           {/* 削除ボタン */}
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
