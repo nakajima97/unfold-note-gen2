@@ -169,6 +169,192 @@ export const useNoteEditor = ({
     immediatelyRender: false,
   });
 
+  // --- Markdown変換用関数（選択範囲 or 全体） ---
+  const getMarkdown = (options?: { selectionOnly?: boolean }) => {
+    if (!editor || !editor.view) return '';
+    const { state } = editor.view;
+    let doc = state.doc;
+    // selectionOnly: true の場合は選択範囲のみ抽出
+    if (options?.selectionOnly && !state.selection.empty) {
+      const { from, to } = state.selection;
+      doc = state.doc.cut(from, to);
+    }
+    try {
+      // Tiptapのエディタ内容をHTMLとして取得
+      let html = '';
+      if (options?.selectionOnly && !state.selection.empty) {
+        // 選択範囲のHTMLを取得（シンプルな方法）
+        const tempDiv = document.createElement('div');
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          tempDiv.appendChild(range.cloneContents());
+          html = tempDiv.innerHTML;
+        } else {
+          // 選択範囲が取得できない場合は全体を使用
+          html = editor.getHTML();
+        }
+      } else {
+        // 全体のHTMLを取得
+        html = editor.getHTML();
+      }
+
+      // HTML→テキスト変換（簡易的なMarkdown化）
+      return convertHtmlToMarkdown(html);
+    } catch (error) {
+      console.error('Markdown変換エラー:', error);
+      // エラー時はプレーンテキストを返す
+      return doc.textContent;
+    }
+  };
+
+  // --- HTML→Markdown変換（簡易実装） ---
+  const convertHtmlToMarkdown = (html: string): string => {
+    // 一時的なDOMを作成してHTMLを解析
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // 再帰的にノードをMarkdownに変換
+    return convertNodeToMarkdown(tempDiv);
+  };
+
+  // --- DOM Node→Markdown変換（再帰処理） ---
+  const convertNodeToMarkdown = (node: Node, indent = ''): string => {
+    let markdown = '';
+    
+    // テキストノードの場合はそのまま返す
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent || '';
+    }
+    
+    // 要素ノードの場合
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const element = node as HTMLElement;
+      const tagName = element.tagName.toLowerCase();
+      
+      // タグに応じた処理
+      switch (tagName) {
+        case 'h1':
+          markdown += '# ' + getTextContent(element) + '\n\n';
+          break;
+        case 'h2':
+          markdown += '## ' + getTextContent(element) + '\n\n';
+          break;
+        case 'h3':
+          markdown += '### ' + getTextContent(element) + '\n\n';
+          break;
+        case 'p':
+          markdown += getTextContent(element) + '\n\n';
+          break;
+        case 'strong':
+        case 'b':
+          markdown += '**' + getTextContent(element) + '**';
+          break;
+        case 'em':
+        case 'i':
+          markdown += '*' + getTextContent(element) + '*';
+          break;
+        case 'code':
+          markdown += '`' + getTextContent(element) + '`';
+          break;
+        case 'pre':
+          markdown += '```\n' + getTextContent(element) + '\n```\n\n';
+          break;
+        case 'a':
+          const href = element.getAttribute('href') || '';
+          markdown += '[' + getTextContent(element) + '](' + href + ')';
+          break;
+        case 'img':
+          const src = element.getAttribute('src') || '';
+          const alt = element.getAttribute('alt') || '';
+          markdown += '![' + alt + '](' + src + ')';
+          break;
+        case 'ul':
+          // 子要素を処理（リスト項目）
+          for (let i = 0; i < element.childNodes.length; i++) {
+            const child = element.childNodes[i];
+            if (child.nodeType === Node.ELEMENT_NODE && (child as HTMLElement).tagName.toLowerCase() === 'li') {
+              markdown += indent + '- ' + getTextContent(child as HTMLElement) + '\n';
+            }
+          }
+          markdown += '\n';
+          break;
+        case 'ol':
+          // 子要素を処理（番号付きリスト項目）
+          for (let i = 0; i < element.childNodes.length; i++) {
+            const child = element.childNodes[i];
+            if (child.nodeType === Node.ELEMENT_NODE && (child as HTMLElement).tagName.toLowerCase() === 'li') {
+              markdown += indent + (i + 1) + '. ' + getTextContent(child as HTMLElement) + '\n';
+            }
+          }
+          markdown += '\n';
+          break;
+        case 'blockquote':
+          markdown += '> ' + getTextContent(element) + '\n\n';
+          break;
+        case 'hr':
+          markdown += '---\n\n';
+          break;
+        case 'br':
+          markdown += '\n';
+          break;
+        default:
+          // その他の要素は子要素を再帰的に処理
+          for (let i = 0; i < element.childNodes.length; i++) {
+            markdown += convertNodeToMarkdown(element.childNodes[i], indent);
+          }
+      }
+      
+      return markdown;
+    }
+    
+    // その他のノードタイプは無視
+    return '';
+  };
+
+  // --- テキスト内容を取得（子要素も含む） ---
+  const getTextContent = (element: HTMLElement): string => {
+    // シンプルなテキスト取得（子要素のタグは無視）
+    return element.textContent || '';
+  };
+
+  // --- クリップボードにMarkdownを書き込む関数 ---
+  const copyMarkdownToClipboard = (options?: { selectionOnly?: boolean }) => {
+    const markdown = getMarkdown(options);
+    if (!markdown) return;
+    navigator.clipboard.writeText(markdown).catch((err) => {
+      // エラー時はalert
+      alert('クリップボードへのコピーに失敗しました: ' + err);
+    });
+  };
+
+  // --- Tiptapのcopyイベントを上書き（選択範囲のみ） ---
+  useEffect(() => {
+    const handler = (e: ClipboardEvent) => {
+      // 通常のコピーハンドラをキャンセル
+      e.preventDefault();
+      copyMarkdownToClipboard({ selectionOnly: true });
+    };
+    if (editor && editor.view && editor.view.dom) {
+      const dom = editor.view.dom;
+      dom.addEventListener('copy', handler);
+      return () => {
+        dom.removeEventListener('copy', handler);
+      };
+    }
+  }, [editor]);
+
+  // --- Markdownストレージを追加（NoteCreateからアクセスできるように） ---
+  useEffect(() => {
+    if (editor) {
+      // エディタのストレージにMarkdown変換関数を保存
+      editor.storage.markdown = {
+        getMarkdown,
+        copyMarkdownToClipboard,
+      };
+    }
+  }, [editor]);
+
   // debouncedContentまたはprojectIdが変わるたびにタグ名を抽出し、APIで一致判定
   useEffect(() => {
     if (!debouncedContent || !projectId || !editor) return;
@@ -269,5 +455,8 @@ export const useNoteEditor = ({
     isUploading,
     handleSubmit,
     isRefreshingImages,
+    // --- 追加: マークダウン変換・コピー用API ---
+    getMarkdown,
+    copyMarkdownToClipboard,
   };
 };

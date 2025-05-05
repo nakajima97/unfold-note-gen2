@@ -19,6 +19,20 @@ export type NoteActionMenuProps = {
 const NoteActionMenu = ({ onDelete, isSubmitting }: NoteActionMenuProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  // --- 追加: マークダウンでコピー機能 ---
+  // 親コンポーネントからeditor/copyMarkdownToClipboardをpropsで受け取る想定
+  // もしpropsで受け取れない場合はwindow経由やcontext等で取得する設計も可
+  const editorApi = (window as any).__noteEditorApi;
+  const handleCopyMarkdown = () => {
+    if (editorApi && typeof editorApi.copyMarkdownToClipboard === 'function') {
+      editorApi.copyMarkdownToClipboard({ selectionOnly: false });
+      // UX向上のためコピー完了通知
+      alert('ノート全体をマークダウン形式でコピーしました');
+    } else {
+      alert('エディタの初期化が完了していません');
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -28,7 +42,13 @@ const NoteActionMenu = ({ onDelete, isSubmitting }: NoteActionMenuProps) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {/* 将来的に追加する機能用のプレースホルダー */}
+          {/* --- 追加: マークダウンでコピー --- */}
+          <DropdownMenuItem
+            onClick={handleCopyMarkdown}
+          >
+            <span className="mr-2">📋</span>
+            マークダウンでコピー
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
             onClick={() => setIsDeleteDialogOpen(true)}
