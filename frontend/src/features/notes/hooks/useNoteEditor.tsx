@@ -12,6 +12,7 @@ import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { Markdown } from 'tiptap-markdown'
 
 type Props = {
   initialTitle: string;
@@ -61,6 +62,10 @@ export const useNoteEditor = ({
       Image.configure({
         allowBase64: true, // 一時的な画像表示のために残す
         inline: false,
+      }),
+      Markdown.configure({  // コピーペーストでマークダウンを扱う
+        transformCopiedText: true,   // ← コピー時に Markdown を入れる
+        transformPastedText: true,   // ← 必要なら貼り付け時も Markdown⇔HTML 変換
       }),
       tagExtension, // ここでTag拡張を差し替え
       AutoImage, // 画像URL自動検出拡張を追加
