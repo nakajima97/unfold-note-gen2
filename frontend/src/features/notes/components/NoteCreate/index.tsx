@@ -13,9 +13,8 @@ import EditorHelpTooltip from '@/features/notes/components/EditorHelpTooltip';
 import NoteActionMenu from '@/features/notes/components/NoteActionMenu';
 import RelatedNotesByTagContainer from '@/features/notes/containers/RelatedNotesByTagContainer';
 import { type Editor, EditorContent } from '@tiptap/react';
-import { ArrowLeft, Save, Copy } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import type React from 'react';
-import { useEffect } from 'react';
 import './editor.css';
 
 export type NoteCreateProps = {
@@ -47,31 +46,6 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
   isRefreshingImages,
   onDelete,
 }) => {
-  // エディタAPIをグローバルに公開（NoteActionMenuから利用するため）
-  useEffect(() => {
-    if (editor) {
-      // @ts-ignore
-      window.__noteEditorApi = {
-        copyMarkdownToClipboard: (options?: { selectionOnly?: boolean }) => {
-          // editorのgetMarkdownとcopyMarkdownToClipboardを直接呼び出す
-          // @ts-ignore - エディタのカスタムメソッドにアクセス
-          const markdown = editor.storage.markdown?.getMarkdown?.(options) || '';
-          if (markdown) {
-            navigator.clipboard.writeText(markdown).catch((err) => {
-              alert('クリップボードへのコピーに失敗しました: ' + err);
-            });
-          }
-        },
-      };
-      
-      return () => {
-        // クリーンアップ
-        // @ts-ignore
-        window.__noteEditorApi = undefined;
-      };
-    }
-  }, [editor]);
-
   // エディタが初期化されていない場合はローディング表示
   if (!editor && !isRefreshingImages) {
     return (
@@ -98,30 +72,10 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
             <h2 className="text-2xl font-bold">
               {noteId ? 'ノートを編集' : 'ノートを作成'}
             </h2>
-            {/* マークダウンコピーボタン（モバイル向け） */}
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="md:hidden"
-                onClick={() => {
-                  // @ts-ignore
-                  if (window.__noteEditorApi?.copyMarkdownToClipboard) {
-                    // @ts-ignore
-                    window.__noteEditorApi.copyMarkdownToClipboard({ selectionOnly: false });
-                    alert('ノート全体をマークダウン形式でコピーしました');
-                  }
-                }}
-                title="マークダウンでコピー"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-              {/* 編集時のみメニューボタンを表示 */}
-              {noteId && onDelete && (
-                <NoteActionMenu onDelete={onDelete} isSubmitting={isSubmitting} />
-              )}
-            </div>
+            {/* 編集時のみメニューボタンを表示 */}
+            {noteId && onDelete && (
+              <NoteActionMenu onDelete={onDelete} isSubmitting={isSubmitting} />
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
