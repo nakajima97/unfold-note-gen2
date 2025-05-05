@@ -42,7 +42,7 @@ export const useNoteEditor = ({
   const [editorInitialized, setEditorInitialized] = useState(false);
   const [isRefreshingImages, setIsRefreshingImages] = useState(false);
 
-  // --- 追加: タグと一致するノート情報（title, urlId）配列 ---
+  // --- タグと一致するノート情報（title, urlId）配列 ---
   const [matchingNoteInfos, setMatchingNoteInfos] = useState<
     { title: string; urlId: string }[]
   >([]);
