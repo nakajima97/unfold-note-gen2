@@ -74,7 +74,11 @@ const NoteCreate: React.FC<NoteCreateProps> = ({
             </h2>
             {/* 編集時のみメニューボタンを表示 */}
             {noteId && onDelete && (
-              <NoteActionMenu onDelete={onDelete} isSubmitting={isSubmitting} />
+              <NoteActionMenu 
+                onDelete={onDelete} 
+                isSubmitting={isSubmitting}
+                editor={editor}
+              />
             )}
           </div>
         </CardHeader>
