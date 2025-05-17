@@ -1,10 +1,16 @@
 import { supabase } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export const useNavbarContainer = () => {
   const router = useRouter();
+  const params = useParams();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // 現在のプロジェクトのURLパラメータを取得
+  const currentProjectUrlId = params?.projectUrlId
+    ? String(params.projectUrlId)
+    : null;
 
   const handleLogout = async () => {
     try {
@@ -28,5 +34,6 @@ export const useNavbarContainer = () => {
   return {
     isLoggingOut,
     handleLogout,
+    currentProjectUrlId,
   };
 };
