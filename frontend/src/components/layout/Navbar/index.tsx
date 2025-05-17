@@ -10,12 +10,20 @@ type NavbarProps = {
   currentProjectUrlId: string | null;
 };
 
-const Navbar = ({ onLogout, isLoggingOut, currentProjectUrlId }: NavbarProps) => {
+const Navbar = ({
+  onLogout,
+  isLoggingOut,
+  currentProjectUrlId,
+}: NavbarProps) => {
   return (
     <nav className="bg-background border-b">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link 
-          href={currentProjectUrlId ? `/projects/${currentProjectUrlId}/notes` : "/projects"} 
+        <Link
+          href={
+            currentProjectUrlId
+              ? `/projects/${currentProjectUrlId}/notes`
+              : '/projects'
+          }
           className="text-xl font-bold"
         >
           Unfold Note

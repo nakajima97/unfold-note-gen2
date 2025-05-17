@@ -6,9 +6,11 @@ export const useNavbarContainer = () => {
   const router = useRouter();
   const params = useParams();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  
+
   // 現在のプロジェクトのURLパラメータを取得
-  const currentProjectUrlId = params?.projectUrlId ? String(params.projectUrlId) : null;
+  const currentProjectUrlId = params?.projectUrlId
+    ? String(params.projectUrlId)
+    : null;
 
   const handleLogout = async () => {
     try {
