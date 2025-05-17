@@ -35,22 +35,6 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
       className="cursor-pointer hover:shadow-md transition-shadow"
       onClick={handleClick}
     >
-      {/* サムネイル画像表示エリア */}
-      {note.thumbnail_url && !imageError ? (
-        <div className="w-full h-32 overflow-hidden">
-          <img 
-            src={note.thumbnail_url} 
-            alt={note.title}
-            className="w-full h-full object-cover"
-            loading="lazy"
-            onError={() => setImageError(true)}
-          />
-        </div>
-      ) : (
-        <div className="w-full h-32 bg-muted flex items-center justify-center">
-          <Image className="w-12 h-12 text-muted-foreground opacity-20" />
-        </div>
-      )}
       <CardHeader className="pb-2">
         <CardTitle className="line-clamp-1">{note.title}</CardTitle>
         <CardDescription className="flex items-center gap-1 text-xs">
@@ -63,12 +47,26 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm line-clamp-3">
-          {stripHtml(note.content).result.replace(
-            /#[a-zA-Z0-9_\-/\p{L}\p{N}]+/gu,
-            '',
-          )}
-        </p>
+        {note.thumbnail_url && !imageError ? (
+          // サムネイルがある場合は画像を表示
+          <div className="w-full h-32 overflow-hidden">
+            <img 
+              src={note.thumbnail_url} 
+              alt={note.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          </div>
+        ) : (
+          // サムネイルがない場合は内容を表示
+          <p className="text-sm line-clamp-3">
+            {stripHtml(note.content).result.replace(
+              /#[a-zA-Z0-9_\-/\p{L}\p{N}]+/gu,
+              '',
+            )}
+          </p>
+        )}
       </CardContent>
       <CardFooter className="pt-2 flex flex-wrap gap-2">
         {extractTags(note.content).map((tag) => (
