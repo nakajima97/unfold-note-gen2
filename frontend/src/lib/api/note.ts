@@ -7,11 +7,11 @@ import { supabase } from '@/utils/supabase/client';
 export function extractFirstImageUrl(content: string): string | null {
   const imgRegex = /<img[^>]+src="([^"'>]+)"/g;
   const match = imgRegex.exec(content);
-  
-  if (match && match[1]) {
+
+  if (match?.[1]) {
     return match[1];
   }
-  
+
   return null;
 }
 
@@ -260,12 +260,12 @@ export const updateNote = async (
   },
 ): Promise<Note> => {
   // コンテンツが更新される場合はサムネイルURLも更新
-  let updateData: {
+  const updateData: {
     title?: string;
     content?: string;
     thumbnail_url?: string | null;
   } = { ...noteData };
-  
+
   if (noteData.content) {
     const thumbnailUrl = extractFirstImageUrl(noteData.content);
     updateData.thumbnail_url = thumbnailUrl;

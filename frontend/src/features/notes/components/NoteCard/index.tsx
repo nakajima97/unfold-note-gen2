@@ -10,10 +10,10 @@ import {
 } from '@/components/shadcn/ui/card';
 import type { Note } from '@/lib/api/note';
 import { formatDistanceToNow } from 'date-fns';
-import { Clock, Image } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import type React from 'react';
-import { stripHtml } from 'string-strip-html';
 import { useState } from 'react';
+import { stripHtml } from 'string-strip-html';
 
 export type NoteCardProps = {
   note: Note;
@@ -50,8 +50,8 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
         {note.thumbnail_url && !imageError ? (
           // サムネイルがある場合は画像を表示
           <div className="w-full h-32 overflow-hidden">
-            <img 
-              src={note.thumbnail_url} 
+            <img
+              src={note.thumbnail_url}
               alt={note.title}
               className="w-full h-full object-cover"
               loading="lazy"

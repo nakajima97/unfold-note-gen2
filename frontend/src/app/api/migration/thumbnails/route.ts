@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     const updatedCount = await updateExistingNotesThumbnails();
-    
+
     return NextResponse.json({
       success: true,
       message: `${updatedCount}件のノートのサムネイルURLを更新しました`,
@@ -16,14 +16,14 @@ export async function GET() {
     });
   } catch (error) {
     console.error('サムネイル更新APIエラー:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         message: 'サムネイルの更新に失敗しました',
         error: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
