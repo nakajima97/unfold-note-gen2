@@ -12,6 +12,7 @@ import type { Note } from '@/lib/api/note';
 import { formatDistanceToNow } from 'date-fns';
 import { Clock } from 'lucide-react';
 import type React from 'react';
+import { stripHtml } from 'string-strip-html';
 
 export type NoteCardProps = {
   note: Note;
@@ -43,7 +44,10 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
       </CardHeader>
       <CardContent>
         <p className="text-sm line-clamp-3">
-          {note.content.replace(/#[a-zA-Z0-9_\-/\p{L}\p{N}]+/gu, '')}
+          {stripHtml(note.content).result.replace(
+            /#[a-zA-Z0-9_\-/\p{L}\p{N}]+/gu,
+            '',
+          )}
         </p>
       </CardContent>
       <CardFooter className="pt-2 flex flex-wrap gap-2">
