@@ -76,6 +76,19 @@ const noTagsNote: Note = {
   updated_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
 };
 
+// サムネイル画像付きのノート
+const withThumbnailNote: Note = {
+  id: '6',
+  urlId: 'note-with-thumbnail',
+  title: 'サムネイル画像付きノート',
+  content:
+    '<p>このノートにはサムネイル画像が含まれています。<img src="/logo.png" alt="Unfold Note Logo" /></p><p>画像の下に表示されるテキストです。</p><p>タグも含めています: #サムネイル #画像 #テスト</p>',
+  project_id: 'project-1',
+  created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+  updated_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+  thumbnail_url: '/logo.png',
+};
+
 export const Default: Story = {
   args: {
     note: sampleNote,
@@ -107,6 +120,13 @@ export const ManyTags: Story = {
 export const NoTags: Story = {
   args: {
     note: noTagsNote,
+    onClick: (id) => console.log(`Note clicked: ${id}`),
+  },
+};
+
+export const WithThumbnail: Story = {
+  args: {
+    note: withThumbnailNote,
     onClick: (id) => console.log(`Note clicked: ${id}`),
   },
 };

@@ -12,6 +12,7 @@ import type { Note } from '@/lib/api/note';
 import { formatDistanceToNow } from 'date-fns';
 import { Clock } from 'lucide-react';
 import type React from 'react';
+import { useState } from 'react';
 import { stripHtml } from 'string-strip-html';
 
 export type NoteCardProps = {
@@ -25,6 +26,9 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
     // 常にurlIdを使用する
     onClick(note.urlId);
   };
+
+  // 画像読み込みエラー状態
+  const [imageError, setImageError] = useState(false);
 
   return (
     <Card
@@ -43,14 +47,28 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm line-clamp-3">
-          {stripHtml(note.content).result.replace(
-            /#[a-zA-Z0-9_\-/\p{L}\p{N}]+/gu,
-            '',
-          )}
-        </p>
+        {note.thumbnail_url && !imageError ? (
+          // サムネイルがある場合は画像を表示
+          <div className="w-full h-32 overflow-hidden">
+            <img
+              src={note.thumbnail_url}
+              alt={note.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          </div>
+        ) : (
+          // サムネイルがない場合は内容を表示
+          <p className="text-sm line-clamp-3">
+            {stripHtml(note.content).result.replace(
+              /#[a-zA-Z0-9_\-/\p{L}\p{N}]+/gu,
+              '',
+            )}
+          </p>
+        )}
       </CardContent>
-      <CardFooter className="pt-2 flex flex-wrap gap-2">
+      <CardFooter className="pt-2 flex flex-wrap gap-2 mt-auto">
         {extractTags(note.content).map((tag) => (
           <span
             key={`tag-${note.urlId}-${tag}`}
