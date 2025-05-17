@@ -41,7 +41,7 @@ export async function updateExistingNotesThumbnails(): Promise<number> {
     }
 
     return updatedCount;
-  } catch (error) {
+  } catch {
     return 0;
   }
 }
@@ -89,7 +89,7 @@ export async function updateProjectNotesThumbnails(
     }
 
     return updatedCount;
-  } catch (error) {
+  } catch {
     return 0;
   }
 }
