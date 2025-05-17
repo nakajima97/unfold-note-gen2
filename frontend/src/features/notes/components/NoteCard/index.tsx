@@ -68,7 +68,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
           </p>
         )}
       </CardContent>
-      <CardFooter className="pt-2 flex flex-wrap gap-2">
+      <CardFooter className="pt-2 flex flex-wrap gap-2 mt-auto">
         {extractTags(note.content).map((tag) => (
           <span
             key={`tag-${note.urlId}-${tag}`}
