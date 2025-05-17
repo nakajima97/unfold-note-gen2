@@ -1,6 +1,20 @@
 import { generateUniqueUrlId } from '@/lib/utils/urlId';
 import { supabase } from '@/utils/supabase/client';
 
+/**
+ * ノート本文から最初の画像URLを抽出する関数
+ */
+export function extractFirstImageUrl(content: string): string | null {
+  const imgRegex = /<img[^>]+src="([^"'>]+)"/g;
+  const match = imgRegex.exec(content);
+  
+  if (match && match[1]) {
+    return match[1];
+  }
+  
+  return null;
+}
+
 export type Note = {
   id: string;
   urlId: string;
@@ -9,6 +23,7 @@ export type Note = {
   project_id: string;
   created_at: string;
   updated_at: string;
+  thumbnail_url?: string; // サムネイル画像のURL
 };
 
 /**
@@ -172,6 +187,9 @@ export const createNote = async (noteData: {
     });
 
     try {
+      // サムネイルURLを抽出
+      const thumbnailUrl = extractFirstImageUrl(noteData.content);
+
       const { data: rpcData, error: rpcError } = await supabase.rpc(
         'create_note_with_url_id',
         {
@@ -179,11 +197,15 @@ export const createNote = async (noteData: {
           content_param: noteData.content,
           project_id_param: noteData.projectId,
           url_id_param: urlId,
+          thumbnail_url_param: thumbnailUrl,
         },
       );
 
       if (rpcError) {
         console.error('Error creating note with RPC:', rpcError);
+
+        // サムネイルURLを抽出（RPCが失敗した場合のフォールバック）
+        const thumbnailUrl = extractFirstImageUrl(noteData.content);
 
         const { data: insertData, error: insertError } = await supabase
           .from('notes')
@@ -192,6 +214,7 @@ export const createNote = async (noteData: {
             content: noteData.content,
             project_id: noteData.projectId,
             url_id: urlId,
+            thumbnail_url: thumbnailUrl,
           })
           .select()
           .single();
@@ -236,9 +259,21 @@ export const updateNote = async (
     content?: string;
   },
 ): Promise<Note> => {
+  // コンテンツが更新される場合はサムネイルURLも更新
+  let updateData: {
+    title?: string;
+    content?: string;
+    thumbnail_url?: string | null;
+  } = { ...noteData };
+  
+  if (noteData.content) {
+    const thumbnailUrl = extractFirstImageUrl(noteData.content);
+    updateData.thumbnail_url = thumbnailUrl;
+  }
+
   const { data, error } = await supabase
     .from('notes')
-    .update(noteData)
+    .update(updateData)
     .eq('id', noteId)
     .select()
     .single();

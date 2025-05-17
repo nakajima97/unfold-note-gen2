@@ -10,9 +10,10 @@ import {
 } from '@/components/shadcn/ui/card';
 import type { Note } from '@/lib/api/note';
 import { formatDistanceToNow } from 'date-fns';
-import { Clock } from 'lucide-react';
+import { Clock, Image } from 'lucide-react';
 import type React from 'react';
 import { stripHtml } from 'string-strip-html';
+import { useState } from 'react';
 
 export type NoteCardProps = {
   note: Note;
@@ -26,11 +27,30 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
     onClick(note.urlId);
   };
 
+  // 画像読み込みエラー状態
+  const [imageError, setImageError] = useState(false);
+
   return (
     <Card
       className="cursor-pointer hover:shadow-md transition-shadow"
       onClick={handleClick}
     >
+      {/* サムネイル画像表示エリア */}
+      {note.thumbnail_url && !imageError ? (
+        <div className="w-full h-32 overflow-hidden">
+          <img 
+            src={note.thumbnail_url} 
+            alt={note.title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            onError={() => setImageError(true)}
+          />
+        </div>
+      ) : (
+        <div className="w-full h-32 bg-muted flex items-center justify-center">
+          <Image className="w-12 h-12 text-muted-foreground opacity-20" />
+        </div>
+      )}
       <CardHeader className="pb-2">
         <CardTitle className="line-clamp-1">{note.title}</CardTitle>
         <CardDescription className="flex items-center gap-1 text-xs">
