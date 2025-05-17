@@ -15,8 +15,6 @@ export async function GET() {
       updatedCount,
     });
   } catch (error) {
-    console.error('サムネイル更新APIエラー:', error);
-
     return NextResponse.json(
       {
         success: false,
